@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() { return request.auth != null; }
+    function isAdmin() { 
+      return isSignedIn() && 
+        (request.auth.token.email == 'sankalpsmn@gmail.com' || 
+         request.auth.token.email_verified == true && request.auth.token.email == 'sankalpsmn@gmail.com'); 
+    }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    function isValidId(id) { return id is string && id.size() <= 128; }
+
+    function isValidProduct(data) {
+      return data.keys().hasAll(['name', 'price', 'imageUrl', 'createdAt', 'updatedAt']) 
+        && data.name is string && data.name.size() <= 200
+        && data.price is number && data.price >= 0
+        && data.imageUrl is string && data.imageUrl.size() <= 3000
+        && (data.get('description', '') is string && data.get('description', '').size() <= 2000)
+        && (data.get('category', '') is string && data.get('category', '').size() <= 100)
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidId(productId) && isValidProduct(incoming()) && incoming().createdAt == request.time && incoming().updatedAt == request.time;
+      allow update: if isAdmin() && isValidProduct(incoming()) && incoming().createdAt == existing().createdAt && incoming().updatedAt == request.time && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'price', 'imageUrl', 'description', 'category', 'updatedAt']);
+      allow delete: if isAdmin();
+    }
+  }
+}

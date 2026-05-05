@@ -1,0 +1,25 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "A single clothing item in the store",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Name of the product" },
+        "price": { "type": "number", "description": "Price in ₹" },
+        "description": { "type": "string", "description": "A short summary of the item" },
+        "imageUrl": { "type": "string", "format": "uri", "description": "Link to the product image in Storage" },
+        "category": { "type": "string", "description": "Type of clothing (e.g., Saree, Suit)" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "price", "imageUrl"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Collection of all available products"
+    }
+  }
+}
