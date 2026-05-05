@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [isFormOpen, setIsFormOpen] = React.useState(false);
   const [editingProduct, setEditingProduct] = React.useState<Product | undefined>();
   const [isSyncing, setIsSyncing] = React.useState(false);
+  const [authInitialized, setAuthInitialized] = React.useState(false);
   const navigate = useNavigate();
 
   const loadingRef = React.useRef(loading);
@@ -29,13 +30,12 @@ export default function Dashboard() {
     const authUnsubscribe = onAuthStateChanged(auth, (authUser) => {
       if (!isMounted) return;
       
-      if (!authUser) {
-        navigate('/admin');
-      } else {
-        setUser(authUser);
-        if (!authUser.emailVerified) {
-          console.warn("User email not verified. Writes might fail.");
-        }
+      setAuthInitialized(true);
+      setUser(authUser);
+      
+      if (!authUser && isMounted) {
+        // Simple direct check for auth initialization
+        navigate('/admin', { replace: true });
       }
     });
 
@@ -60,13 +60,8 @@ export default function Dashboard() {
       if (!isMounted) return;
       if (loadingRef.current) {
         setLoading(false);
-        if (productsRef.current.length === 0) {
-          if (auth.currentUser) {
-            setError("The catalog connection is taking longer than expected. Please check your network or try refreshing.");
-          }
-        }
       }
-    }, 15000); // 15 seconds safely timeout
+    }, 10000); 
 
     return () => {
       isMounted = false;
@@ -76,7 +71,7 @@ export default function Dashboard() {
     };
   }, [navigate]);
 
-  const handleLogout = () => signOut(auth).then(() => navigate('/admin'));
+  const handleLogout = () => signOut(auth).then(() => navigate('/admin', { replace: true }));
 
   const handleDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to remove this piece from the collection?")) {
@@ -89,12 +84,22 @@ export default function Dashboard() {
     setIsFormOpen(true);
   };
 
-  if (loading) return (
+  if (!authInitialized || (loading && products.length === 0)) return (
     <div className="min-h-screen flex items-center justify-center bg-cream">
        <div className="flex flex-col items-center">
-         <div className="w-16 h-16 border-4 border-gold/20 border-t-gold rounded-full animate-spin mb-6" />
-         <h1 className="text-xl font-serif text-maroon tracking-widest uppercase animate-pulse">Entering Vault</h1>
-         <p className="text-xs text-ink/40 mt-2 uppercase tracking-widest">Synchronizing catalog...</p>
+         <div className="relative w-20 h-20 mb-8">
+           <div className="absolute inset-0 border-2 border-gold/10 rounded-full" />
+           <div className="absolute inset-0 border-2 border-gold border-t-transparent rounded-full animate-spin" />
+           <div className="absolute inset-0 flex items-center justify-center">
+             <ShoppingBag className="text-gold/30" size={24} />
+           </div>
+         </div>
+         <h1 className="text-xs font-sans text-gold tracking-[0.4em] uppercase font-bold">Secure Access</h1>
+         <div className="mt-4 flex space-x-1">
+           <div className="w-1 h-1 bg-gold rounded-full animate-bounce [animation-delay:-0.3s]" />
+           <div className="w-1 h-1 bg-gold rounded-full animate-bounce [animation-delay:-0.15s]" />
+           <div className="w-1 h-1 bg-gold rounded-full animate-bounce" />
+         </div>
        </div>
     </div>
   );
@@ -123,40 +128,46 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-cream">
-      {/* Sidebar/Header */}
-      <nav className="bg-white border-b border-gold/20 sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row justify-between items-center py-4 sm:h-20 space-y-4 sm:space-y-0">
-            <div className="flex items-center space-x-4">
-              <Link to="/" className="text-maroon hover:text-gold transition-colors">
-                <h1 className="text-xl font-serif tracking-widest uppercase">Anshi Admin</h1>
+    <div className="min-h-screen bg-cream selection:bg-rose/20">
+      {/* Navigation - Glassmorphism */}
+      <nav className="bg-white/70 backdrop-blur-2xl border-b luxury-border sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8">
+          <div className="flex flex-col sm:flex-row justify-between items-center py-6 sm:h-24 space-y-4 sm:space-y-0">
+            <div className="flex items-center space-x-6">
+              <Link to="/" className="brand-logo serif text-2xl tracking-[4px] text-maroon font-black">
+                ANSHI COLLECTION
               </Link>
-              <span className="hidden md:block h-6 w-px bg-gold/20" />
-              <div className="flex items-center space-x-2">
-                <span className="hidden md:block text-xs uppercase tracking-widest text-charcoal/40 font-bold">Catalog Management</span>
+              <div className="h-8 w-[1px] bg-gold/20 hidden md:block" />
+              <div className="flex items-center space-x-3">
+                <span className="text-[10px] uppercase font-black tracking-[0.3em] text-indigo/40 bg-indigo/5 px-3 py-1 rounded-full">Artisan Dashboard</span>
                 {isSyncing && (
                   <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="flex items-center space-x-1.5 px-2 py-0.5 bg-gold/10 rounded-full"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex items-center space-x-2 px-3 py-1 bg-rose/5 rounded-full border border-rose/10"
                   >
-                    <div className="w-1.5 h-1.5 bg-gold rounded-full animate-pulse" />
-                    <span className="text-[10px] text-gold uppercase tracking-tighter font-bold">Cloud Syncing</span>
+                    <div className="w-2 h-2 bg-rose rounded-full animate-pulse" />
+                    <span className="text-[9px] text-rose uppercase tracking-widest font-black">Cloud Sync active</span>
                   </motion.div>
                 )}
               </div>
             </div>
             
-            <div className="flex items-center space-x-4 sm:space-x-6">
-              <button
+            <div className="flex items-center space-x-4">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => { setEditingProduct(undefined); setIsFormOpen(true); }}
-                className="luxury-gradient text-white px-4 sm:px-6 py-2 sm:py-3 text-[10px] sm:text-xs uppercase tracking-widest font-bold flex items-center space-x-2"
+                className="wa-button !bg-indigo !text-cream shadow-2xl !py-4 rounded-xl"
               >
-                <Plus size={16} />
+                <Plus size={18} className="font-black" />
                 <span>Add Piece</span>
-              </button>
-              <button onClick={handleLogout} className="text-charcoal/60 hover:text-maroon transition-colors p-2">
+              </motion.button>
+              <button 
+                onClick={handleLogout} 
+                className="p-4 bg-rose/5 text-rose rounded-xl hover:bg-rose hover:text-white transition-all shadow-lg shadow-rose/5"
+                title="Logout"
+              >
                 <LogOut size={20} />
               </button>
             </div>
@@ -164,52 +175,70 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6">
-          <div>
-            <h2 className="text-3xl font-serif text-charcoal">Active Collection</h2>
-            <p className="text-charcoal/40 text-sm font-sans mt-2">Manage your luxury fashion inventory in real-time.</p>
+      <main className="max-w-7xl mx-auto px-6 sm:px-8 py-16">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-10"
+        >
+          <div className="space-y-4">
+            <h2 className="text-5xl sm:text-6xl font-serif text-ink font-bold tracking-tight">Active <span className="text-rose italic font-medium">Collection</span></h2>
+            <p className="text-ink/40 text-lg font-medium max-w-xl">Curate your legacy. Add, refine, or archive pieces from your global boutique.</p>
           </div>
-          <div className="bg-white p-1 rounded-full border border-gold/20 flex shadow-sm">
-            <button className="p-2 bg-cream text-gold rounded-full"><LayoutGrid size={18} /></button>
-            <button className="p-2 text-charcoal/40 hover:text-gold"><List size={18} /></button>
+          <div className="flex items-center gap-2 bg-white/50 p-2 rounded-2xl border luxury-border">
+            <button className="p-4 bg-indigo text-white rounded-xl shadow-xl shadow-indigo/20"><LayoutGrid size={20} /></button>
+            <button className="p-4 text-ink/20 hover:text-indigo transition-colors"><List size={20} /></button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Product List Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {products.map((product) => (
-            <motion.div
-              layout
-              key={product.id}
-              className="bg-white p-4 shadow-sm border border-gold/10 group relative"
-            >
-              <div className="aspect-[3/4] overflow-hidden mb-4 bg-cream">
-                <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-xs uppercase tracking-widest text-gold font-bold">{product.category || 'Collection'}</h3>
-                <h4 className="text-lg font-serif text-charcoal truncate">{product.name}</h4>
-                <p className="text-maroon font-bold">₹{product.price.toLocaleString('en-IN')}</p>
-              </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+          <AnimatePresence mode="popLayout">
+            {products.map((product) => (
+              <motion.div
+                layout
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                key={product.id}
+                className="glass-card p-0 group flex flex-col h-full rounded-3xl overflow-hidden hover:shadow-[0_40px_80px_-20px_rgba(45,62,80,0.15)]"
+              >
+                <div className="aspect-[4/5] overflow-hidden relative">
+                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" referrerPolicy="no-referrer" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent" />
+                  
+                  {/* Floating ID Label */}
+                  <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30 text-[8px] text-white font-black uppercase tracking-widest">
+                    ID: {product.id.substring(0, 8)}
+                  </div>
+                </div>
 
-              {/* Action Buttons Overlay - visible on hover for desktop, always for mobile */}
-              <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
-                <button
-                  onClick={() => handleEdit(product)}
-                  className="bg-white/95 p-3 rounded-full text-ink hover:bg-gold hover:text-white shadow-xl transition-all border border-gold/10"
-                >
-                  <Edit2 size={16} />
-                </button>
-                <button
-                  onClick={() => handleDelete(product.id)}
-                  className="bg-white/95 p-3 rounded-full text-ink hover:bg-maroon hover:text-white shadow-xl transition-all border border-gold/10"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            </motion.div>
-          ))}
+                <div className="p-8 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-[10px] uppercase tracking-[0.3em] text-saffron font-black mb-3">{product.category || 'Legacy'}</h3>
+                    <h4 className="text-2xl font-serif text-ink font-bold leading-tight group-hover:text-maroon transition-colors line-clamp-2">{product.name}</h4>
+                  </div>
+                  <div className="mt-8 flex items-center justify-between">
+                    <p className="text-indigo font-display font-black text-xl">₹{product.price.toLocaleString('en-IN')}</p>
+                    <div className="flex gap-2">
+                       <button
+                        onClick={() => handleEdit(product)}
+                        className="p-3 bg-indigo/5 text-indigo rounded-xl hover:bg-indigo hover:text-white transition-all shadow-xl shadow-indigo/5"
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(product.id)}
+                        className="p-3 bg-rose/5 text-rose rounded-xl hover:bg-rose hover:text-white transition-all shadow-xl shadow-rose/5"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
 
         {products.length === 0 && (

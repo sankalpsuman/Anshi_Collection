@@ -1,39 +1,99 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-serif: "Playfair Display", serif;
   --font-sans: "Inter", sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
   
   --color-cream: #FDFBF7;
-  --color-gold: #B8860B;
-  --color-maroon: #5D0E11;
-  --color-ink: #1A1A1A;
+  --color-gold: #D4AF37; /* More vibrant gold */
+  --color-maroon: #721c24; /* Deeper maroon */
+  --color-ink: #0D0D0D;
+  --color-saffron: #F4C430; /* New accent */
+  --color-indigo: #2D3E50; /* New accent */
+  --color-rose: #E0115F; /* New accent */
+  
+  --shadow-luxury: 0 20px 40px -15px rgba(114, 28, 36, 0.1);
+  --shadow-glow: 0 0 20px rgba(212, 175, 55, 0.2);
 }
 
 @layer base {
   body {
-    @apply bg-cream text-ink font-sans antialiased;
+    @apply bg-cream text-ink font-sans antialiased selection:bg-rose/20;
   }
   
   h1, h2, h3, h4, h5, h6, .serif {
     @apply font-serif;
   }
+  
+  .display {
+    @apply font-display tracking-tight;
+  }
 }
 
 .luxury-border {
-  border-color: rgba(184, 134, 11, 0.2);
+  border-color: rgba(212, 175, 55, 0.15);
 }
 
 .luxury-gradient {
-  background-color: #5D0E11;
-  background: linear-gradient(135deg, #5D0E11 0%, #1A1A1A 100%);
+  background: linear-gradient(135deg, var(--color-maroon) 0%, var(--color-ink) 100%);
+}
+
+.saffron-gradient {
+  background: linear-gradient(135deg, #F4C430 0%, #FF8C00 100%);
 }
 
 .wa-button {
-  @apply bg-maroon text-cream flex items-center justify-center gap-2 py-3 px-6 text-xs font-semibold uppercase tracking-widest transition-all hover:opacity-90;
+  @apply relative overflow-hidden bg-maroon text-cream flex items-center justify-center gap-2 py-4 px-8 text-[10px] font-bold uppercase tracking-[0.2em] transition-all hover:bg-ink active:scale-95 shadow-lg;
+}
+
+.wa-button::after {
+  content: '';
+  @apply absolute inset-0 bg-white/10 translate-y-full transition-transform duration-300;
+}
+
+.wa-button:hover::after {
+  @apply translate-y-0;
 }
 
 .search-bar {
-  @apply bg-transparent border-b border-gold py-2 w-full font-serif italic text-lg outline-none placeholder:text-ink/30;
+  @apply bg-white/50 backdrop-blur-sm border-b-2 border-gold/30 focus:border-maroon py-4 px-6 w-full font-serif italic text-xl outline-none placeholder:text-ink/20 transition-all;
+}
+
+.glass-card {
+  @apply bg-white/40 backdrop-blur-md border border-white/20 shadow-luxury transition-all;
+}
+
+.staggered-text span {
+  @apply inline-block;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(2deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.noise-bg {
+  position: relative;
+}
+
+.noise-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.silk-gradient {
+  background: linear-gradient(135deg, rgba(253, 251, 247, 0.8) 0%, rgba(244, 196, 48, 0.05) 50%, rgba(224, 17, 95, 0.05) 100%);
 }

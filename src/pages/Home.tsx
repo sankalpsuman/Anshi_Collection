@@ -61,13 +61,13 @@ export default function Home() {
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const productId = params.get('product');
-    if (productId && products.length > 0) {
+    if (productId && products.length > 0 && !selectedProduct) {
       const product = products.find(p => p.id === productId);
       if (product) {
         setSelectedProduct(product);
       }
     }
-  }, [products]);
+  }, [products, selectedProduct]);
 
   React.useEffect(() => {
     let filtered = products;
@@ -75,102 +75,137 @@ export default function Home() {
       filtered = filtered.filter(p => p.category === activeCategory);
     }
     if (searchQuery) {
+      const lowerQuery = searchQuery.toLowerCase();
       filtered = filtered.filter(p => 
-        p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        (p.category && p.category.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (p.description && p.description.toLowerCase().includes(searchQuery.toLowerCase()))
+        p.name.toLowerCase().includes(lowerQuery) || 
+        (p.category && p.category.toLowerCase().includes(lowerQuery)) ||
+        (p.description && p.description.toLowerCase().includes(lowerQuery))
       );
     }
     setFilteredProducts(filtered);
   }, [products, activeCategory, searchQuery]);
 
-  const categories = ['All', ...Array.from(new Set(products.map(p => p.category).filter(Boolean)))];
+  const categories = React.useMemo(() => {
+    return ['All', ...Array.from(new Set(products.map(p => p.category).filter(Boolean)))];
+  }, [products]);
 
   return (
-    <div className="min-h-screen bg-cream selection:bg-gold/30 font-sans">
-      <div className="flex flex-col lg:flex-row min-h-screen">
+    <div className="min-h-screen bg-cream selection:bg-gold/30 font-sans noise-bg">
+      <div className="flex flex-col lg:flex-row min-h-screen silk-gradient">
         {/* Sidebar - Desktop Only sticky, Mobile Hero */}
-        <aside className="lg:w-[400px] lg:border-r luxury-border p-6 sm:p-8 md:p-12 lg:sticky lg:top-0 lg:h-screen flex flex-col justify-between bg-white lg:bg-transparent z-20">
-          <div className="space-y-8 md:space-y-12">
-            <Link to="/" className="brand-logo serif text-3xl md:text-4xl tracking-[4px] text-maroon border-b-2 border-gold pb-2 inline-block">
-              ANSHI
-            </Link>
-            
-            <div className="space-y-6 md:space-y-8">
-              <div>
-                <span className="text-[10px] uppercase tracking-[0.3em] text-ink/50 block mb-3 md:mb-4">Est. 2024 — Handcrafted</span>
-                <h1 className="text-4xl sm:text-5xl md:text-7xl font-serif text-ink leading-[1.1] md:leading-[0.9] mb-4 md:mb-6">
-                  Timeless<br />
-                  <i className="font-normal opacity-80">Elegance</i>
-                </h1>
-              </div>
-              
-              <p className="text-sm font-sans leading-relaxed text-ink/70 max-w-sm">
-                Discover our curated collection of luxury ethnic wear, designed for the modern woman who values tradition and style.
-              </p>
+        <aside className="lg:w-[480px] lg:border-r luxury-border lg:sticky lg:top-0 lg:h-screen flex flex-col justify-between bg-white lg:bg-transparent z-20 overflow-hidden">
+          {/* Decorative background element */}
+          <div className="absolute -top-24 -left-24 w-64 h-64 bg-saffron/10 rounded-full blur-3xl -z-10" />
+          <div className="absolute top-1/2 -right-32 w-80 h-80 bg-rose/5 rounded-full blur-3xl -z-10" />
 
-              <div className="flex flex-col space-y-3">
-                <button 
+          <div className="p-8 sm:p-12 md:p-16 space-y-12 md:space-y-20">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <Link to="/" className="brand-logo serif text-4xl tracking-[6px] text-maroon border-b-4 border-saffron pb-3 inline-block font-black">
+                ANSHI COLLECTION
+              </Link>
+            </motion.div>
+            
+            <div className="space-y-8 md:space-y-12">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                <span className="text-[10px] uppercase tracking-[0.4em] text-indigo font-bold block mb-4 border-l-2 border-indigo pl-3">
+                  Est. 2024 — The Artisan Label
+                </span>
+                <h1 className="text-5xl sm:text-6xl md:text-8xl font-serif text-ink leading-[1] md:leading-[0.85] mb-8 font-bold">
+                  Wear<br />
+                  <span className="text-rose italic font-medium">Stories</span><br />
+                  <span className="text-3xl md:text-5xl block mt-4 border-t luxury-border pt-4 text-ink/40 font-light">Not Just Silk.</span>
+                </h1>
+              </motion.div>
+              
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 0.5 }}
+                className="text-base font-sans leading-relaxed text-ink/60 max-w-sm font-medium"
+              >
+                A sanctuary of handcrafted ethnic silhouettes. We curate threads of heritage into modern masterpieces for the discerning soul.
+              </motion.p>
+
+              <div className="flex flex-col space-y-4">
+                <motion.button 
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => {
                     const el = document.getElementById('collection');
                     el?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="wa-button !bg-transparent border border-maroon !text-maroon hover:!bg-maroon hover:!text-cream transition-all w-full sm:w-auto text-center font-bold tracking-widest"
+                  className="wa-button !bg-indigo !text-cream hover:!bg-maroon shadow-2xl w-full sm:w-auto text-center font-black tracking-[0.3em] py-5 px-10 text-xs"
                 >
-                  View Collection
-                </button>
-                <div className="flex items-center space-x-4 pt-4">
-                  <a href="#" onClick={(e) => { e.preventDefault(); window.open('https://instagram.com', '_blank') }} className="text-maroon/60 hover:text-maroon transition-colors">
-                    <Instagram size={20} />
+                  Explore Collection
+                </motion.button>
+                <div className="flex items-center space-x-6 pt-6">
+                  <a href="#" onClick={(e) => { e.preventDefault(); window.open('https://instagram.com', '_blank') }} className="text-maroon/40 hover:text-rose transition-all hover:scale-125">
+                    <Instagram size={22} />
                   </a>
-                  <a href="#" onClick={(e) => { e.preventDefault(); window.open('https://wa.me/7979005226', '_blank') }} className="text-maroon/60 hover:text-maroon transition-colors">
-                    <MessageCircle size={20} />
+                  <a href="#" onClick={(e) => { e.preventDefault(); window.open('https://wa.me/7979005226', '_blank') }} className="text-maroon/40 hover:text-indigo transition-all hover:scale-125">
+                    <MessageCircle size={22} />
                   </a>
+                  <span className="h-[1px] w-12 bg-gold/30"></span>
+                  <span className="text-[10px] uppercase tracking-widest text-ink/30 font-bold">Social</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="pt-8 border-t luxury-border mt-12 lg:mt-0">
-            <Link to="/admin" className="text-[10px] uppercase tracking-widest font-bold text-gold hover:text-maroon transition-colors">Artisan Portal</Link>
-            <p className="text-[10px] uppercase tracking-widest text-ink/30 mt-2">© 2024 Anshi Collections. All rights reserved.</p>
+          <div className="p-8 sm:p-12 md:p-16 pt-8 border-t luxury-border mt-12 lg:mt-0 bg-white/20 backdrop-blur-sm">
+            <Link to="/admin" className="text-[10px] uppercase tracking-widest font-black text-rose hover:text-maroon transition-colors flex items-center gap-2">
+              <span className="w-2 h-2 bg-rose rounded-full animate-pulse"></span>
+              Artisan Access
+            </Link>
+            <p className="text-[10px] uppercase tracking-widest text-ink/20 mt-3 font-semibold tracking-[0.2em]">© 2024 Anshi Collection</p>
           </div>
         </aside>
 
         {/* Main Content Area */}
         <main id="collection" className="flex-1 p-6 sm:p-8 md:p-12 lg:pl-16">
           {/* Top Search & Filter Bar */}
-          <div className="flex flex-col space-y-8 mb-12 sm:mb-16">
-            <div className="flex flex-col md:flex-row justify-between items-end gap-6 px-1 md:px-2">
-              <div className="w-full md:max-w-md relative group">
+          <div className="flex flex-col space-y-10 mb-16 sm:mb-24">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-8 bg-white/40 p-6 rounded-2xl border border-white/60 backdrop-blur-xl shadow-xl shadow-indigo/5">
+              <div className="w-full md:max-w-xl relative group">
                 <input 
                   type="text" 
-                  className="search-bar pl-10" 
-                  placeholder="Find your aesthetic..." 
+                  className="search-bar pl-14 rounded-xl border-none focus:ring-4 focus:ring-rose/5" 
+                  placeholder="What captures your eye today?..." 
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-ink/30 group-focus-within:text-gold transition-colors">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-ink/20 group-focus-within:text-rose transition-colors">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                 </div>
               </div>
-              <div className="hidden md:block font-serif italic text-ink/60 text-sm">
-                Showing {filteredProducts.length} unique pieces
+              <div className="flex items-center gap-4">
+                <span className="w-10 h-[2px] bg-saffron/30"></span>
+                <div className="font-display font-bold text-indigo text-sm uppercase tracking-widest">
+                  {filteredProducts.length} <span className="text-ink/30 font-medium">Pieces</span>
+                </div>
               </div>
             </div>
 
             {/* Category Filter */}
-            <div className="flex overflow-x-auto pb-4 scrollbar-hide space-x-3 px-1 no-scrollbar">
+            <div className="flex flex-wrap gap-4 px-1">
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat || 'All')}
-                  className={`px-6 py-2 rounded-full text-[10px] uppercase tracking-widest font-bold transition-all whitespace-nowrap border ${
+                  className={`px-8 py-4 rounded-xl text-xs uppercase tracking-[0.2em] font-black transition-all whitespace-nowrap border-2 ${
                     activeCategory === (cat || 'All')
-                      ? 'bg-maroon text-white border-maroon shadow-lg'
-                      : 'bg-white text-ink/60 border-gold/20 hover:border-gold'
+                      ? 'bg-ink text-white border-ink shadow-[0_15px_30px_-10px_rgba(0,0,0,0.3)] -translate-y-1 scale-105'
+                      : 'bg-white text-ink/40 border-transparent hover:border-saffron hover:text-ink'
                   }`}
                 >
-                  {cat || 'Uncategorized'}
+                  {cat || 'Originals'}
                 </button>
               ))}
             </div>
@@ -204,9 +239,11 @@ export default function Home() {
           )}
 
           {/* Editorial Promo Box */}
-          <div className="mt-24 p-8 md:p-12 border border-dashed border-gold bg-gold/[0.03] flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="mt-24 p-8 md:p-12 border border-dashed border-gold bg-gold/[0.03] flex flex-col md:flex-row items-center justify-between gap-8 rounded-3xl">
             <div className="flex items-center gap-6">
-              <div className="w-16 h-16 bg-maroon rounded-full flex-shrink-0" />
+              <div className="w-16 h-16 bg-maroon rounded-full flex-shrink-0 flex items-center justify-center text-cream shadow-xl">
+                <MapPin size={24} />
+              </div>
               <div>
                 <h3 className="font-serif text-xl font-bold">Custom Tailoring</h3>
                 <p className="text-sm opacity-70 font-sans">Available for bespoke silhouette requests and sizing.</p>
@@ -218,6 +255,85 @@ export default function Home() {
             >
               Consult an Artisan &rarr;
             </button>
+          </div>
+
+          {/* Legacy & User Guide Section */}
+          <div className="mt-32 space-y-24 pb-20">
+            {/* The Founders & Story */}
+            <section className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+              <div className="relative group">
+                <div className="aspect-[4/5] overflow-hidden rounded-[40px] shadow-2xl relative">
+                  <img 
+                    src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800" 
+                    alt="Artisan Craftsmanship" 
+                    className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+                  />
+                  <div className="absolute inset-0 bg-maroon/10 mix-blend-multiply" />
+                </div>
+                <div className="absolute -bottom-8 -right-8 bg-white p-8 rounded-3xl shadow-luxury max-w-[280px] border border-gold/10">
+                   <p className="text-xs font-serif italic text-ink/60 mb-2">"We believe every weave is a bridge between our heritage and your future."</p>
+                   <p className="text-[10px] font-black uppercase tracking-widest text-maroon">Richa Verma & Amit Kumar Verma</p>
+                   <p className="text-[9px] uppercase tracking-tighter text-ink/30 mt-1">Founders, Anshi Collection</p>
+                </div>
+              </div>
+              
+              <div className="space-y-8">
+                <div className="space-y-4">
+                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-saffron">Our Legacy</span>
+                  <h2 className="text-5xl font-serif font-bold text-ink leading-tight">The Soul of<br />Anshi Collection</h2>
+                </div>
+                <p className="text-ink/60 leading-relaxed font-medium">
+                  Born from a shared passion for India's rich textile heritage, Anshi Collection was founded by <b>Richa Verma</b> and <b>Amit Kumar Verma</b>. Our journey began in a small workshop where we vowed to preserve the disappearing art of handcrafted ethnic wear.
+                </p>
+                <div className="grid grid-cols-2 gap-8 py-6 border-y luxury-border">
+                  <div>
+                    <h4 className="text-sm font-black uppercase tracking-widest text-indigo mb-2">100% Genuine</h4>
+                    <p className="text-xs text-ink/40 leading-relaxed">Every piece is verified for authentic silk and artisan-grade craftsmanship.</p>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-black uppercase tracking-widest text-indigo mb-2">Direct Trust</h4>
+                    <p className="text-xs text-ink/40 leading-relaxed">No middlemen. You interact directly with the curators who bring these dreams to life.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* How to Order Guide */}
+            <section className="bg-ink text-white p-10 md:p-20 rounded-[60px] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.4)] relative overflow-hidden">
+               <div className="absolute top-0 right-0 w-1/2 h-full bg-rose/[0.03] -skew-x-12" />
+               
+               <div className="relative z-10">
+                 <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
+                    <span className="text-[10px] font-black uppercase tracking-[0.5em] text-rose">Experience Luxury</span>
+                    <h2 className="text-4xl md:text-5xl font-serif font-bold">Acquiring an <span className="italic text-saffron">Anshi</span> Original</h2>
+                 </div>
+
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                    {[
+                      { step: '01', title: 'Curate', desc: 'Browse our digital boutique and select the silhouette that resonates with your soul.' },
+                      { step: '02', title: 'Inquire', desc: 'Click "Reserve" to connect with our artisan via WhatsApp for size and fabric consultation.' },
+                      { step: '03', title: 'Craft & Receive', desc: 'Once confirmed, your masterpiece is prepared, quality-checked, and shipped to your doorstep.' }
+                    ].map((item, idx) => (
+                      <div key={idx} className="space-y-6 group">
+                        <span className="text-6xl font-serif text-white/5 group-hover:text-saffron/20 transition-colors duration-500 font-bold block">{item.step}</span>
+                        <h4 className="text-xl font-serif font-bold text-saffron">{item.title}</h4>
+                        <p className="text-white/40 text-sm leading-relaxed">{item.desc}</p>
+                      </div>
+                    ))}
+                 </div>
+
+                 <div className="mt-16 pt-12 border-t border-white/10 flex flex-col items-center">
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 mb-8">Personalized assistance is just a message away</p>
+                    <button 
+                      onClick={() => window.open('https://wa.me/7979005226', '_blank')}
+                      className="wa-button !bg-saffron !text-ink hover:!bg-white shadow-[0_0_40px_rgba(244,196,48,0.3)] !py-6 !px-12 rounded-full"
+                    >
+                      <MessageCircle size={20} />
+                      <span className="text-xs">Start Your Consultation</span>
+                    </button>
+                 </div>
+               </div>
+            </section>
           </div>
         </main>
       </div>

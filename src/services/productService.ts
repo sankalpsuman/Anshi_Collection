@@ -24,7 +24,7 @@ export const productService = {
   ) => {
     const q = query(collection(db, COLLECTION_NAME));
     
-    return onSnapshot(q, { includeMetadataChanges: true }, (snapshot) => {
+    return onSnapshot(q, (snapshot) => {
       const products = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()

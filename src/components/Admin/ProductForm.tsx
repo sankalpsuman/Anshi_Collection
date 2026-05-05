@@ -1,9 +1,8 @@
 import React from 'react';
-import { ref, uploadBytesResumable, getDownloadURL, StorageError } from 'firebase/storage';
-import { storage } from '../../lib/firebase';
 import { productService } from '../../services/productService';
 import { Product } from '../../types';
 import { Upload, X, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { motion } from 'motion/react';
 
 interface ProductFormProps {
   initialData?: Product;
@@ -68,8 +67,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
   const [isUploading, setIsUploading] = React.useState(false);
   const [uploadedUrl, setUploadedUrl] = React.useState(initialData?.imageUrl || '');
   const [uploadError, setUploadError] = React.useState<string | null>(null);
-  const [retryCount, setRetryCount] = React.useState(0);
-  
+
   const [formData, setFormData] = React.useState({
     name: initialData?.name || '',
     price: initialData?.price || 0,
@@ -77,277 +75,312 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
     category: initialData?.category || '',
   });
 
-  const uploadWithRetry = async (blob: Blob, fileName: string, attempt: number = 0): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const storageRef = ref(storage, `products/${Date.now()}_${fileName}`);
-      const uploadTask = uploadBytesResumable(storageRef, blob);
+  // Requirement 4: Separate logic - uploadImage returns imageUrl
+  const uploadImage = async (file: File | Blob, originalName: string): Promise<string> => {
+    setIsUploading(true);
+    setUploadError(null);
+    setUploadProgress(10); // Initial start progress
 
-      // 20s Timeout
-      const timeoutId = setTimeout(() => {
-        uploadTask.cancel();
-        reject(new Error('Upload timed out after 20 seconds.'));
-      }, 20000);
+    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+    const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setUploadProgress(progress);
-        },
-        (error: StorageError) => {
-          clearTimeout(timeoutId);
-          console.error(`Upload error (attempt ${attempt + 1}):`, error);
-          if (attempt < 1) {
-            console.log('Retrying upload...');
-            uploadWithRetry(blob, fileName, attempt + 1).then(resolve).catch(reject);
-          } else {
-            reject(error);
+    if (!cloudName || !uploadPreset) {
+      const msg = "Cloudinary config missing. Please add VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET in the Settings menu.";
+      setUploadError(msg);
+      setIsUploading(false);
+      throw new Error(msg);
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', uploadPreset);
+    formData.append('folder', 'products');
+
+    try {
+      return new Promise<string>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`);
+
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const progress = (event.loaded / event.total) * 100;
+            // Simulated scale to avoid 100% before actually finished receiving response
+            setUploadProgress(Math.min(progress * 0.9, 90)); 
           }
-        },
-        async () => {
-          clearTimeout(timeoutId);
-          const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-          resolve(downloadUrl);
-        }
-      );
-    });
+        };
+
+        xhr.onload = () => {
+          const response = JSON.parse(xhr.responseText);
+          if (xhr.status >= 200 && xhr.status < 300) {
+            const url = response.secure_url;
+            setUploadedUrl(url);
+            setUploadProgress(100);
+            setIsUploading(false);
+            resolve(url);
+          } else {
+            console.error("Cloudinary Detailed Error:", response);
+            let errorMessage = response.error?.message || 'Cloudinary upload failed';
+            
+            if (errorMessage.toLowerCase().includes("upload_preset")) {
+              errorMessage = "Invalid Upload Preset. Ensure it matches your Cloudinary dashboard exactly.";
+            } else if (errorMessage.toLowerCase().includes("whitelisted")) {
+              errorMessage = "Cloudinary Error: The upload preset must be 'Unsigned'. Check your Cloudinary Upload Settings.";
+            }
+            
+            reject(new Error(errorMessage));
+          }
+        };
+
+        xhr.onerror = () => {
+          reject(new Error('Network error during upload'));
+        };
+
+        xhr.send(formData);
+      });
+    } catch (error: any) {
+      console.error("Cloudinary upload error:", error);
+      setUploadError("Upload failed: " + (error.message || "Unknown error"));
+      setIsUploading(false);
+      throw error;
+    }
+  };
+
+  // Requirement 4: Separate logic - saveProduct saves to Firestore
+  const saveProduct = async (imageUrl: string) => {
+    const productData = {
+      ...formData,
+      price: Number(formData.price),
+      imageUrl // Requirement 2: Store ONLY product data + imageUrl string
+    };
+
+    if (initialData) {
+      await productService.updateProduct(initialData.id, productData);
+    } else {
+      await productService.addProduct(productData);
+    }
   };
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      console.time('Image Processing & Upload');
-      console.log(`Initial file size: ${(file.size / 1024).toFixed(2)}KB`);
-      
-      setImageFile(file);
-      setUploadError(null);
-      setUploadProgress(0);
-      
-      // Instant preview
-      const objectUrl = URL.createObjectURL(file);
-      setPreviewUrl(objectUrl);
-      
-      setIsUploading(true);
-      try {
-        let uploadBlob: Blob = file;
-        
-        // Skip compression for small files (< 200KB)
-        if (file.size > 200 * 1024) {
-          console.time('Compression');
-          uploadBlob = await compressImage(file);
-          console.timeEnd('Compression');
-        } else {
-          console.log('Skipping compression for small file');
-        }
+    if (!file) return;
 
-        const fileName = (file.name.split('.')[0] || 'image') + '.jpg';
-        
-        console.time('Upload');
-        const url = await uploadWithRetry(uploadBlob, fileName);
-        console.timeEnd('Upload');
-        
-        setUploadedUrl(url);
-        console.timeEnd('Image Processing & Upload');
-      } catch (error) {
-        console.error("Image process failed:", error);
-        setUploadError(error instanceof Error ? error.message : "Upload failed");
-      } finally {
-        setIsUploading(false);
+    setImageFile(file);
+
+    // Requirement 3: Instant preview
+    const objectUrl = URL.createObjectURL(file);
+    setPreviewUrl(objectUrl);
+    
+    try {
+      let fileToUpload: File | Blob = file;
+      
+      // Requirement 3: Skip compression if image < 200KB
+      if (file.size > 200 * 1024) {
+        // Requirement 3: Upload immediately after selection (compressed if needed)
+        fileToUpload = await compressImage(file);
       }
-
-      // Cleanup
-      return () => URL.revokeObjectURL(objectUrl);
+      
+      await uploadImage(fileToUpload, file.name);
+    } catch (err) {
+      console.error("Upload init failed:", err);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Requirement 5: Prevent saving product if image upload fails or is in progress
     if (isUploading) return;
     if (!uploadedUrl) {
-      setUploadError("Please wait for the image to finish uploading or try re-uploading.");
+      setUploadError("Image is required. Please wait for upload to complete.");
       return;
     }
     
     setLoading(true);
 
     try {
-      const productData = {
-        ...formData,
-        price: Number(formData.price),
-        imageUrl: uploadedUrl
-      };
-
-      if (initialData) {
-        await productService.updateProduct(initialData.id, productData);
-      } else {
-        await productService.addProduct(productData);
-      }
-      
+      await saveProduct(uploadedUrl);
       onSuccess();
     } catch (error) {
       console.error("Error saving product:", error);
-      alert("Failed to save product. This might be due to connection issues or security rules.");
+      alert("Failed to save product. Please check your connection.");
     } finally {
       setLoading(false);
     }
   };
 
+  const hasConfig = !!import.meta.env.VITE_CLOUDINARY_CLOUD_NAME && !!import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <form onSubmit={handleSubmit} className="space-y-10">
+      {!hasConfig && (
+        <div className="bg-rose/5 border-l-4 border-rose p-6 rounded-2xl mb-10 shadow-xl shadow-rose/5">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <AlertCircle className="h-6 w-6 text-rose" />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm text-rose font-black uppercase tracking-[0.2em]">
+                Configuration Required
+              </p>
+              <p className="text-xs text-rose/60 mt-2 leading-relaxed font-medium">
+                1. Add <code className="bg-rose/10 px-2 py-0.5 rounded text-rose font-black">VITE_CLOUDINARY_CLOUD_NAME</code> and <code className="bg-rose/10 px-2 py-0.5 rounded text-rose font-black">VITE_CLOUDINARY_UPLOAD_PRESET</code> in <b>Settings</b>.
+                <br />
+                2. In Cloudinary: <b>Upload presets</b>, create an <b className="underline">Unsigned</b> preset.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 sm:gap-16">
         {/* Image Upload Area */}
-        <div className="space-y-4">
-          <label className="block text-sm font-bold uppercase tracking-widest text-charcoal/60">Product Image</label>
-          <div className="relative aspect-[3/4] border-2 border-dashed border-gold/30 rounded-lg flex flex-col items-center justify-center bg-cream/30 overflow-hidden group">
+        <div className="space-y-6">
+          <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 mb-2">Visual Representation</label>
+          <div 
+            className={`relative group aspect-[4/5] border-2 border-dashed transition-all duration-500 rounded-[32px] overflow-hidden flex flex-col items-center justify-center bg-cream/30 ${
+              previewUrl ? 'border-transparent' : 'border-gold/20 hover:border-maroon/40'
+            }`}
+          >
             {previewUrl ? (
               <>
-                <img src={previewUrl} alt="Preview" className={`w-full h-full object-cover ${isUploading ? 'opacity-40 grayscale' : ''}`} />
-                
+                <img 
+                  src={previewUrl} 
+                  alt="Preview" 
+                  className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ${isUploading ? 'opacity-40 grayscale' : ''}`} 
+                />
+                <div className="absolute inset-0 bg-ink/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                  {!isUploading && (
+                    <button
+                      type="button"
+                      onClick={() => { 
+                        setPreviewUrl(''); 
+                        setImageFile(null); 
+                        setUploadedUrl(''); 
+                        setUploadError(null);
+                        setUploadProgress(0);
+                      }}
+                      className="p-4 bg-rose text-white rounded-full shadow-2xl hover:scale-110 transition-transform"
+                    >
+                      <X size={24} />
+                    </button>
+                  )}
+                </div>
                 {isUploading && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/20 backdrop-blur-[2px]">
-                    <div className="bg-white p-4 rounded-xl shadow-2xl flex flex-col items-center space-y-3 min-w-[160px]">
-                      <div className="relative w-12 h-12">
-                        <svg className="w-full h-full" viewBox="0 0 36 36">
-                          <circle cx="18" cy="18" r="16" fill="none" className="stroke-gold/10" strokeWidth="3" />
-                          <circle 
-                            cx="18" cy="18" r="16" fill="none" className="stroke-gold transition-all duration-300" 
-                            strokeWidth="3" 
-                            strokeDasharray={`${uploadProgress}, 100`}
-                            strokeLinecap="round"
-                            transform="rotate(-90 18 18)"
-                          />
-                        </svg>
-                        <div className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-gold">
-                          {Math.round(uploadProgress)}%
-                        </div>
-                      </div>
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-gold animate-pulse">Uploading...</span>
+                  <div className="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-ink/80 to-transparent">
+                    <div className="flex justify-between items-end mb-2">
+                       <span className="text-[10px] text-white font-black uppercase tracking-widest animate-pulse">Uploading Artifact...</span>
+                       <span className="text-xs text-saffron font-display font-black">{Math.round(uploadProgress)}%</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-white/20 rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${uploadProgress}%` }}
+                        className="h-full saffron-gradient"
+                      />
                     </div>
                   </div>
                 )}
-
-                {!isUploading && uploadedUrl && (
-                  <div className="absolute top-2 left-2 p-1.5 bg-green-500 rounded-full text-white shadow-lg">
-                    <CheckCircle2 size={14} />
-                  </div>
-                )}
-
-                {uploadError && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-red-50/80 p-4 text-center">
-                    <div className="flex flex-col items-center space-y-2">
-                      <AlertCircle className="text-red-500" size={24} />
-                      <p className="text-[10px] text-red-600 font-bold uppercase tracking-tight leading-tight">{uploadError}</p>
-                      <label className="cursor-pointer bg-red-600 text-white text-[10px] px-3 py-1.5 rounded uppercase font-bold tracking-widest mt-2">
-                        Retry
-                        <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
-                      </label>
-                    </div>
-                  </div>
-                )}
-
-                <button
-                  type="button"
-                  onClick={() => { 
-                    setPreviewUrl(''); 
-                    setImageFile(null); 
-                    setUploadedUrl(''); 
-                    setUploadError(null);
-                    setUploadProgress(0);
-                  }}
-                  className="absolute top-2 right-2 p-2 bg-white/80 rounded-full text-maroon hover:bg-white shadow-md z-10 transition-transform active:scale-95"
-                >
-                  <X size={16} />
-                </button>
               </>
             ) : (
-              <label className="cursor-pointer flex flex-col items-center justify-center space-y-2 p-12 w-full h-full hover:bg-gold/5 transition-colors">
-                <div className="w-16 h-16 rounded-full bg-gold/10 flex items-center justify-center mb-2">
-                  <Upload size={32} className="text-gold" />
+              <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer p-8 space-y-6">
+                <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} required={!initialData} />
+                <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-maroon shadow-xl border border-gold/10 group-hover:rotate-12 transition-transform">
+                  <Upload size={32} />
                 </div>
-                <span className="text-xs uppercase tracking-widest text-charcoal/40 font-bold">Choose Masterpiece</span>
-                <span className="text-[9px] uppercase tracking-tighter text-charcoal/30">JPG, PNG up to 10MB</span>
-                <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} required={!initialData} />
+                <div className="text-center">
+                  <p className="text-ink font-serif text-xl font-bold">Select Masterpiece</p>
+                  <p className="text-[10px] text-ink/30 uppercase tracking-widest mt-2 font-black">PNG, JPG up to 10MB</p>
+                </div>
+                <div className="px-6 py-2 bg-indigo/5 text-indigo text-[10px] font-black uppercase tracking-widest rounded-full border border-indigo/10">
+                  Browse Files
+                </div>
               </label>
             )}
           </div>
+          {uploadError && (
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center gap-3 text-rose bg-rose/5 p-4 rounded-xl border border-rose/10"
+            >
+              <AlertCircle size={16} className="shrink-0" />
+              <p className="text-[10px] font-black uppercase tracking-wider leading-relaxed">{uploadError}</p>
+            </motion.div>
+          )}
         </div>
 
-        {/* Form Fields */}
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-bold uppercase tracking-widest text-charcoal/60 mb-2">Product Name</label>
-            <input
-              type="text"
-              required
-              className="w-full bg-cream border-gold/20 py-3 px-4 focus:ring-1 focus:ring-gold outline-none font-sans transition-all"
-              placeholder="e.g. Royal Maroon Saree"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-bold uppercase tracking-widest text-charcoal/60 mb-2">Price (₹)</label>
+        {/* Form Details */}
+        <div className="space-y-10">
+          <div className="space-y-8">
+            <div className="relative">
+              <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 mb-3">Model Name</label>
               <input
-                type="number"
                 required
-                className="w-full bg-cream border-gold/20 py-3 px-4 focus:ring-1 focus:ring-gold outline-none font-sans"
-                placeholder="0"
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-bold uppercase tracking-widest text-charcoal/60 mb-2">Category</label>
-              <input
                 type="text"
-                className="w-full bg-cream border-gold/20 py-3 px-4 focus:ring-1 focus:ring-gold outline-none font-sans"
-                placeholder="e.g. Saree"
-                value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                placeholder="e.g. Royal Indigo Saree"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full bg-transparent border-b-2 border-gold/20 focus:border-maroon py-4 font-serif text-2xl outline-none placeholder:text-ink/10 transition-all font-bold"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-8">
+              <div className="relative">
+                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 mb-3">Price (₹)</label>
+                <input
+                  required
+                  type="number"
+                  placeholder="0.00"
+                  value={formData.price}
+                  onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
+                  className="w-full bg-transparent border-b-2 border-gold/20 focus:border-maroon py-4 font-display font-black text-2xl outline-none placeholder:text-ink/10 transition-all"
+                />
+              </div>
+              <div className="relative">
+                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 mb-3">Sillhouette</label>
+                <input
+                  required
+                  type="text"
+                  placeholder="e.g. Saree"
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  className="w-full bg-transparent border-b-2 border-gold/20 focus:border-maroon py-4 font-serif italic text-2xl outline-none placeholder:text-ink/10 transition-all font-medium"
+                />
+              </div>
+            </div>
+
+            <div className="relative">
+              <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 mb-3">Artisan Narrative</label>
+              <textarea
+                rows={4}
+                placeholder="Describe the craftsmanship and soul of this piece..."
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                className="w-full bg-white/50 backdrop-blur-sm border-2 border-gold/10 focus:border-maroon p-6 rounded-2xl font-sans text-base outline-none resize-none placeholder:text-ink/10 transition-all"
               />
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-bold uppercase tracking-widest text-charcoal/60 mb-2">Description</label>
-            <textarea
-              rows={4}
-              className="w-full bg-cream border-gold/20 py-3 px-4 focus:ring-1 focus:ring-gold outline-none font-sans resize-none"
-              placeholder="Tell your customers about this masterpiece..."
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            />
-          </div>
-
-          <div className="flex space-x-4 pt-4">
-            <button
+          <div className="flex flex-col sm:flex-row gap-4 pt-6">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loading || isUploading}
-              className="flex-1 luxury-gradient text-white py-4 font-bold uppercase tracking-widest text-xs flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
+              className="flex-1 wa-button !bg-indigo !py-6 !rounded-2xl shadow-indigo/20 shadow-2xl disabled:opacity-50 disabled:grayscale transition-all disabled:scale-100"
             >
-              {loading ? (
-                <>
-                  <Loader2 className="animate-spin" size={16} />
-                  <span>Finalizing...</span>
-                </>
-              ) : isUploading ? (
-                <>
-                  <Loader2 className="animate-spin" size={16} />
-                  <span>Uploading {Math.round(uploadProgress)}%</span>
-                </>
-              ) : (
-                <span>{initialData ? 'Update Masterpiece' : 'Add to Collection'}</span>
-              )}
-            </button>
-            <button
+              {loading ? <Loader2 className="animate-spin" size={20} /> : <CheckCircle2 size={20} />}
+              <span className="font-black text-xs uppercase tracking-[0.3em]">{initialData ? 'Archive Changes' : 'Commit to Collection'}</span>
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               type="button"
               onClick={onCancel}
-              className="px-6 border border-gold/30 text-gold hover:bg-gold/5 font-bold uppercase tracking-widest text-xs transition-colors"
+              className="px-10 py-6 border-2 border-ink/5 text-ink/40 font-black uppercase tracking-widest text-[10px] hover:bg-rose/5 hover:text-rose hover:border-rose/10 transition-all rounded-2xl"
             >
-              Cancel
-            </button>
+              Discard
+            </motion.button>
           </div>
         </div>
       </div>

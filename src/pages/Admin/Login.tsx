@@ -11,9 +11,11 @@ export default function Login() {
   const navigate = useNavigate();
 
   React.useEffect(() => {
+    let checkInProgress = true;
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        navigate('/admin/dashboard');
+      if (user && checkInProgress) {
+        checkInProgress = false;
+        navigate('/admin/dashboard', { replace: true });
       }
       setLoading(false);
     }, (err) => {
@@ -21,7 +23,10 @@ export default function Login() {
       setError("Failed to verify authentication status.");
       setLoading(false);
     });
-    return () => unsubscribe();
+    return () => {
+      checkInProgress = false;
+      unsubscribe();
+    };
   }, [navigate]);
 
   const handleLogin = async () => {
@@ -52,45 +57,70 @@ export default function Login() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-cream px-4">
-      <div className="w-full max-w-md bg-white p-12 text-center shadow-2xl space-y-8">
-        <div className="space-y-2">
-          <h1 className="text-sm uppercase tracking-[0.5em] text-gold font-bold">Anshi Collections</h1>
-          <h2 className="text-4xl font-serif text-charcoal">Admin Portal</h2>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-cream px-4 relative overflow-hidden">
+      {/* Decorative full-screen background elements */}
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-indigo/[0.02] skew-x-12 -z-10" />
+      <div className="absolute -bottom-48 -left-48 w-96 h-96 bg-rose/5 rounded-full blur-3xl -z-10" />
+      <div className="absolute top-24 right-12 w-64 h-64 bg-saffron/5 rounded-full blur-3xl -z-10" />
+
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-md bg-white p-16 text-center shadow-[0_40px_100px_-20px_rgba(0,0,0,0.1)] space-y-10 rounded-[40px] border border-white/50 backdrop-blur-sm"
+      >
+        <div className="space-y-4">
+          <motion.div
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            className="brand-logo serif text-4xl tracking-[8px] text-maroon border-b-4 border-saffron pb-3 inline-block font-black"
+          >
+            ANSHI COLLECTION
+          </motion.div>
+          <h2 className="text-sm uppercase tracking-[0.4em] text-indigo font-black">Authorized Artisan Portal</h2>
         </div>
         
-        <div className="py-8">
-          <div className="w-20 h-20 mx-auto bg-cream rounded-full flex items-center justify-center text-maroon mb-6">
-            <ShoppingBag size={32} />
+        <div className="py-8 relative">
+          <div className="w-24 h-24 mx-auto bg-cream rounded-[30px] flex items-center justify-center text-maroon mb-6 rotate-6 shadow-xl border border-gold/10">
+            <ShoppingBag size={40} />
           </div>
-          <p className="text-charcoal/60 font-sans tracking-wide">
-            Secure access for product management and catalog synchronization.
+          <p className="text-ink/40 font-sans tracking-wide leading-relaxed text-sm font-medium">
+            Secure gateway reserved for the curators of elegance. Access your dashboard to manage the collection.
           </p>
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-600 p-4 text-xs font-sans border border-red-100 mb-4 animate-in fade-in slide-in-from-top-1">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-rose/5 text-rose p-4 text-[10px] font-black uppercase tracking-widest border border-rose/10 rounded-xl"
+          >
             {error}
-          </div>
+          </motion.div>
         )}
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={handleLogin}
-          className="w-full h-14 luxury-gradient text-white flex items-center justify-center space-x-3 group hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95"
+          className="w-full h-16 bg-ink text-white flex items-center justify-center space-x-4 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] transition-all rounded-2xl group"
         >
-          <LogIn size={20} className="group-hover:translate-x-1 transition-transform" />
-          <span className="font-sans uppercase tracking-[0.2em] font-bold text-sm">Login with Google</span>
-        </button>
+          <div className="bg-white/10 p-2 rounded-lg group-hover:bg-rose group-hover:rotate-12 transition-all">
+            <LogIn size={20} />
+          </div>
+          <span className="font-display uppercase tracking-[0.2em] font-black text-xs">Verify Identity via Google</span>
+        </motion.button>
 
-        <div className="pt-8 flex flex-col space-y-4">
-          <Link to="/" className="text-xs text-gold hover:text-maroon uppercase tracking-widest font-bold font-sans">
-            &larr; Back to Boutique
+        <div className="pt-8 flex flex-col space-y-6">
+          <Link to="/" className="text-xs text-indigo hover:text-rose font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-3">
+             <span className="w-10 h-[1px] bg-indigo/20"></span>
+             Boutique View
+             <span className="w-10 h-[1px] bg-indigo/20"></span>
           </Link>
-          <p className="text-[10px] text-gray-400 uppercase tracking-widest">
-            Authorized personnel only. Access is tracked and logged.
+          <p className="text-[10px] text-ink/20 uppercase tracking-[0.3em] font-bold leading-loose">
+            System monitored for integrity.<br />All sessions are encrypted.
           </p>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
