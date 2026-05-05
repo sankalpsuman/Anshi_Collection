@@ -66,24 +66,25 @@ export default function Login() {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md bg-white p-16 text-center shadow-[0_40px_100px_-20px_rgba(0,0,0,0.1)] space-y-10 rounded-[40px] border border-white/50 backdrop-blur-sm"
+        className="w-full max-w-md bg-white p-8 sm:p-12 md:p-16 text-center shadow-[0_40px_100px_-20px_rgba(0,0,0,0.1)] space-y-8 sm:space-y-10 rounded-[30px] sm:rounded-[40px] border border-white/50 backdrop-blur-sm"
       >
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           <motion.div
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
-            className="brand-logo serif text-4xl tracking-[8px] text-maroon border-b-4 border-saffron pb-3 inline-block font-black"
+            className="brand-logo serif text-2xl sm:text-4xl tracking-[4px] sm:tracking-[8px] text-maroon border-b-4 border-saffron pb-2 sm:pb-3 inline-block font-black"
           >
             ANSHI COLLECTION
           </motion.div>
-          <h2 className="text-sm uppercase tracking-[0.4em] text-indigo font-black">Authorized Artisan Portal</h2>
+          <h2 className="text-[10px] sm:text-sm uppercase tracking-[0.3em] sm:tracking-[0.4em] text-indigo font-black">Authorized Artisan Portal</h2>
         </div>
         
-        <div className="py-8 relative">
-          <div className="w-24 h-24 mx-auto bg-cream rounded-[30px] flex items-center justify-center text-maroon mb-6 rotate-6 shadow-xl border border-gold/10">
-            <ShoppingBag size={40} />
+        <div className="py-4 sm:py-8 relative">
+          <div className="w-16 h-16 sm:w-24 sm:h-24 mx-auto bg-cream rounded-2xl sm:rounded-[30px] flex items-center justify-center text-maroon mb-4 sm:mb-6 rotate-6 shadow-xl border border-gold/10">
+            <ShoppingBag size={32} className="sm:hidden" />
+            <ShoppingBag size={40} className="hidden sm:block" />
           </div>
-          <p className="text-ink/40 font-sans tracking-wide leading-relaxed text-sm font-medium">
+          <p className="text-ink/40 font-sans tracking-wide leading-relaxed text-xs sm:text-sm font-medium">
             Secure gateway reserved for the curators of elegance. Access your dashboard to manage the collection.
           </p>
         </div>

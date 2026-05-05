@@ -4,6 +4,7 @@ export interface Product {
   price: number;
   description: string;
   imageUrl: string;
+  publicId?: string; // Cloudinary public_id
   category?: string;
   createdAt: any;
   updatedAt: any;

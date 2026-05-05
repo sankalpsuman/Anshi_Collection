@@ -66,6 +66,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
   const [uploadProgress, setUploadProgress] = React.useState(0);
   const [isUploading, setIsUploading] = React.useState(false);
   const [uploadedUrl, setUploadedUrl] = React.useState(initialData?.imageUrl || '');
+  const [uploadedPublicId, setUploadedPublicId] = React.useState(initialData?.publicId || '');
   const [uploadError, setUploadError] = React.useState<string | null>(null);
 
   const [formData, setFormData] = React.useState({
@@ -75,11 +76,11 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
     category: initialData?.category || '',
   });
 
-  // Requirement 4: Separate logic - uploadImage returns imageUrl
-  const uploadImage = async (file: File | Blob, originalName: string): Promise<string> => {
+  // Requirement 4: Separate logic - uploadImage returns Cloudinary data
+  const uploadImage = async (file: File | Blob): Promise<{ url: string; publicId: string }> => {
     setIsUploading(true);
     setUploadError(null);
-    setUploadProgress(10); // Initial start progress
+    setUploadProgress(10);
 
     const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
     const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
@@ -97,14 +98,13 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
     formData.append('folder', 'products');
 
     try {
-      return new Promise<string>((resolve, reject) => {
+      return new Promise<{ url: string; publicId: string }>((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`);
 
         xhr.upload.onprogress = (event) => {
           if (event.lengthComputable) {
             const progress = (event.loaded / event.total) * 100;
-            // Simulated scale to avoid 100% before actually finished receiving response
             setUploadProgress(Math.min(progress * 0.9, 90)); 
           }
         };
@@ -113,20 +113,15 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
           const response = JSON.parse(xhr.responseText);
           if (xhr.status >= 200 && xhr.status < 300) {
             const url = response.secure_url;
+            const publicId = response.public_id;
             setUploadedUrl(url);
+            setUploadedPublicId(publicId);
             setUploadProgress(100);
             setIsUploading(false);
-            resolve(url);
+            resolve({ url, publicId });
           } else {
             console.error("Cloudinary Detailed Error:", response);
             let errorMessage = response.error?.message || 'Cloudinary upload failed';
-            
-            if (errorMessage.toLowerCase().includes("upload_preset")) {
-              errorMessage = "Invalid Upload Preset. Ensure it matches your Cloudinary dashboard exactly.";
-            } else if (errorMessage.toLowerCase().includes("whitelisted")) {
-              errorMessage = "Cloudinary Error: The upload preset must be 'Unsigned'. Check your Cloudinary Upload Settings.";
-            }
-            
             reject(new Error(errorMessage));
           }
         };
@@ -146,11 +141,12 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
   };
 
   // Requirement 4: Separate logic - saveProduct saves to Firestore
-  const saveProduct = async (imageUrl: string) => {
+  const saveProduct = async (imageUrl: string, publicId: string) => {
     const productData = {
       ...formData,
       price: Number(formData.price),
-      imageUrl // Requirement 2: Store ONLY product data + imageUrl string
+      imageUrl,
+      publicId
     };
 
     if (initialData) {
@@ -179,7 +175,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
         fileToUpload = await compressImage(file);
       }
       
-      await uploadImage(fileToUpload, file.name);
+      await uploadImage(fileToUpload);
     } catch (err) {
       console.error("Upload init failed:", err);
     }
@@ -198,7 +194,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
     setLoading(true);
 
     try {
-      await saveProduct(uploadedUrl);
+      await saveProduct(uploadedUrl, uploadedPublicId);
       onSuccess();
     } catch (error) {
       console.error("Error saving product:", error);
@@ -232,10 +228,10 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 sm:gap-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16">
         {/* Image Upload Area */}
-        <div className="space-y-6">
-          <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 mb-2">Visual Representation</label>
+        <div className="space-y-4 sm:space-y-6">
+          <label className="block text-[9px] sm:text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 mb-2">Visual Representation</label>
           <div 
             className={`relative group aspect-[4/5] border-2 border-dashed transition-all duration-500 rounded-[32px] overflow-hidden flex flex-col items-center justify-center bg-cream/30 ${
               previewUrl ? 'border-transparent' : 'border-gold/20 hover:border-maroon/40'
@@ -256,22 +252,23 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
                         setPreviewUrl(''); 
                         setImageFile(null); 
                         setUploadedUrl(''); 
+                        setUploadedPublicId('');
                         setUploadError(null);
                         setUploadProgress(0);
                       }}
-                      className="p-4 bg-rose text-white rounded-full shadow-2xl hover:scale-110 transition-transform"
+                      className="p-3 sm:p-4 bg-rose text-white rounded-full shadow-2xl hover:scale-110 transition-transform"
                     >
-                      <X size={24} />
+                      <X size={20} />
                     </button>
                   )}
                 </div>
                 {isUploading && (
-                  <div className="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-ink/80 to-transparent">
+                  <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 bg-gradient-to-t from-ink/80 to-transparent">
                     <div className="flex justify-between items-end mb-2">
-                       <span className="text-[10px] text-white font-black uppercase tracking-widest animate-pulse">Uploading Artifact...</span>
-                       <span className="text-xs text-saffron font-display font-black">{Math.round(uploadProgress)}%</span>
+                       <span className="text-[8px] sm:text-[10px] text-white font-black uppercase tracking-widest animate-pulse">Uploading Artifact...</span>
+                       <span className="text-[10px] sm:text-xs text-saffron font-display font-black">{Math.round(uploadProgress)}%</span>
                     </div>
-                    <div className="h-1.5 w-full bg-white/20 rounded-full overflow-hidden">
+                    <div className="h-1 sm:h-1.5 w-full bg-white/20 rounded-full overflow-hidden">
                       <motion.div 
                         initial={{ width: 0 }}
                         animate={{ width: `${uploadProgress}%` }}
@@ -282,16 +279,16 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
                 )}
               </>
             ) : (
-              <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer p-8 space-y-6">
+              <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer p-6 sm:p-8 space-y-4 sm:space-y-6">
                 <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} required={!initialData} />
-                <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-maroon shadow-xl border border-gold/10 group-hover:rotate-12 transition-transform">
-                  <Upload size={32} />
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-2xl sm:rounded-3xl flex items-center justify-center text-maroon shadow-xl border border-gold/10 group-hover:rotate-12 transition-transform">
+                  <Upload size={24} />
                 </div>
                 <div className="text-center">
-                  <p className="text-ink font-serif text-xl font-bold">Select Masterpiece</p>
-                  <p className="text-[10px] text-ink/30 uppercase tracking-widest mt-2 font-black">PNG, JPG up to 10MB</p>
+                  <p className="text-ink font-serif text-lg sm:text-xl font-bold">Select Masterpiece</p>
+                  <p className="text-[9px] sm:text-[10px] text-ink/30 uppercase tracking-widest mt-2 font-black">PNG, JPG up to 10MB</p>
                 </div>
-                <div className="px-6 py-2 bg-indigo/5 text-indigo text-[10px] font-black uppercase tracking-widest rounded-full border border-indigo/10">
+                <div className="px-4 sm:px-6 py-2 bg-indigo/5 text-indigo text-[9px] sm:text-[10px] font-black uppercase tracking-widest rounded-full border border-indigo/10">
                   Browse Files
                 </div>
               </label>
@@ -301,83 +298,83 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
             <motion.div 
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-3 text-rose bg-rose/5 p-4 rounded-xl border border-rose/10"
+              className="flex items-center gap-2 sm:gap-3 text-rose bg-rose/5 p-3 sm:p-4 rounded-xl border border-rose/10"
             >
-              <AlertCircle size={16} className="shrink-0" />
-              <p className="text-[10px] font-black uppercase tracking-wider leading-relaxed">{uploadError}</p>
+              <AlertCircle size={14} className="shrink-0" />
+              <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider leading-relaxed">{uploadError}</p>
             </motion.div>
           )}
         </div>
 
         {/* Form Details */}
-        <div className="space-y-10">
-          <div className="space-y-8">
+        <div className="space-y-8 sm:space-y-10">
+          <div className="space-y-6 sm:space-y-8">
             <div className="relative">
-              <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 mb-3">Model Name</label>
+              <label className="block text-[9px] sm:text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 mb-2 sm:mb-3">Model Name</label>
               <input
                 required
                 type="text"
                 placeholder="e.g. Royal Indigo Saree"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full bg-transparent border-b-2 border-gold/20 focus:border-maroon py-4 font-serif text-2xl outline-none placeholder:text-ink/10 transition-all font-bold"
+                className="w-full bg-transparent border-b-2 border-gold/20 focus:border-maroon py-3 sm:py-4 font-serif text-xl sm:text-2xl outline-none placeholder:text-ink/10 transition-all font-bold"
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
               <div className="relative">
-                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 mb-3">Price (₹)</label>
+                <label className="block text-[9px] sm:text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 mb-2 sm:mb-3">Price (₹)</label>
                 <input
                   required
                   type="number"
                   placeholder="0.00"
                   value={formData.price}
                   onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
-                  className="w-full bg-transparent border-b-2 border-gold/20 focus:border-maroon py-4 font-display font-black text-2xl outline-none placeholder:text-ink/10 transition-all"
+                  className="w-full bg-transparent border-b-2 border-gold/20 focus:border-maroon py-3 sm:py-4 font-display font-black text-xl sm:text-2xl outline-none placeholder:text-ink/10 transition-all"
                 />
               </div>
               <div className="relative">
-                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 mb-3">Sillhouette</label>
+                <label className="block text-[9px] sm:text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 mb-2 sm:mb-3">Sillhouette</label>
                 <input
                   required
                   type="text"
                   placeholder="e.g. Saree"
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full bg-transparent border-b-2 border-gold/20 focus:border-maroon py-4 font-serif italic text-2xl outline-none placeholder:text-ink/10 transition-all font-medium"
+                  className="w-full bg-transparent border-b-2 border-gold/20 focus:border-maroon py-3 sm:py-4 font-serif italic text-xl sm:text-2xl outline-none placeholder:text-ink/10 transition-all font-medium"
                 />
               </div>
             </div>
 
             <div className="relative">
-              <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 mb-3">Artisan Narrative</label>
+              <label className="block text-[9px] sm:text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 mb-2 sm:mb-3">Artisan Narrative</label>
               <textarea
-                rows={4}
-                placeholder="Describe the craftsmanship and soul of this piece..."
+                rows={3}
+                placeholder="Describe the craftsmanship..."
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full bg-white/50 backdrop-blur-sm border-2 border-gold/10 focus:border-maroon p-6 rounded-2xl font-sans text-base outline-none resize-none placeholder:text-ink/10 transition-all"
+                className="w-full bg-white/50 backdrop-blur-sm border-2 border-gold/10 focus:border-maroon p-4 sm:p-6 rounded-2xl font-sans text-sm sm:text-base outline-none resize-none placeholder:text-ink/10 transition-all"
               />
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 pt-6">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 sm:pt-6">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loading || isUploading}
-              className="flex-1 wa-button !bg-indigo !py-6 !rounded-2xl shadow-indigo/20 shadow-2xl disabled:opacity-50 disabled:grayscale transition-all disabled:scale-100"
+              className="flex-1 wa-button !bg-indigo !py-4 lg:!py-6 !rounded-2xl shadow-indigo/20 shadow-2xl disabled:opacity-50 disabled:grayscale transition-all disabled:scale-100 text-[10px] sm:text-xs"
             >
-              {loading ? <Loader2 className="animate-spin" size={20} /> : <CheckCircle2 size={20} />}
-              <span className="font-black text-xs uppercase tracking-[0.3em]">{initialData ? 'Archive Changes' : 'Commit to Collection'}</span>
+              {loading ? <Loader2 className="animate-spin" size={18} /> : <CheckCircle2 size={18} />}
+              <span className="font-black uppercase tracking-[0.2em]">{initialData ? 'Archive Changes' : 'Commit to Collection'}</span>
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               type="button"
               onClick={onCancel}
-              className="px-10 py-6 border-2 border-ink/5 text-ink/40 font-black uppercase tracking-widest text-[10px] hover:bg-rose/5 hover:text-rose hover:border-rose/10 transition-all rounded-2xl"
+              className="px-8 sm:px-10 py-4 lg:py-6 border-2 border-ink/5 text-ink/40 font-black uppercase tracking-widest text-[9px] sm:text-[10px] hover:bg-rose/5 hover:text-rose hover:border-rose/10 transition-all rounded-2xl"
             >
               Discard
             </motion.button>

@@ -131,113 +131,123 @@ export default function Dashboard() {
     <div className="min-h-screen bg-cream selection:bg-rose/20">
       {/* Navigation - Glassmorphism */}
       <nav className="bg-white/70 backdrop-blur-2xl border-b luxury-border sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8">
-          <div className="flex flex-col sm:flex-row justify-between items-center py-6 sm:h-24 space-y-4 sm:space-y-0">
-            <div className="flex items-center space-x-6">
-              <Link to="/" className="brand-logo serif text-2xl tracking-[4px] text-maroon font-black">
-                ANSHI COLLECTION
+        <div className="max-w-7xl mx-auto px-4 sm:px-8">
+          <div className="flex flex-row justify-between items-center py-4 h-20 sm:h-24">
+            <div className="flex items-center space-x-3 sm:space-x-6">
+              <Link to="/" className="brand-logo serif text-lg sm:text-2xl tracking-[2px] sm:tracking-[4px] text-maroon font-black whitespace-nowrap">
+                ANSHI
               </Link>
-              <div className="h-8 w-[1px] bg-gold/20 hidden md:block" />
-              <div className="flex items-center space-x-3">
-                <span className="text-[10px] uppercase font-black tracking-[0.3em] text-indigo/40 bg-indigo/5 px-3 py-1 rounded-full">Artisan Dashboard</span>
+              <div className="h-6 w-[1px] bg-gold/20" />
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <span className="text-[8px] sm:text-[10px] uppercase font-black tracking-widest text-indigo/40 bg-indigo/5 px-2 sm:px-3 py-1 rounded-full whitespace-nowrap">Dashboard</span>
                 {isSyncing && (
                   <motion.div 
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="flex items-center space-x-2 px-3 py-1 bg-rose/5 rounded-full border border-rose/10"
+                    className="hidden sm:flex items-center space-x-2 px-3 py-1 bg-rose/5 rounded-full border border-rose/10"
                   >
                     <div className="w-2 h-2 bg-rose rounded-full animate-pulse" />
-                    <span className="text-[9px] text-rose uppercase tracking-widest font-black">Cloud Sync active</span>
+                    <span className="text-[9px] text-rose uppercase tracking-widest font-black">Cloud Sync</span>
                   </motion.div>
                 )}
               </div>
             </div>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => { setEditingProduct(undefined); setIsFormOpen(true); }}
-                className="wa-button !bg-indigo !text-cream shadow-2xl !py-4 rounded-xl"
+                className="wa-button !bg-indigo !text-cream shadow-2xl !py-2.5 sm:!py-4 rounded-xl !px-4 sm:!px-8 text-[10px] sm:text-xs"
               >
-                <Plus size={18} className="font-black" />
-                <span>Add Piece</span>
+                <Plus size={16} className="font-black" />
+                <span className="hidden sm:inline">Add Piece</span>
+                <span className="sm:hidden">Add</span>
               </motion.button>
               <button 
                 onClick={handleLogout} 
-                className="p-4 bg-rose/5 text-rose rounded-xl hover:bg-rose hover:text-white transition-all shadow-lg shadow-rose/5"
+                className="p-3 sm:p-4 bg-rose/5 text-rose rounded-xl hover:bg-rose hover:text-white transition-all shadow-lg shadow-rose/5"
                 title="Logout"
               >
-                <LogOut size={20} />
+                <LogOut size={16} className="sm:hidden" />
+                <LogOut size={20} className="hidden sm:block" />
               </button>
             </div>
           </div>
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-6 sm:px-8 py-16">
+      <main className="max-w-7xl mx-auto px-4 sm:px-8 py-10 sm:py-16">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-10"
+          className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-20 gap-8 sm:gap-10"
         >
-          <div className="space-y-4">
-            <h2 className="text-5xl sm:text-6xl font-serif text-ink font-bold tracking-tight">Active <span className="text-rose italic font-medium">Collection</span></h2>
-            <p className="text-ink/40 text-lg font-medium max-w-xl">Curate your legacy. Add, refine, or archive pieces from your global boutique.</p>
+          <div className="space-y-3 sm:space-y-4">
+            <h2 className="text-4xl sm:text-6xl font-serif text-ink font-bold tracking-tight">Active <span className="text-rose italic font-medium">Collection</span></h2>
+            <p className="text-ink/40 text-base sm:text-lg font-medium max-w-xl">Curate your legacy. Add, refine, or archive pieces from your global boutique.</p>
           </div>
-          <div className="flex items-center gap-2 bg-white/50 p-2 rounded-2xl border luxury-border">
-            <button className="p-4 bg-indigo text-white rounded-xl shadow-xl shadow-indigo/20"><LayoutGrid size={20} /></button>
-            <button className="p-4 text-ink/20 hover:text-indigo transition-colors"><List size={20} /></button>
+          <div className="flex items-center gap-2 bg-white/50 p-2 rounded-2xl border luxury-border self-start">
+            <button className="p-3 sm:p-4 bg-indigo text-white rounded-xl shadow-xl shadow-indigo/20"><LayoutGrid size={18} /></button>
+            <button className="p-3 sm:p-4 text-ink/20 hover:text-indigo transition-colors"><List size={18} /></button>
           </div>
         </motion.div>
 
         {/* Product List Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-10">
           <AnimatePresence mode="popLayout">
-            {products.map((product) => (
-              <motion.div
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                key={product.id}
-                className="glass-card p-0 group flex flex-col h-full rounded-3xl overflow-hidden hover:shadow-[0_40px_80px_-20px_rgba(45,62,80,0.15)]"
-              >
-                <div className="aspect-[4/5] overflow-hidden relative">
-                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" referrerPolicy="no-referrer" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent" />
-                  
-                  {/* Floating ID Label */}
-                  <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30 text-[8px] text-white font-black uppercase tracking-widest">
-                    ID: {product.id.substring(0, 8)}
-                  </div>
-                </div>
-
-                <div className="p-8 flex-1 flex flex-col justify-between">
-                  <div>
-                    <h3 className="text-[10px] uppercase tracking-[0.3em] text-saffron font-black mb-3">{product.category || 'Legacy'}</h3>
-                    <h4 className="text-2xl font-serif text-ink font-bold leading-tight group-hover:text-maroon transition-colors line-clamp-2">{product.name}</h4>
-                  </div>
-                  <div className="mt-8 flex items-center justify-between">
-                    <p className="text-indigo font-display font-black text-xl">₹{product.price.toLocaleString('en-IN')}</p>
-                    <div className="flex gap-2">
-                       <button
-                        onClick={() => handleEdit(product)}
-                        className="p-3 bg-indigo/5 text-indigo rounded-xl hover:bg-indigo hover:text-white transition-all shadow-xl shadow-indigo/5"
-                      >
-                        <Edit2 size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(product.id)}
-                        className="p-3 bg-rose/5 text-rose rounded-xl hover:bg-rose hover:text-white transition-all shadow-xl shadow-rose/5"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+            {(products || []).map((product) => {
+              const stableKey = product.publicId || product.id;
+              return (
+                <motion.div
+                  layout
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  key={stableKey}
+                  className="glass-card p-0 group flex flex-col h-full rounded-3xl overflow-hidden hover:shadow-[0_40px_80px_-20px_rgba(45,62,80,0.15)]"
+                >
+                  <div className="aspect-[4/5] overflow-hidden relative">
+                    <img 
+                      src={product.imageUrl} 
+                      alt={product.name} 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                      referrerPolicy="no-referrer"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent" />
+                    
+                    <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30 text-[8px] text-white font-black uppercase tracking-widest">
+                      ID: {product.id.substring(0, 8)}
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+
+                  <div className="p-8 flex-1 flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-[10px] uppercase tracking-[0.3em] text-saffron font-black mb-3">{product.category || 'Legacy'}</h3>
+                      <h4 className="text-2xl font-serif text-ink font-bold leading-tight group-hover:text-maroon transition-colors line-clamp-2">{product.name}</h4>
+                    </div>
+                    <div className="mt-8 flex items-center justify-between">
+                      <p className="text-indigo font-display font-black text-xl">₹{product.price.toLocaleString('en-IN')}</p>
+                      <div className="flex gap-2">
+                         <button
+                          onClick={() => handleEdit(product)}
+                          className="p-3 bg-indigo/5 text-indigo rounded-xl hover:bg-indigo hover:text-white transition-all shadow-xl shadow-indigo/5"
+                        >
+                          <Edit2 size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(product.id)}
+                          className="p-3 bg-rose/5 text-rose rounded-xl hover:bg-rose hover:text-white transition-all shadow-xl shadow-rose/5"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
           </AnimatePresence>
         </div>
 
