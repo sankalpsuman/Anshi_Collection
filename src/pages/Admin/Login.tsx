@@ -2,8 +2,10 @@ import React from 'react';
 import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '../../lib/firebase';
 import { motion } from 'motion/react';
-import { LogIn, ShoppingBag, Loader2 } from 'lucide-react';
+import { LogIn, ShoppingBag, Loader2, Sparkles } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
+
+import { adminService } from '../../services/adminService';
 
 export default function Login() {
   const [loading, setLoading] = React.useState(true);
@@ -12,12 +14,26 @@ export default function Login() {
 
   React.useEffect(() => {
     let checkInProgress = true;
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user && checkInProgress) {
         checkInProgress = false;
-        navigate('/admin/dashboard', { replace: true });
+        try {
+          const { authorized } = await adminService.checkAdminStatus(user.email || '');
+          if (authorized) {
+            navigate('/admin/dashboard', { replace: true });
+          } else {
+            await signOut(auth);
+            setError("You are not authorized to access this portal.");
+            setLoading(false);
+          }
+        } catch (err) {
+          console.error("Admin check failed:", err);
+          setError("Failed to verify access permissions.");
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
       }
-      setLoading(false);
     }, (err) => {
       console.error("Auth state error:", err);
       setError("Failed to verify authentication status.");
@@ -33,10 +49,17 @@ export default function Login() {
     setError(null);
     const provider = new GoogleAuthProvider();
     try {
-      // Trying to fix common iframe issues with popup
       const result = await signInWithPopup(auth, provider);
       if (result.user) {
-        navigate('/admin/dashboard');
+        setLoading(true);
+        const { authorized } = await adminService.checkAdminStatus(result.user.email || '');
+        if (authorized) {
+          navigate('/admin/dashboard');
+        } else {
+          await signOut(auth);
+          setError("You are not authorized to access this portal.");
+          setLoading(false);
+        }
       }
     } catch (error: any) {
       console.error("Login failed:", error);
@@ -47,6 +70,7 @@ export default function Login() {
       } else {
         setError(error.message || "An unexpected error occurred during login.");
       }
+      setLoading(false);
     }
   };
 
@@ -72,8 +96,9 @@ export default function Login() {
           <motion.div
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
-            className="brand-logo serif text-2xl sm:text-4xl tracking-[4px] sm:tracking-[8px] text-maroon border-b-4 border-saffron pb-2 sm:pb-3 inline-block font-black"
+            className="brand-logo serif text-2xl sm:text-4xl tracking-[4px] sm:tracking-[8px] text-maroon border-b-4 border-saffron pb-2 sm:pb-3 flex items-center justify-center gap-3 font-black"
           >
+            <Sparkles className="text-saffron w-8 h-8 sm:w-10 sm:h-10 shrink-0" fill="currentColor" />
             ANSHI COLLECTION
           </motion.div>
           <h2 className="text-[10px] sm:text-sm uppercase tracking-[0.3em] sm:tracking-[0.4em] text-indigo font-black">Authorized Artisan Portal</h2>

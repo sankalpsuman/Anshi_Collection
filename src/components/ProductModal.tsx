@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, MessageCircle, Share2, Check } from 'lucide-react';
+import { X, MessageCircle, Share2 } from 'lucide-react';
 import { Product } from '../types';
+import FeedbackSection from './FeedbackSection';
 
 interface ProductModalProps {
   product: Product | null;
@@ -11,13 +12,10 @@ interface ProductModalProps {
 export default function ProductModal({ product, onClose }: ProductModalProps) {
   if (!product) return null;
 
-  const [copied, setCopied] = React.useState(false);
-
   const handleShare = () => {
     const url = `${window.location.origin}/?product=${product.id}`;
-    navigator.clipboard.writeText(url);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    const message = `Check out this beautiful piece from Anshi Collection: *${product.name}*\nPrice: *₹${product.price.toLocaleString('en-IN')}*\n\nView details here: ${url}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   const handleWhatsAppOrder = () => {
@@ -96,6 +94,8 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                    Artisan Consultation Available
                  </div>
               </div>
+
+              <FeedbackSection productId={product.id} />
             </div>
 
             <div className="mt-8 sm:mt-auto pt-6 sm:pt-10 space-y-4">
@@ -115,7 +115,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                   className="p-4 sm:p-6 bg-white border-2 border-indigo/10 text-indigo hover:border-maroon hover:text-maroon transition-all flex items-center justify-center rounded-xl shadow-lg"
                   title="Share product"
                 >
-                  {copied ? <Check size={20} className="text-rose" /> : <Share2 size={20} />}
+                  <Share2 size={20} />
                 </motion.button>
               </div>
             </div>

@@ -1,3 +1,20 @@
+export interface Admin {
+  id: string; // The user's UID
+  email: string;
+  role: 'super_admin' | 'admin';
+  status: 'active' | 'disabled';
+  createdAt: any;
+}
+
+export interface Feedback {
+  id: string;
+  productId: string;
+  userName: string;
+  comment: string;
+  rating: number; // 1-5
+  createdAt: any;
+}
+
 export interface Product {
   id: string;
   name: string;

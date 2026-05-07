@@ -29,9 +29,6 @@ export default function Navbar({ onSearch }: { onSearch: (query: string) => void
             <a href="https://instagram.com" target="_blank" rel="noreferrer" className="text-charcoal hover:text-gold transition-colors">
               <Instagram size={22} />
             </a>
-            <Link to="/admin" className="text-charcoal hover:text-gold transition-colors">
-              <Settings size={22} />
-            </Link>
             <ShoppingBag size={22} className="text-maroon" />
           </div>
 
@@ -90,7 +87,6 @@ export default function Navbar({ onSearch }: { onSearch: (query: string) => void
             <div className="flex flex-col h-full pt-20 px-8 space-y-8">
               <Link to="/" className="text-4xl font-serif text-maroon border-b border-gold/20 pb-4" onClick={() => setIsMenuOpen(false)}>Home</Link>
               <a href="#collection" className="text-4xl font-serif text-maroon border-b border-gold/20 pb-4" onClick={() => setIsMenuOpen(false)}>Collections</a>
-              <Link to="/admin" className="text-4xl font-serif text-maroon border-b border-gold/20 pb-4" onClick={() => setIsMenuOpen(false)}>Admin Access</Link>
               <div className="pt-8 flex space-x-6">
                 <a href="https://instagram.com" className="text-maroon hover:text-gold"><Instagram size={28} /></a>
               </div>

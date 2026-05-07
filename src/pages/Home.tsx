@@ -5,8 +5,11 @@ import ProductModal from '../components/ProductModal';
 import { Product } from '../types';
 import { productService } from '../services/productService';
 import { motion } from 'motion/react';
-import { MessageCircle, Instagram } from 'lucide-react';
+import { MessageCircle, Instagram, Search, Sparkles, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { auth } from '../lib/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { adminService } from '../services/adminService';
 
 // No temporary mock data - fetching directly from Firebase
 
@@ -17,6 +20,21 @@ export default function Home() {
   const [error, setError] = React.useState<string | null>(null);
   const [activeCategory, setActiveCategory] = React.useState('All');
   const [searchQuery, setSearchQuery] = React.useState('');
+  const [gridCols, setGridCols] = React.useState(4);
+
+  const [isAdminUser, setIsAdminUser] = React.useState(false);
+
+  React.useEffect(() => {
+    const unsub = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const { authorized } = await adminService.checkAdminStatus(user.email || '');
+        setIsAdminUser(authorized);
+      } else {
+        setIsAdminUser(false);
+      }
+    });
+    return () => unsub();
+  }, []);
 
   React.useEffect(() => {
     const unsubscribe = productService.subscribeToProducts(
@@ -79,8 +97,10 @@ export default function Home() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
+              className="flex items-start"
             >
-              <Link to="/" className="brand-logo serif text-3xl sm:text-4xl tracking-[4px] sm:tracking-[6px] text-maroon border-b-4 border-saffron pb-2 sm:pb-3 inline-block font-black">
+              <Link to="/" className="brand-logo serif text-3xl sm:text-4xl tracking-[4px] sm:tracking-[6px] text-maroon border-b-4 border-saffron pb-2 sm:pb-3 flex items-center gap-3 font-black">
+                <Sparkles className="text-saffron w-8 h-8 sm:w-10 sm:h-10 shrink-0" fill="currentColor" />
                 ANSHI COLLECTION
               </Link>
             </motion.div>
@@ -136,12 +156,8 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="p-6 sm:p-10 lg:p-12 xl:p-16 pt-8 border-t luxury-border mt-8 lg:mt-0 bg-white/20 backdrop-blur-sm">
-            <Link to="/admin" className="text-[9px] sm:text-[10px] uppercase tracking-widest font-black text-rose hover:text-maroon transition-colors flex items-center gap-2">
-              <span className="w-2 h-2 bg-rose rounded-full animate-pulse"></span>
-              Artisan Access
-            </Link>
-            <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-ink/20 mt-3 font-semibold tracking-[0.2em]">© 2026 Anshi Collection</p>
+          <div className="p-6 sm:p-10 lg:p-12 xl:p-16 pt-8 border-t luxury-border mt-8 lg:mt-0 bg-white/20 backdrop-blur-sm self-end w-full">
+            <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-ink/20 font-semibold tracking-[0.2em]">© 2026 Anshi Collection</p>
           </div>
         </aside>
 
@@ -149,46 +165,78 @@ export default function Home() {
         <main id="collection" className="flex-1 p-4 sm:p-8 md:p-10 lg:p-12 lg:pl-16">
           {/* Top Search & Filter Bar */}
           <div className="flex flex-col space-y-6 sm:space-y-10 mb-12 sm:mb-20">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-6 sm:gap-8 bg-white/40 p-4 sm:p-6 rounded-2xl border border-white/60 backdrop-blur-xl shadow-xl shadow-indigo/5">
-              <div className="w-full md:max-w-xl relative group">
+            <div className="flex flex-col lg:flex-row justify-between items-center gap-6 sm:gap-8 luxury-border bg-white/60 p-4 sm:p-6 rounded-3xl border border-white/80 backdrop-blur-2xl shadow-2xl shadow-indigo/5">
+              <div className="w-full lg:max-w-2xl relative group">
                 <input 
                   type="text" 
-                  className="search-bar pl-12 sm:pl-14 rounded-xl border-none focus:ring-4 focus:ring-rose/5 text-sm sm:text-base py-3 sm:py-4" 
+                  className="w-full bg-cream/50 backdrop-blur-sm border-2 border-gold/10 rounded-2xl pl-14 sm:pl-16 pr-6 py-4 sm:py-5 text-sm sm:text-base outline-none focus:border-rose/50 focus:ring-4 focus:ring-rose/5 transition-all placeholder:text-ink/20 font-medium"
                   placeholder="What captures your eye today?..." 
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-ink/20 group-focus-within:text-rose transition-colors">
-                  <svg width="20" height="20" className="sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <div className="absolute left-5 sm:left-6 top-1/2 -translate-y-1/2 text-ink/20 group-focus-within:text-rose transition-colors">
+                  <Search size={24} strokeWidth={2.5} />
                 </div>
               </div>
-              <div className="flex items-center gap-3 sm:gap-4 self-end md:self-center">
-                <span className="w-8 sm:w-10 h-[2px] bg-saffron/30"></span>
-                <div className="font-display font-bold text-indigo text-xs sm:text-sm uppercase tracking-widest whitespace-nowrap">
-                  {filteredProducts.length} <span className="text-ink/30 font-medium">Pieces</span>
+              
+              <div className="flex items-center gap-4 self-center lg:self-center pr-2">
+                <div className="hidden lg:flex items-center gap-2 bg-cream/50 p-1 rounded-xl border border-gold/10 mr-4">
+                  {[1, 2, 3, 4].map((num) => (
+                    <button
+                      key={num}
+                      onClick={() => setGridCols(num)}
+                      className={`w-8 h-8 flex items-center justify-center rounded-lg text-[10px] font-black transition-all ${
+                        gridCols === num 
+                          ? 'bg-ink text-white shadow-lg' 
+                          : 'text-ink/30 hover:text-ink hover:bg-white'
+                      }`}
+                    >
+                      {num}
+                    </button>
+                  ))}
+                </div>
+                <div className="hidden lg:block h-10 w-[1px] bg-gold/10"></div>
+                <div className="flex flex-col items-center lg:items-end">
+                  <div className="font-display font-black text-indigo text-xl sm:text-2xl tracking-tighter leading-none">
+                    {filteredProducts.length}
+                  </div>
+                  <div className="text-[10px] uppercase font-black tracking-widest text-ink/20">
+                    Pieces Curated
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Category Filter */}
-            <div className="flex overflow-x-auto pb-4 sm:pb-0 sm:flex-wrap gap-3 sm:gap-4 px-1 no-scrollbar -mx-4 px-4 sm:mx-0">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setActiveCategory(cat || 'All')}
-                  className={`px-5 sm:px-8 py-3 sm:py-4 rounded-xl text-[10px] sm:text-xs uppercase tracking-[0.2em] font-black transition-all whitespace-nowrap border-2 ${
-                    activeCategory === (cat || 'All')
-                      ? 'bg-ink text-white border-ink shadow-[0_15px_30px_-10px_rgba(0,0,0,0.3)] -translate-y-1 scale-105'
-                      : 'bg-white text-ink/40 border-transparent hover:border-saffron hover:text-ink'
-                  }`}
-                >
-                  {cat || 'Originals'}
-                </button>
-              ))}
+            <div className="flex flex-col space-y-4">
+              <div className="flex items-center gap-3">
+                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo/30">Collections</span>
+                <div className="h-[1px] flex-1 bg-gold/10"></div>
+              </div>
+              <div className="flex overflow-x-auto pb-4 sm:pb-2 gap-3 sm:gap-4 px-1 no-scrollbar -mx-4 px-4 sm:mx-0">
+                {categories.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat || 'All')}
+                    className={`px-6 sm:px-10 py-3 sm:py-4 rounded-2xl text-[10px] sm:text-xs uppercase tracking-[0.2em] font-black transition-all whitespace-nowrap border-2 ${
+                      activeCategory === (cat || 'All')
+                        ? 'bg-ink text-white border-ink shadow-2xl -translate-y-1 scale-105'
+                        : 'bg-white text-ink/40 border-gold/5 hover:border-saffron hover:text-ink hover:shadow-lg'
+                    }`}
+                  >
+                    {cat || 'Originals'}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Product Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 sm:gap-10 md:gap-12">
+          <div className={`grid gap-6 sm:gap-10 md:gap-12 ${
+            gridCols === 1 ? 'grid-cols-1 max-w-2xl mx-auto' : 
+            gridCols === 2 ? 'grid-cols-1 sm:grid-cols-2' :
+            gridCols === 3 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' :
+            'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+          }`}>
             {loading ? (
                Array(3).fill(0).map((_, i) => (
                   <div key={i} className="animate-pulse space-y-4">
@@ -296,17 +344,29 @@ export default function Home() {
             </section>
           </div>
 
-          <footer className="mt-20 pt-10 pb-20 border-t border-gold/10 text-center space-y-4">
-            <div className="brand-logo serif text-2xl tracking-[4px] text-maroon font-black opacity-30">
+          <footer className="mt-20 pt-10 pb-20 border-t border-gold/10 text-center space-y-6">
+            <div className="brand-logo serif text-2xl tracking-[4px] text-maroon font-black opacity-30 flex items-center justify-center gap-2">
+              <Sparkles size={24} fill="currentColor" className="text-saffron" />
               ANSHI COLLECTION
             </div>
-            <div className="space-y-1">
-              <p className="text-[10px] uppercase font-black tracking-widest text-ink/20">
-                Crafting Elegance Since 2026
-              </p>
-              <p className="text-[10px] uppercase font-bold tracking-tighter text-ink/10">
-                &copy; 2026 Anshi Collection. All Rights Reserved.
-              </p>
+            <div className="flex flex-col items-center gap-4">
+              <Link to="/admin" className="text-[10px] uppercase tracking-[0.4em] font-black text-rose hover:text-maroon transition-colors flex items-center gap-2">
+                <span className={`w-1.5 h-1.5 rounded-full ${isAdminUser ? 'bg-indigo' : 'bg-rose'} animate-pulse`}></span>
+                {isAdminUser ? 'Collector Dashboard' : 'Artisan Access'}
+              </Link>
+              <div className="space-y-2">
+                <p className="text-[10px] uppercase font-black tracking-[0.2em] text-ink/40 max-w-xs mx-auto">
+                  102 AITA TOWER, AVILALA, TIRUPATI
+                </p>
+                <div className="space-y-1">
+                  <p className="text-[10px] uppercase font-black tracking-widest text-ink/20">
+                    Crafting Elegance Since 2026
+                  </p>
+                  <p className="text-[10px] uppercase font-bold tracking-tighter text-ink/10">
+                    &copy; 2026 Anshi Collection. All Rights Reserved.
+                  </p>
+                </div>
+              </div>
             </div>
           </footer>
         </main>

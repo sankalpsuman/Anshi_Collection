@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Product } from '../types';
-import { MessageCircle, Share2, Check } from 'lucide-react';
+import { MessageCircle, Share2, Star } from 'lucide-react';
+import { feedbackService } from '../services/feedbackService';
 
 interface ProductCardProps {
   product: Product;
@@ -9,15 +10,58 @@ interface ProductCardProps {
   key?: React.Key;
 }
 
+function RatingSummary({ productId }: { productId: string }) {
+  const [stats, setStats] = useState({ avg: 0, count: 0 });
+
+  useEffect(() => {
+    return feedbackService.subscribeToFeedback(productId, (feedbacks) => {
+      if (feedbacks.length > 0) {
+        const sum = feedbacks.reduce((acc, curr) => acc + curr.rating, 0);
+        setStats({
+          avg: Math.round((sum / feedbacks.length) * 10) / 10,
+          count: feedbacks.length
+        });
+      } else {
+        setStats({ avg: 0, count: 0 });
+      }
+    });
+  }, [productId]);
+
+  if (stats.count === 0) {
+    return (
+      <div className="flex items-center gap-1 opacity-20">
+        <Star size={10} className="text-gold" />
+        <span className="text-[9px] font-bold uppercase tracking-tighter">No reviews</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <div className="flex gap-0.5">
+        {[1, 2, 3, 4, 5].map((s) => (
+          <Star 
+            key={s} 
+            size={10} 
+            fill={s <= Math.round(stats.avg) ? "#C5A059" : "none"} 
+            className={s <= Math.round(stats.avg) ? "text-gold" : "text-gold/20"} 
+          />
+        ))}
+      </div>
+      <span className="text-[10px] font-black text-gold uppercase tracking-tighter">
+        {stats.avg} ({stats.count})
+      </span>
+    </div>
+  );
+}
+
 export default function ProductCard({ product, onClick }: ProductCardProps) {
-  const [copied, setCopied] = React.useState(false);
 
   const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation();
     const url = `${window.location.origin}/?product=${product.id}`;
-    navigator.clipboard.writeText(url);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    const message = `Check out this beautiful piece from Anshi Collection: *${product.name}*\nPrice: *₹${product.price.toLocaleString('en-IN')}*\n\nView details here: ${url}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   const handleWhatsAppOrder = (e: React.MouseEvent) => {
@@ -54,7 +98,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
             onClick={handleShare}
             className="p-3 bg-white/90 backdrop-blur-sm rounded-full text-maroon hover:bg-rose hover:text-white shadow-xl transition-all"
           >
-            {copied ? <Check size={16} /> : <Share2 size={16} />}
+            <Share2 size={16} />
           </button>
         </div>
 
@@ -76,6 +120,8 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
             <p className="text-indigo font-display font-bold text-base sm:text-lg whitespace-nowrap">₹{product.price.toLocaleString('en-IN')}</p>
           </div>
         </div>
+
+        <RatingSummary productId={product.id} />
         
         <button
           onClick={handleWhatsAppOrder}

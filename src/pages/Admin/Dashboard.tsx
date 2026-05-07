@@ -5,8 +5,10 @@ import { productService } from '../../services/productService';
 import { Product } from '../../types';
 import { useNavigate, Link } from 'react-router-dom';
 import ProductForm from '../../components/Admin/ProductForm';
-import { Plus, LogOut, Edit2, Trash2, LayoutGrid, List, ShoppingBag } from 'lucide-react';
+import AdminControlPanel from '../../components/Admin/AdminControlPanel';
+import { Plus, LogOut, Edit2, Trash2, LayoutGrid, List, ShoppingBag, Sparkles, Users, UserRoundCog, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { adminService } from '../../services/adminService';
 
 export default function Dashboard() {
   const [user, setUser] = React.useState<any>(null);
@@ -17,6 +19,8 @@ export default function Dashboard() {
   const [editingProduct, setEditingProduct] = React.useState<Product | undefined>();
   const [isSyncing, setIsSyncing] = React.useState(false);
   const [authInitialized, setAuthInitialized] = React.useState(false);
+  const [isSuperAdmin, setIsSuperAdmin] = React.useState(false);
+  const [activeTab, setActiveTab] = React.useState<'collection' | 'personnel'>('collection');
   const navigate = useNavigate();
 
   const loadingRef = React.useRef(loading);
@@ -27,15 +31,30 @@ export default function Dashboard() {
   React.useEffect(() => {
     let isMounted = true;
 
-    const authUnsubscribe = onAuthStateChanged(auth, (authUser) => {
+    const authUnsubscribe = onAuthStateChanged(auth, async (authUser) => {
       if (!isMounted) return;
       
-      setAuthInitialized(true);
-      setUser(authUser);
-      
       if (!authUser && isMounted) {
-        // Simple direct check for auth initialization
+        setAuthInitialized(true);
         navigate('/admin', { replace: true });
+        return;
+      }
+
+      if (authUser && isMounted) {
+        try {
+          const status = await adminService.checkAdminStatus(authUser.email || '');
+          if (!status.authorized && isMounted) {
+            await signOut(auth);
+            navigate('/admin', { replace: true });
+          } else if (isMounted) {
+            setUser(authUser);
+            setIsSuperAdmin(status.role === 'super_admin');
+            setAuthInitialized(true);
+          }
+        } catch (err) {
+          console.error("Authorization check failed:", err);
+          if (isMounted) navigate('/admin', { replace: true });
+        }
       }
     });
 
@@ -134,7 +153,8 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-8">
           <div className="flex flex-row justify-between items-center py-4 h-20 sm:h-24">
             <div className="flex items-center space-x-3 sm:space-x-6">
-              <Link to="/" className="brand-logo serif text-lg sm:text-2xl tracking-[2px] sm:tracking-[4px] text-maroon font-black whitespace-nowrap">
+              <Link to="/" className="brand-logo serif text-lg sm:text-2xl tracking-[2px] sm:tracking-[4px] text-maroon font-black whitespace-nowrap flex items-center gap-2">
+                <Sparkles size={20} fill="currentColor" className="text-saffron" />
                 ANSHI
               </Link>
               <div className="h-6 w-[1px] bg-gold/20" />
@@ -153,24 +173,49 @@ export default function Dashboard() {
               </div>
             </div>
             
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => { setEditingProduct(undefined); setIsFormOpen(true); }}
-                className="wa-button !bg-indigo !text-cream shadow-2xl !py-2.5 sm:!py-4 rounded-xl !px-4 sm:!px-8 text-[10px] sm:text-xs"
-              >
-                <Plus size={16} className="font-black" />
-                <span className="hidden sm:inline">Add Piece</span>
-                <span className="sm:hidden">Add</span>
-              </motion.button>
+            <div className="flex items-center gap-1.5 sm:gap-4 overflow-x-auto no-scrollbar scroll-smooth pr-1">
+              {isSuperAdmin && (
+                <div className="flex items-center bg-cream/50 p-1 rounded-2xl border border-gold/10 shrink-0">
+                  <button
+                    onClick={() => setActiveTab('collection')}
+                    className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+                      activeTab === 'collection' ? 'bg-indigo text-white shadow-lg' : 'text-indigo/40 hover:text-indigo'
+                    }`}
+                  >
+                    <ShoppingBag size={14} className="shrink-0" />
+                    <span className="hidden xs:inline">Collection</span>
+                    <span className="xs:hidden">Shop</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('personnel')}
+                    className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+                      activeTab === 'personnel' ? 'bg-indigo text-white shadow-lg' : 'text-indigo/40 hover:text-indigo'
+                    }`}
+                  >
+                    <UserRoundCog size={14} className="shrink-0" />
+                    <span className="hidden xs:inline">Personnel</span>
+                    <span className="xs:hidden">Team</span>
+                  </button>
+                </div>
+              )}
+              {activeTab === 'collection' && (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => { setEditingProduct(undefined); setIsFormOpen(true); }}
+                  className="wa-button !bg-indigo !text-cream shadow-2xl !py-2.5 sm:!py-4 rounded-xl !px-3 sm:!px-8 text-[9px] sm:text-xs whitespace-nowrap shrink-0"
+                >
+                  <Plus size={16} className="font-black shrink-0" />
+                  <span className="hidden sm:inline">Add Piece</span>
+                  <span className="sm:hidden">Add</span>
+                </motion.button>
+              )}
               <button 
                 onClick={handleLogout} 
-                className="p-3 sm:p-4 bg-rose/5 text-rose rounded-xl hover:bg-rose hover:text-white transition-all shadow-lg shadow-rose/5"
+                className="p-3 sm:p-4 bg-rose/5 text-rose rounded-xl hover:bg-rose hover:text-white transition-all shadow-lg shadow-rose/5 shrink-0"
                 title="Logout"
               >
-                <LogOut size={16} className="sm:hidden" />
-                <LogOut size={20} className="hidden sm:block" />
+                <LogOut size={16} />
               </button>
             </div>
           </div>
@@ -178,92 +223,110 @@ export default function Dashboard() {
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-8 py-10 sm:py-16">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-20 gap-8 sm:gap-10"
-        >
-          <div className="space-y-3 sm:space-y-4">
-            <h2 className="text-4xl sm:text-6xl font-serif text-ink font-bold tracking-tight">Active <span className="text-rose italic font-medium">Collection</span></h2>
-            <p className="text-ink/40 text-base sm:text-lg font-medium max-w-xl">Curate your legacy. Add, refine, or archive pieces from your global boutique.</p>
-          </div>
-          <div className="flex items-center gap-2 bg-white/50 p-2 rounded-2xl border luxury-border self-start">
-            <button className="p-3 sm:p-4 bg-indigo text-white rounded-xl shadow-xl shadow-indigo/20"><LayoutGrid size={18} /></button>
-            <button className="p-3 sm:p-4 text-ink/20 hover:text-indigo transition-colors"><List size={18} /></button>
-          </div>
-        </motion.div>
+        {activeTab === 'collection' ? (
+          <>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-20 gap-8 sm:gap-10"
+            >
+              <div className="space-y-3 sm:space-y-4">
+                <h2 className="text-4xl sm:text-6xl font-serif text-ink font-bold tracking-tight">Active <span className="text-rose italic font-medium">Collection</span></h2>
+                <p className="text-ink/40 text-base sm:text-lg font-medium max-w-xl">Curate your legacy. Add, refine, or archive pieces from your global boutique.</p>
+              </div>
+              <div className="flex items-center gap-2 bg-white/50 p-2 rounded-2xl border luxury-border self-start">
+                <button className="p-3 sm:p-4 bg-indigo text-white rounded-xl shadow-xl shadow-indigo/20"><LayoutGrid size={18} /></button>
+                <button className="p-3 sm:p-4 text-ink/20 hover:text-indigo transition-colors"><List size={18} /></button>
+              </div>
+            </motion.div>
 
-        {/* Product List Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-10">
-          <AnimatePresence mode="popLayout">
-            {(products || []).map((product) => {
-              const stableKey = product.publicId || product.id;
-              return (
-                <motion.div
-                  layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  key={stableKey}
-                  className="glass-card p-0 group flex flex-col h-full rounded-3xl overflow-hidden hover:shadow-[0_40px_80px_-20px_rgba(45,62,80,0.15)]"
-                >
-                  <div className="aspect-[4/5] overflow-hidden relative">
-                    <img 
-                      src={product.imageUrl} 
-                      alt={product.name} 
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-                      referrerPolicy="no-referrer"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent" />
-                    
-                    <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30 text-[8px] text-white font-black uppercase tracking-widest">
-                      ID: {product.id.substring(0, 8)}
-                    </div>
-                  </div>
-
-                  <div className="p-8 flex-1 flex flex-col justify-between">
-                    <div>
-                      <h3 className="text-[10px] uppercase tracking-[0.3em] text-saffron font-black mb-3">{product.category || 'Legacy'}</h3>
-                      <h4 className="text-2xl font-serif text-ink font-bold leading-tight group-hover:text-maroon transition-colors line-clamp-2">{product.name}</h4>
-                    </div>
-                    <div className="mt-8 flex items-center justify-between">
-                      <p className="text-indigo font-display font-black text-xl">₹{product.price.toLocaleString('en-IN')}</p>
-                      <div className="flex gap-2">
-                         <button
-                          onClick={() => handleEdit(product)}
-                          className="p-3 bg-indigo/5 text-indigo rounded-xl hover:bg-indigo hover:text-white transition-all shadow-xl shadow-indigo/5"
-                        >
-                          <Edit2 size={16} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(product.id)}
-                          className="p-3 bg-rose/5 text-rose rounded-xl hover:bg-rose hover:text-white transition-all shadow-xl shadow-rose/5"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+            {/* Product List Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-10">
+              <AnimatePresence mode="popLayout">
+                {(products || []).map((product) => {
+                  const stableKey = product.publicId || product.id;
+                  return (
+                    <motion.div
+                      layout
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      key={stableKey}
+                      className="glass-card p-0 group flex flex-col h-full rounded-3xl overflow-hidden hover:shadow-[0_40px_80px_-20px_rgba(45,62,80,0.15)]"
+                    >
+                      <div className="aspect-[4/5] overflow-hidden relative">
+                        <img 
+                          src={product.imageUrl} 
+                          alt={product.name} 
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                          referrerPolicy="no-referrer"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent" />
+                        
+                        <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30 text-[8px] text-white font-black uppercase tracking-widest">
+                          ID: {product.id.substring(0, 8)}
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
-        </div>
 
-        {products.length === 0 && (
-          <div className="text-center py-32 border-2 border-dashed border-gold/20 rounded-xl bg-white/50">
-            <div className="max-w-xs mx-auto space-y-6">
-              <ShoppingBag size={48} className="mx-auto text-gold/20" />
-              <p className="text-charcoal/40 font-serif text-xl italic">The collection is currently empty.</p>
-              <button
-                onClick={() => setIsFormOpen(true)}
-                className="text-gold font-bold uppercase tracking-widest text-xs border-b border-gold/40 pb-1"
-              >
-                Add your first piece
-              </button>
+                      <div className="p-8 flex-1 flex flex-col justify-between">
+                        <div>
+                          <h3 className="text-[10px] uppercase tracking-[0.3em] text-saffron font-black mb-3">{product.category || 'Legacy'}</h3>
+                          <h4 className="text-2xl font-serif text-ink font-bold leading-tight group-hover:text-maroon transition-colors line-clamp-2">{product.name}</h4>
+                        </div>
+                        <div className="mt-8 flex items-center justify-between">
+                          <p className="text-indigo font-display font-black text-xl">₹{product.price.toLocaleString('en-IN')}</p>
+                          <div className="flex gap-2">
+                             <button
+                              onClick={() => handleEdit(product)}
+                              className="p-3 bg-indigo/5 text-indigo rounded-xl hover:bg-indigo hover:text-white transition-all shadow-xl shadow-indigo/5"
+                            >
+                              <Edit2 size={16} />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(product.id)}
+                              className="p-3 bg-rose/5 text-rose rounded-xl hover:bg-rose hover:text-white transition-all shadow-xl shadow-rose/5"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             </div>
-          </div>
+
+            {products.length === 0 && (
+              <div className="text-center py-32 border-2 border-dashed border-gold/20 rounded-xl bg-white/50">
+                <div className="max-w-xs mx-auto space-y-6">
+                  <ShoppingBag size={48} className="mx-auto text-gold/20" />
+                  <p className="text-charcoal/40 font-serif text-xl italic">The collection is currently empty.</p>
+                  <button
+                    onClick={() => setIsFormOpen(true)}
+                    className="text-gold font-bold uppercase tracking-widest text-xs border-b border-gold/40 pb-1"
+                  >
+                    Add your first piece
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="space-y-12"
+          >
+            <div className="space-y-4 max-w-2xl">
+              <h2 className="text-4xl sm:text-6xl font-serif text-ink font-bold tracking-tight">Admin <span className="text-saffron italic font-medium">Control</span></h2>
+              <p className="text-ink/40 text-base sm:text-lg font-medium leading-relaxed">
+                Manage the curators and artisans who breathe life into Anshi Collection. Ensure the security of your heritage boutique.
+              </p>
+            </div>
+            <AdminControlPanel />
+          </motion.div>
         )}
       </main>
 

@@ -6,11 +6,19 @@ service cloud.firestore {
     }
 
     function isSignedIn() { return request.auth != null; }
-    function isAdmin() { 
-      return isSignedIn() && 
-        (request.auth.token.email == 'sankalpsmn@gmail.com' || 
-         request.auth.token.email_verified == true && request.auth.token.email == 'sankalpsmn@gmail.com'); 
+
+    function isSuperAdmin() {
+      return isSignedIn() && request.auth.token.email == 'sankalpsmn@gmail.com' && request.auth.token.email_verified == true;
     }
+
+    function isAdmin() { 
+      return isSuperAdmin() || (
+        isSignedIn() && 
+        exists(/databases/$(database)/documents/admins/$(request.auth.token.email)) &&
+        get(/databases/$(database)/documents/admins/$(request.auth.token.email)).data.status == 'active'
+      );
+    }
+
     function incoming() { return request.resource.data; }
     function existing() { return resource.data; }
     function isValidId(id) { return id is string && id.size() <= 128; }
@@ -26,11 +34,42 @@ service cloud.firestore {
         && data.updatedAt is timestamp;
     }
 
+    function isValidFeedback(data) {
+      return data.keys().hasAll(['productId', 'userName', 'comment', 'rating', 'createdAt'])
+        && data.productId is string && data.productId.size() <= 128
+        && data.userName is string && data.userName.size() <= 100
+        && data.comment is string && data.comment.size() <= 1000
+        && data.rating is number && data.rating >= 1 && data.rating <= 5
+        && data.createdAt is timestamp;
+    }
+
+    function isValidAdmin(data) {
+      return data.keys().hasAll(['email', 'role', 'status', 'createdAt'])
+        && data.email is string && data.email.size() <= 200
+        && data.role in ['super_admin', 'admin']
+        && data.status in ['active', 'disabled']
+        && data.createdAt is timestamp;
+    }
+
     match /products/{productId} {
       allow read: if true;
       allow create: if isAdmin() && isValidId(productId) && isValidProduct(incoming()) && incoming().createdAt == request.time && incoming().updatedAt == request.time;
       allow update: if isAdmin() && isValidProduct(incoming()) && incoming().createdAt == existing().createdAt && incoming().updatedAt == request.time && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'price', 'imageUrl', 'description', 'category', 'updatedAt']);
       allow delete: if isAdmin();
+    }
+
+    match /feedback/{feedbackId} {
+      allow read: if true;
+      allow create: if isValidId(feedbackId) && isValidFeedback(incoming()) && incoming().createdAt == request.time;
+      allow update: if false; // Feedback is usually immutable once posted
+      allow delete: if isAdmin();
+    }
+
+    match /admins/{email} {
+      allow get: if isSignedIn() && (request.auth.token.email == email || isSuperAdmin());
+      allow list: if isSuperAdmin();
+      allow create, update: if isSuperAdmin() && isValidAdmin(incoming()) && incoming().createdAt == (resource == null ? request.time : resource.data.createdAt);
+      allow delete: if isSuperAdmin() && email != 'sankalpsmn@gmail.com';
     }
   }
 }
