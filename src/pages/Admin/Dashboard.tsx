@@ -178,23 +178,23 @@ export default function Dashboard() {
                 <div className="flex items-center bg-cream/50 p-1 rounded-2xl border border-gold/10 shrink-0">
                   <button
                     onClick={() => setActiveTab('collection')}
-                    className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
                       activeTab === 'collection' ? 'bg-indigo text-white shadow-lg' : 'text-indigo/40 hover:text-indigo'
                     }`}
                   >
                     <ShoppingBag size={14} className="shrink-0" />
-                    <span className="hidden xs:inline">Collection</span>
-                    <span className="xs:hidden">Shop</span>
+                    <span className="hidden sm:inline">Collection</span>
+                    <span className="sm:hidden">Items</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('personnel')}
-                    className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
                       activeTab === 'personnel' ? 'bg-indigo text-white shadow-lg' : 'text-indigo/40 hover:text-indigo'
                     }`}
                   >
                     <UserRoundCog size={14} className="shrink-0" />
-                    <span className="hidden xs:inline">Personnel</span>
-                    <span className="xs:hidden">Team</span>
+                    <span className="hidden sm:inline">Personnel</span>
+                    <span className="sm:hidden">Team</span>
                   </button>
                 </div>
               )}

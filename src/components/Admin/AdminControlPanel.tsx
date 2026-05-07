@@ -162,7 +162,7 @@ export default function AdminControlPanel() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                <div className="flex items-center gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all shrink-0">
                   {admin.email?.toLowerCase() !== 'sankalpsmn@gmail.com' && (
                     <>
                       <button
