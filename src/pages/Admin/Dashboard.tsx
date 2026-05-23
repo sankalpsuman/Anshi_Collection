@@ -6,6 +6,7 @@ import { Product } from '../../types';
 import { useNavigate, Link } from 'react-router-dom';
 import ProductForm from '../../components/Admin/ProductForm';
 import AdminControlPanel from '../../components/Admin/AdminControlPanel';
+import ThemeToggle from '../../components/ThemeToggle';
 import { Plus, LogOut, Edit2, Trash2, LayoutGrid, List, ShoppingBag, Sparkles, Users, UserRoundCog, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { adminService } from '../../services/adminService';
@@ -104,7 +105,7 @@ export default function Dashboard() {
   };
 
   if (!authInitialized || (loading && products.length === 0)) return (
-    <div className="min-h-screen flex items-center justify-center bg-cream">
+    <div className="min-h-screen flex items-center justify-center bg-cream dark:bg-dark-surface transition-colors duration-300">
        <div className="flex flex-col items-center">
          <div className="relative w-20 h-20 mb-8">
            <div className="absolute inset-0 border-2 border-gold/10 rounded-full" />
@@ -124,20 +125,20 @@ export default function Dashboard() {
   );
 
   if (error) return (
-    <div className="min-h-screen flex items-center justify-center bg-cream px-4">
-      <div className="max-w-md w-full bg-white p-12 text-center shadow-xl border border-red-100">
-        <h2 className="text-2xl font-serif text-maroon mb-4">Access Issue</h2>
-        <p className="text-ink/60 mb-8 font-sans">{error}</p>
+    <div className="min-h-screen flex items-center justify-center bg-cream dark:bg-dark-surface px-4 transition-colors duration-300">
+      <div className="max-w-md w-full bg-white dark:bg-dark-card p-12 text-center shadow-xl border border-red-100 dark:border-white/5 rounded-[40px]">
+        <h2 className="text-2xl font-serif text-maroon dark:text-gold mb-4">Access Issue</h2>
+        <p className="text-ink/60 dark:text-dark-muted mb-8 font-sans">{error}</p>
         <div className="space-y-4">
           <button 
             onClick={() => window.location.reload()}
-            className="w-full luxury-gradient text-white py-4 font-bold uppercase tracking-widest text-xs"
+            className="w-full bg-maroon dark:bg-gold text-white dark:text-ink py-4 font-bold uppercase tracking-widest text-xs rounded-xl"
           >
             Retry Connection
           </button>
           <button 
             onClick={handleLogout}
-            className="w-full border border-gold/30 text-gold py-4 font-bold uppercase tracking-widest text-xs"
+            className="w-full border border-gold/30 text-gold py-4 font-bold uppercase tracking-widest text-xs rounded-xl"
           >
             Switch Account
           </button>
@@ -147,54 +148,45 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-cream selection:bg-rose/20">
+    <div className="min-h-screen bg-cream dark:bg-dark-surface selection:bg-rose/20 transition-colors duration-300">
       {/* Navigation - Glassmorphism */}
-      <nav className="bg-white/70 backdrop-blur-2xl border-b luxury-border sticky top-0 z-40">
+      <nav className="bg-white/70 dark:bg-dark-surface/70 backdrop-blur-2xl border-b luxury-border sticky top-0 z-40 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-8">
           <div className="flex flex-row justify-between items-center py-4 h-20 sm:h-24">
             <div className="flex items-center space-x-3 sm:space-x-6">
-              <Link to="/" className="brand-logo serif text-lg sm:text-2xl tracking-[2px] sm:tracking-[4px] text-maroon font-black whitespace-nowrap flex items-center gap-2">
-                <Sparkles size={20} fill="currentColor" className="text-saffron" />
+              <Link to="/" className="brand-logo serif text-lg sm:text-2xl tracking-[2px] sm:tracking-[4px] text-maroon dark:text-gold font-black whitespace-nowrap flex items-center gap-2">
+                <Sparkles size={24} fill="currentColor" className="text-saffron" />
                 ANSHI
               </Link>
               <div className="h-6 w-[1px] bg-gold/20" />
               <div className="flex items-center space-x-2 sm:space-x-3">
-                <span className="text-[8px] sm:text-[10px] uppercase font-black tracking-widest text-indigo/40 bg-indigo/5 px-2 sm:px-3 py-1 rounded-full whitespace-nowrap">Dashboard</span>
-                {isSyncing && (
-                  <motion.div 
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="hidden sm:flex items-center space-x-2 px-3 py-1 bg-rose/5 rounded-full border border-rose/10"
-                  >
-                    <div className="w-2 h-2 bg-rose rounded-full animate-pulse" />
-                    <span className="text-[9px] text-rose uppercase tracking-widest font-black">Cloud Sync</span>
-                  </motion.div>
-                )}
+                <span className="text-[8px] sm:text-[10px] uppercase font-black tracking-widest text-indigo/40 dark:text-gold/40 bg-indigo/5 dark:bg-gold/5 px-2 sm:px-3 py-1 rounded-full whitespace-nowrap">Dashboard</span>
               </div>
             </div>
             
             <div className="flex items-center gap-1.5 sm:gap-4 overflow-x-auto no-scrollbar scroll-smooth pr-1">
+              <div className="hidden lg:block">
+                <ThemeToggle />
+              </div>
               {isSuperAdmin && (
-                <div className="flex items-center bg-cream/50 p-1 rounded-2xl border border-gold/10 shrink-0">
+                <div className="flex items-center bg-cream/50 dark:bg-dark-surface/50 p-1 rounded-2xl border border-gold/10 shrink-0">
                   <button
                     onClick={() => setActiveTab('collection')}
                     className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
-                      activeTab === 'collection' ? 'bg-indigo text-white shadow-lg' : 'text-indigo/40 hover:text-indigo'
+                      activeTab === 'collection' ? 'bg-indigo dark:bg-gold text-white dark:text-ink shadow-lg' : 'text-indigo/40 dark:text-dark-muted hover:text-indigo dark:hover:text-gold'
                     }`}
                   >
                     <ShoppingBag size={14} className="shrink-0" />
                     <span className="hidden sm:inline">Collection</span>
-                    <span className="sm:hidden">Items</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('personnel')}
                     className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
-                      activeTab === 'personnel' ? 'bg-indigo text-white shadow-lg' : 'text-indigo/40 hover:text-indigo'
+                      activeTab === 'personnel' ? 'bg-indigo dark:bg-gold text-white dark:text-ink shadow-lg' : 'text-indigo/40 dark:text-dark-muted hover:text-indigo dark:hover:text-gold'
                     }`}
                   >
                     <UserRoundCog size={14} className="shrink-0" />
                     <span className="hidden sm:inline">Personnel</span>
-                    <span className="sm:hidden">Team</span>
                   </button>
                 </div>
               )}
@@ -203,13 +195,15 @@ export default function Dashboard() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => { setEditingProduct(undefined); setIsFormOpen(true); }}
-                  className="wa-button !bg-indigo !text-cream shadow-2xl !py-2.5 sm:!py-4 rounded-xl !px-3 sm:!px-8 text-[9px] sm:text-xs whitespace-nowrap shrink-0"
+                  className="wa-button !bg-indigo dark:!bg-gold !text-cream dark:!text-ink shadow-2xl !py-2.5 sm:!py-4 rounded-xl !px-3 sm:!px-8 text-[9px] sm:text-xs whitespace-nowrap shrink-0"
                 >
                   <Plus size={16} className="font-black shrink-0" />
                   <span className="hidden sm:inline">Add Piece</span>
-                  <span className="sm:hidden">Add</span>
                 </motion.button>
               )}
+              <div className="lg:hidden">
+                <ThemeToggle />
+              </div>
               <button 
                 onClick={handleLogout} 
                 className="p-3 sm:p-4 bg-rose/5 text-rose rounded-xl hover:bg-rose hover:text-white transition-all shadow-lg shadow-rose/5 shrink-0"
@@ -231,12 +225,12 @@ export default function Dashboard() {
               className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-20 gap-8 sm:gap-10"
             >
               <div className="space-y-3 sm:space-y-4">
-                <h2 className="text-4xl sm:text-6xl font-serif text-ink font-bold tracking-tight">Active <span className="text-rose italic font-medium">Collection</span></h2>
-                <p className="text-ink/40 text-base sm:text-lg font-medium max-w-xl">Curate your legacy. Add, refine, or archive pieces from your global boutique.</p>
+                <h2 className="text-4xl sm:text-6xl font-serif text-ink dark:text-dark-text font-bold tracking-tight">Active <span className="text-rose italic font-medium">Collection</span></h2>
+                <p className="text-ink/40 dark:text-dark-muted text-base sm:text-lg font-medium max-w-xl">Curate your legacy. Add, refine, or archive pieces from your global boutique.</p>
               </div>
-              <div className="flex items-center gap-2 bg-white/50 p-2 rounded-2xl border luxury-border self-start">
-                <button className="p-3 sm:p-4 bg-indigo text-white rounded-xl shadow-xl shadow-indigo/20"><LayoutGrid size={18} /></button>
-                <button className="p-3 sm:p-4 text-ink/20 hover:text-indigo transition-colors"><List size={18} /></button>
+              <div className="flex items-center gap-2 bg-white/50 dark:bg-dark-card/50 p-2 rounded-2xl border luxury-border self-start">
+                <button className="p-3 sm:p-4 bg-indigo dark:bg-gold text-white dark:text-ink rounded-xl shadow-xl shadow-indigo/20"><LayoutGrid size={18} /></button>
+                <button className="p-3 sm:p-4 text-ink/20 dark:text-dark-muted hover:text-indigo dark:hover:text-gold transition-colors"><List size={18} /></button>
               </div>
             </motion.div>
 
@@ -252,7 +246,7 @@ export default function Dashboard() {
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.9 }}
                       key={stableKey}
-                      className="glass-card p-0 group flex flex-col h-full rounded-3xl overflow-hidden hover:shadow-[0_40px_80px_-20px_rgba(45,62,80,0.15)]"
+                      className="glass-card p-0 group flex flex-col h-full rounded-3xl overflow-hidden hover:shadow-[0_40px_80px_-20px_rgba(45,62,80,0.15)] dark:bg-dark-card dark:border-white/5"
                     >
                       <div className="aspect-[4/5] overflow-hidden relative">
                         <img 
@@ -272,14 +266,14 @@ export default function Dashboard() {
                       <div className="p-8 flex-1 flex flex-col justify-between">
                         <div>
                           <h3 className="text-[10px] uppercase tracking-[0.3em] text-saffron font-black mb-3">{product.category || 'Legacy'}</h3>
-                          <h4 className="text-2xl font-serif text-ink font-bold leading-tight group-hover:text-maroon transition-colors line-clamp-2">{product.name}</h4>
+                          <h4 className="text-2xl font-serif text-ink dark:text-dark-text font-bold leading-tight group-hover:text-maroon dark:group-hover:text-gold transition-colors line-clamp-2">{product.name}</h4>
                         </div>
                         <div className="mt-8 flex items-center justify-between">
-                          <p className="text-indigo font-display font-black text-xl">₹{product.price.toLocaleString('en-IN')}</p>
+                          <p className="text-indigo dark:text-gold font-display font-black text-xl">₹{product.price.toLocaleString('en-IN')}</p>
                           <div className="flex gap-2">
                              <button
                               onClick={() => handleEdit(product)}
-                              className="p-3 bg-indigo/5 text-indigo rounded-xl hover:bg-indigo hover:text-white transition-all shadow-xl shadow-indigo/5"
+                              className="p-3 bg-indigo/5 text-indigo dark:text-gold dark:bg-gold/5 rounded-xl hover:bg-indigo hover:text-white dark:hover:bg-gold dark:hover:text-ink transition-all shadow-xl shadow-indigo/5"
                             >
                               <Edit2 size={16} />
                             </button>
@@ -320,8 +314,8 @@ export default function Dashboard() {
             className="space-y-12"
           >
             <div className="space-y-4 max-w-2xl">
-              <h2 className="text-4xl sm:text-6xl font-serif text-ink font-bold tracking-tight">Admin <span className="text-saffron italic font-medium">Control</span></h2>
-              <p className="text-ink/40 text-base sm:text-lg font-medium leading-relaxed">
+              <h2 className="text-4xl sm:text-6xl font-serif text-ink dark:text-dark-text font-bold tracking-tight">Admin <span className="text-saffron italic font-medium">Control</span></h2>
+              <p className="text-ink/40 dark:text-dark-muted text-base sm:text-lg font-medium leading-relaxed">
                 Manage the curators and artisans who breathe life into Anshi Collection. Ensure the security of your heritage boutique.
               </p>
             </div>
@@ -345,9 +339,9 @@ export default function Dashboard() {
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="relative w-full max-w-4xl bg-white p-8 md:p-12 shadow-2xl max-h-[90vh] overflow-y-auto"
+              className="relative w-full max-w-4xl bg-white dark:bg-dark-card p-8 md:p-12 shadow-2xl max-h-[90vh] overflow-y-auto rounded-[40px] border dark:border-white/5"
             >
-              <h3 className="text-3xl font-serif text-charcoal mb-8 pb-4 border-b border-gold/10">
+              <h3 className="text-3xl font-serif text-charcoal dark:text-gold mb-8 pb-4 border-b border-gold/10">
                 {editingProduct ? 'Edit Masterpiece' : 'New Collection Piece'}
               </h3>
               <ProductForm

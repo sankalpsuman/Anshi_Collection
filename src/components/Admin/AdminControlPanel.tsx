@@ -71,41 +71,41 @@ export default function AdminControlPanel() {
 
   if (loading) return (
     <div className="py-20 text-center">
-      <div className="w-10 h-10 border-2 border-indigo border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-      <p className="text-[10px] uppercase font-black tracking-widest text-ink/30">Loading Secure Records...</p>
+      <div className="w-10 h-10 border-2 border-indigo dark:border-gold border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+      <p className="text-[10px] uppercase font-black tracking-widest text-ink/30 dark:text-dark-muted">Loading Secure Records...</p>
     </div>
   );
 
   return (
     <div className="space-y-12">
       {/* Add Admin Form */}
-      <section className="bg-cream/30 p-8 rounded-[30px] border border-gold/10">
+      <section className="bg-cream/30 dark:bg-dark-card/30 p-8 rounded-[30px] border border-gold/10 dark:border-white/5 transition-colors">
         <div className="flex items-center gap-3 mb-8">
-          <div className="p-3 bg-indigo text-white rounded-xl">
+          <div className="p-3 bg-indigo dark:bg-gold text-white dark:text-ink rounded-xl">
             <UserPlus size={18} />
           </div>
           <div>
-            <h3 className="text-sm font-black uppercase tracking-widest text-indigo">Authorize New Artisan</h3>
-            <p className="text-[10px] text-ink/40 uppercase tracking-tighter">Grant access to the collection dashboard</p>
+            <h3 className="text-sm font-black uppercase tracking-widest text-indigo dark:text-gold">Authorize New Artisan</h3>
+            <p className="text-[10px] text-ink/40 dark:text-dark-muted uppercase tracking-tighter">Grant access to the collection dashboard</p>
           </div>
         </div>
 
         <form onSubmit={handleAddAdmin} className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
-            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-ink/20" size={16} />
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-ink/20 dark:text-dark-muted" size={16} />
             <input
               type="email"
               placeholder="artisan@anshicollection.com"
               value={newEmail}
               onChange={(e) => setNewEmail(e.target.value)}
-              className="w-full bg-white border border-gold/10 rounded-2xl pl-12 pr-4 py-4 text-sm outline-none focus:border-indigo transition-all font-sans font-medium"
+              className="w-full bg-white dark:bg-dark-surface border border-gold/10 dark:border-white/5 rounded-2xl pl-12 pr-4 py-4 text-sm outline-none focus:border-indigo dark:focus:border-gold transition-all font-sans font-medium dark:text-dark-text"
               required
             />
           </div>
           <select
             value={newRole}
             onChange={(e) => setNewRole(e.target.value as any)}
-            className="bg-white border border-gold/10 rounded-2xl px-4 py-4 text-sm outline-none focus:border-indigo transition-all font-sans font-medium"
+            className="bg-white dark:bg-dark-surface border border-gold/10 dark:border-white/5 rounded-2xl px-4 py-4 text-sm outline-none focus:border-indigo dark:focus:border-gold transition-all font-sans font-medium dark:text-dark-text"
           >
             <option value="admin">Artisan (Admin)</option>
             <option value="super_admin">Curator (Super Admin)</option>
@@ -113,7 +113,7 @@ export default function AdminControlPanel() {
           <button
             type="submit"
             disabled={isAdding}
-            className="wa-button !bg-indigo !py-4 px-8 rounded-2xl shadow-xl shadow-indigo/20 disabled:opacity-50 text-[10px] uppercase font-black"
+            className="wa-button !bg-indigo dark:!bg-gold !text-white dark:!text-ink !py-4 px-8 rounded-2xl shadow-xl shadow-indigo/20 disabled:opacity-50 text-[10px] uppercase font-black"
           >
             {isAdding ? 'Adding...' : 'Grant Access'}
           </button>
@@ -122,12 +122,12 @@ export default function AdminControlPanel() {
 
       {/* Admin List */}
       <section className="space-y-6">
-        <div className="flex items-center justify-between border-b luxury-border pb-4">
-          <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo flex items-center gap-2">
+        <div className="flex items-center justify-between border-b luxury-border dark:border-white/5 pb-4">
+          <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo dark:text-gold flex items-center gap-2">
             <BadgeCheck size={14} />
             Authorized Personnel
           </h3>
-          <span className="text-[10px] font-bold text-ink/30 uppercase tracking-widest">{admins.length} Logged</span>
+          <span className="text-[10px] font-bold text-ink/30 dark:text-dark-muted uppercase tracking-widest">{admins.length} Logged</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -139,24 +139,24 @@ export default function AdminControlPanel() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className={`p-6 rounded-3xl border bg-white flex items-center justify-between group transition-all ${
-                  admin.status === 'disabled' ? 'opacity-60 grayscale' : 'hover:border-indigo/30 hover:shadow-xl'
-                } ${admin.email?.toLowerCase() === 'sankalpsmn@gmail.com' ? 'border-gold/30 bg-gold/[0.02]' : 'border-gold/5'}`}
+                className={`p-6 rounded-3xl border flex items-center justify-between group transition-all ${
+                  admin.status === 'disabled' ? 'opacity-60 grayscale' : 'hover:border-indigo/30 dark:hover:border-gold/30 hover:shadow-xl'
+                } ${admin.email?.toLowerCase() === 'sankalpsmn@gmail.com' ? 'border-gold/30 bg-gold/[0.02] dark:bg-gold/[0.05]' : 'border-gold/5 dark:border-white/5 bg-white dark:bg-dark-card'}`}
               >
                 <div className="flex items-center gap-4">
                   <div className={`p-3 rounded-2xl ${
-                    admin.email?.toLowerCase() === 'sankalpsmn@gmail.com' ? 'bg-gold text-white' : 'bg-cream text-indigo'
+                    admin.email?.toLowerCase() === 'sankalpsmn@gmail.com' ? 'bg-gold text-white' : 'bg-cream dark:bg-dark-surface text-indigo dark:text-gold'
                   }`}>
                     {admin.role === 'super_admin' ? <ShieldCheck size={18} /> : <BadgeCheck size={18} />}
                   </div>
                   <div>
-                    <h4 className="text-sm font-black text-ink tracking-tight flex items-center gap-2">
+                    <h4 className="text-sm font-black text-ink dark:text-dark-text tracking-tight flex items-center gap-2">
                       {admin.email}
                       {admin.email?.toLowerCase() === 'sankalpsmn@gmail.com' && (
                         <span className="text-[8px] bg-gold text-white px-1.5 py-0.5 rounded-full uppercase tracking-tighter">System</span>
                       )}
                     </h4>
-                    <p className="text-[10px] text-ink/30 uppercase font-black tracking-widest mt-0.5">
+                    <p className="text-[10px] text-ink/30 dark:text-dark-muted uppercase font-black tracking-widest mt-0.5">
                       {admin.role === 'super_admin' ? 'Curator' : 'Artisan'} • {admin.status}
                     </p>
                   </div>
@@ -176,7 +176,7 @@ export default function AdminControlPanel() {
                         onClick={() => handleToggleStatus(admin)}
                         className={`p-2 rounded-xl transition-all ${
                           admin.status === 'active' 
-                            ? 'text-indigo bg-indigo/5 hover:bg-indigo hover:text-white' 
+                            ? 'text-indigo dark:text-gold bg-indigo/5 dark:bg-gold/5 hover:bg-indigo dark:hover:bg-gold hover:text-white dark:hover:text-ink' 
                             : 'text-rose bg-rose/5 hover:bg-rose hover:text-white'
                         }`}
                         title={admin.status === 'active' ? 'Disable Access' : 'Enable Access'}
@@ -185,7 +185,7 @@ export default function AdminControlPanel() {
                       </button>
                       <button
                         onClick={() => handleRemove(admin.email)}
-                        className="p-2 text-ink/20 hover:text-rose hover:bg-rose/5 rounded-xl transition-all"
+                        className="p-2 text-ink/20 dark:text-dark-muted hover:text-rose hover:bg-rose/5 rounded-xl transition-all"
                         title="Remove Permanently"
                       >
                         <Trash2 size={16} />

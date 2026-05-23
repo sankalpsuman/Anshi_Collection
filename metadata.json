@@ -2,5 +2,5 @@
   "name": "Anshi Collections",
   "description": "A luxury fashion ecommerce site where customers can browse collections and order via WhatsApp.",
   "requestFramePermissions": [],
-  "majorCapabilities": []
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

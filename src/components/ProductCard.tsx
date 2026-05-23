@@ -78,9 +78,9 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
       viewport={{ once: true }}
       transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
       onClick={() => onClick(product)}
-      className="group cursor-pointer glass-card p-0 overflow-hidden hover:-translate-y-2"
+      className="group cursor-pointer glass-card p-0 overflow-hidden hover:-translate-y-2 dark:bg-dark-card dark:border-white/5"
     >
-      <div className="relative aspect-[4/5] overflow-hidden bg-ink/5">
+      <div className="relative aspect-[4/5] overflow-hidden bg-ink/5 dark:bg-white/5">
         <img
           src={product.imageUrl}
           alt={product.name}
@@ -88,6 +88,32 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
           referrerPolicy="no-referrer"
           loading="lazy"
         />
+
+        {/* Custom Visual Badges */}
+        {product.badge && (
+          <div className="absolute top-4 left-4 z-10">
+            <span className={`text-[8px] sm:text-[9px] font-display font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg ${
+              product.badge === 'new_arrival' ? 'bg-[#6366f1] text-white' :
+              product.badge === 'trending' ? 'bg-orange-500 text-white animate-pulse' :
+              product.badge === 'fast_selling' ? 'bg-indigo text-white' :
+              product.badge === 'limited_stock' ? 'bg-amber-600 text-white' :
+              'bg-rose text-white'
+            }`}>
+              {product.badge === 'new_arrival' ? '✨ New' :
+               product.badge === 'trending' ? '🔥 Hot' :
+               product.badge === 'fast_selling' ? '⚡ Fast' :
+               product.badge === 'limited_stock' ? '⚠️ Low Stock' : '🏷️ Sale'}
+            </span>
+          </div>
+        )}
+
+        {product.offerPercent && product.offerPercent > 0 ? (
+          <div className="absolute top-4 right-4 z-10 md:hidden group-hover:block transition-all duration-300">
+            <span className="bg-rose text-white text-[8px] sm:text-[9px] font-black uppercase tracking-widest px-2.5 py-1.5 rounded-full shadow-lg">
+              {product.offerPercent}% OFF
+            </span>
+          </div>
+        ) : null}
         
         {/* Overlay Gradients */}
         <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent opacity-40 md:opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -96,7 +122,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
         <div className="absolute top-4 right-4 z-10 flex flex-col space-y-2 translate-x-0 opacity-100 md:translate-x-12 md:opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 delay-100">
           <button 
             onClick={handleShare}
-            className="p-3 bg-white/90 backdrop-blur-sm rounded-full text-maroon hover:bg-rose hover:text-white shadow-xl transition-all"
+            className="p-3 bg-white/90 dark:bg-dark-surface/90 backdrop-blur-sm rounded-full text-maroon dark:text-saffron hover:bg-rose hover:text-white dark:hover:bg-gold dark:hover:text-ink shadow-xl transition-all"
           >
             <Share2 size={16} />
           </button>
@@ -112,23 +138,26 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
       
       <div className="p-5 sm:p-6 space-y-3 sm:space-y-4">
         <div className="flex justify-between items-start gap-3 sm:gap-4">
-          <h2 className="text-xl sm:text-2xl font-serif text-ink group-hover:text-maroon transition-colors leading-tight line-clamp-2">
+          <h2 className="text-xl sm:text-2xl font-serif text-ink dark:text-dark-text group-hover:text-maroon dark:group-hover:text-gold transition-colors leading-tight line-clamp-2">
             {product.name}
           </h2>
           <div className="flex flex-col items-end">
-            <span className="text-[10px] uppercase tracking-widest text-ink/30 mb-1 font-bold">Price</span>
-            <p className="text-indigo font-display font-bold text-base sm:text-lg whitespace-nowrap">₹{product.price.toLocaleString('en-IN')}</p>
+            <span className="text-[10px] uppercase tracking-widest text-ink/30 dark:text-dark-muted mb-1 font-bold">Price</span>
+            <p className="text-indigo dark:text-gold font-display font-bold text-base sm:text-lg whitespace-nowrap">₹{product.price.toLocaleString('en-IN')}</p>
           </div>
         </div>
 
         <RatingSummary productId={product.id} />
         
         <button
-          onClick={handleWhatsAppOrder}
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick(product);
+          }}
           className="wa-button w-full rounded-xl !py-4 group-hover:shadow-[0_0_20px_rgba(114,28,36,0.2)] text-[10px] sm:text-xs"
         >
           <MessageCircle size={14} className="group-hover:animate-bounce" />
-          <span>Inquire & Reserve</span>
+          <span>Curate & Inquire</span>
         </button>
       </div>
     </motion.div>

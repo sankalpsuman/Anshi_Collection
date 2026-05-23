@@ -16,11 +16,22 @@
   
   --shadow-luxury: 0 20px 40px -15px rgba(114, 28, 36, 0.1);
   --shadow-glow: 0 0 20px rgba(212, 175, 55, 0.2);
+
+  /* Dark Mode Palette */
+  --color-dark-surface: #0a0a0a;
+  --color-dark-card: #141414;
+  --color-dark-border: rgba(212, 175, 55, 0.1);
+  --color-dark-text: #e5e5e5;
+  --color-dark-muted: #888888;
 }
 
 @layer base {
   body {
-    @apply bg-cream text-ink font-sans antialiased selection:bg-rose/20;
+    @apply bg-cream text-ink font-sans antialiased selection:bg-rose/20 transition-colors duration-300;
+  }
+  
+  .dark body {
+    @apply bg-dark-surface text-dark-text;
   }
   
   h1, h2, h3, h4, h5, h6, .serif {
@@ -33,36 +44,19 @@
 }
 
 .luxury-border {
-  border-color: rgba(212, 175, 55, 0.15);
+  @apply border-gold/15 transition-colors;
 }
 
-.luxury-gradient {
-  background: linear-gradient(135deg, var(--color-maroon) 0%, var(--color-ink) 100%);
-}
-
-.saffron-gradient {
-  background: linear-gradient(135deg, #F4C430 0%, #FF8C00 100%);
-}
-
-.wa-button {
-  @apply relative overflow-hidden bg-maroon text-cream flex items-center justify-center gap-2 py-4 px-8 text-[10px] font-bold uppercase tracking-[0.2em] transition-all hover:bg-ink active:scale-95 shadow-lg;
-}
-
-.wa-button::after {
-  content: '';
-  @apply absolute inset-0 bg-white/10 translate-y-full transition-transform duration-300;
-}
-
-.wa-button:hover::after {
-  @apply translate-y-0;
-}
-
-.search-bar {
-  @apply bg-white/50 backdrop-blur-sm border-b-2 border-gold/30 focus:border-maroon py-4 px-6 w-full font-serif italic text-xl outline-none placeholder:text-ink/20 transition-all;
+.dark .luxury-border {
+  @apply border-gold/5;
 }
 
 .glass-card {
   @apply bg-white/40 backdrop-blur-md border border-white/20 shadow-luxury transition-all;
+}
+
+.dark .glass-card {
+  @apply bg-dark-card/60 border-gold/5 shadow-none;
 }
 
 .staggered-text span {
@@ -84,4 +78,16 @@
 
 .silk-gradient {
   background: linear-gradient(135deg, rgba(253, 251, 247, 0.8) 0%, rgba(244, 196, 48, 0.05) 50%, rgba(224, 17, 95, 0.05) 100%);
+}
+
+.dark .silk-gradient {
+  background: linear-gradient(135deg, rgba(10, 10, 10, 0.8) 0%, rgba(212, 175, 55, 0.02) 50%, rgba(224, 11, 95, 0.02) 100%);
+}
+
+.wa-button {
+  @apply relative overflow-hidden bg-maroon text-cream flex items-center justify-center gap-2 py-4 px-8 text-[10px] font-bold uppercase tracking-[0.2em] transition-all hover:bg-ink active:scale-95 shadow-lg;
+}
+
+.dark .wa-button {
+  @apply bg-gold/10 text-gold border border-gold/20 hover:bg-gold/20;
 }
