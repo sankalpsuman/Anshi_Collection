@@ -10,6 +10,8 @@ export default function AdminControlPanel() {
   const [newRole, setNewRole] = useState<'super_admin' | 'admin'>('admin');
   const [isAdding, setIsAdding] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [removeConfirmEmail, setRemoveConfirmEmail] = useState<string | null>(null);
 
   useEffect(() => {
     const unsubscribe = adminService.subscribeToAdmins(
@@ -28,14 +30,14 @@ export default function AdminControlPanel() {
   const handleAddAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newEmail) return;
-    
+    setErrorMsg(null);
     setIsAdding(true);
     try {
       await adminService.addAdmin(newEmail, newRole);
       setNewEmail('');
       setNewRole('admin');
     } catch (error: any) {
-      alert(error.message || 'Failed to add admin');
+      setErrorMsg(error.message || 'Failed to add admin');
     } finally {
       setIsAdding(false);
     }
@@ -55,17 +57,23 @@ export default function AdminControlPanel() {
     try {
       await adminService.updateAdminRole(admin.email, nextRole);
     } catch (error: any) {
-      alert(error.message || 'Error updating role');
+      setErrorMsg(error.message || 'Error updating role');
     }
   };
 
-  const handleRemove = async (email: string) => {
-    if (window.confirm(`Are you sure you want to remove ${email}?`)) {
-      try {
-        await adminService.removeAdmin(email);
-      } catch (error) {
-        console.error('Error removing admin:', error);
-      }
+  const handleRemoveClick = (email: string) => {
+    setRemoveConfirmEmail(email);
+  };
+
+  const confirmRemove = async () => {
+    if (!removeConfirmEmail) return;
+    try {
+      await adminService.removeAdmin(removeConfirmEmail);
+    } catch (error: any) {
+      console.error('Error removing admin:', error);
+      setErrorMsg(error.message || 'Error removing admin');
+    } finally {
+      setRemoveConfirmEmail(null);
     }
   };
 
@@ -78,6 +86,62 @@ export default function AdminControlPanel() {
 
   return (
     <div className="space-y-12">
+      {errorMsg && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-4 bg-rose/10 border border-rose/20 text-rose text-xs font-bold rounded-2xl flex justify-between items-center"
+        >
+          <span>{errorMsg}</span>
+          <button onClick={() => setErrorMsg(null)} className="p-1 hover:bg-rose/10 rounded-lg cursor-pointer transition-all">
+            <X size={14} />
+          </button>
+        </motion.div>
+      )}
+
+      {/* Confirmation Dialog Overlay */}
+      <AnimatePresence>
+        {removeConfirmEmail && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setRemoveConfirmEmail(null)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative bg-theme-bg p-8 rounded-[32px] border border-theme-border shadow-luxury max-w-sm w-full text-center space-y-6 z-10"
+            >
+              <Trash2 className="mx-auto text-rose animate-pulse" size={40} />
+              <div className="space-y-2">
+                <h4 className="font-serif text-xl font-bold text-theme-text-primary">Revoke Access</h4>
+                <p className="text-xs text-theme-text-secondary leading-relaxed">
+                  Are you sure you want to completely remove <strong className="break-all">{removeConfirmEmail}</strong> from authorized personnel? They will lose access immediately.
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setRemoveConfirmEmail(null)}
+                  className="flex-1 py-3 border border-theme-border rounded-xl text-[10px] uppercase tracking-widest font-black text-theme-text-secondary cursor-pointer hover:bg-theme-surface"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmRemove}
+                  className="flex-1 py-3 bg-rose text-white rounded-xl text-[10px] uppercase tracking-widest font-black cursor-pointer hover:opacity-90"
+                >
+                  Revoke
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Add Admin Form */}
       <section className="bg-theme-surface border border-theme-border shadow-luxury p-8 rounded-[30px] transition-all">
         <div className="flex items-center gap-3 mb-8">
@@ -184,7 +248,7 @@ export default function AdminControlPanel() {
                         {admin.status === 'active' ? <ShieldAlert size={16} /> : <ShieldCheck size={16} />}
                       </button>
                       <button
-                        onClick={() => handleRemove(admin.email)}
+                        onClick={() => handleRemoveClick(admin.email)}
                         className="p-2 text-theme-text-muted hover:text-rose hover:bg-rose/5 rounded-xl transition-all cursor-pointer"
                         title="Remove Permanently"
                       >

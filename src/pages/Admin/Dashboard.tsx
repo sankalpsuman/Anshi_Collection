@@ -22,6 +22,7 @@ export default function Dashboard() {
   const [authInitialized, setAuthInitialized] = React.useState(false);
   const [isSuperAdmin, setIsSuperAdmin] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState<'collection' | 'personnel'>('collection');
+  const [deleteConfirmId, setDeleteConfirmId] = React.useState<string | null>(null);
   const navigate = useNavigate();
 
   const loadingRef = React.useRef(loading);
@@ -93,9 +94,18 @@ export default function Dashboard() {
 
   const handleLogout = () => signOut(auth).then(() => navigate('/admin', { replace: true }));
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm("Are you sure you want to remove this piece from the collection?")) {
-      await productService.deleteProduct(id);
+  const handleDeleteClick = (id: string) => {
+    setDeleteConfirmId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteConfirmId) return;
+    try {
+      await productService.deleteProduct(deleteConfirmId);
+    } catch (err) {
+      console.error("Delete failed:", err);
+    } finally {
+      setDeleteConfirmId(null);
     }
   };
 
@@ -149,6 +159,49 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-theme-bg selection:bg-rose/20 transition-colors duration-300">
+      {/* Dynamic Deletion Modal Overlay */}
+      <AnimatePresence>
+        {deleteConfirmId && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setDeleteConfirmId(null)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative bg-theme-bg p-8 rounded-[32px] border border-theme-border shadow-luxury max-w-sm w-full text-center space-y-6 z-10"
+            >
+              <Trash2 className="mx-auto text-rose animate-bounce" size={40} />
+              <div className="space-y-2">
+                <h4 className="font-serif text-xl font-bold text-theme-text-primary">Remove Masterpiece</h4>
+                <p className="text-xs text-theme-text-secondary leading-relaxed">
+                  Are you sure you want to remove this piece from the active gallery collection? This action is permanent.
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setDeleteConfirmId(null)}
+                  className="flex-1 py-3 border border-theme-border rounded-xl text-[10px] uppercase tracking-widest font-black text-theme-text-secondary cursor-pointer hover:bg-theme-surface"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="flex-1 py-3 bg-rose text-white rounded-xl text-[10px] uppercase tracking-widest font-black cursor-pointer hover:opacity-90"
+                >
+                  Delete
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Navigation - Glassmorphism */}
       <nav className="bg-theme-surface/70 backdrop-blur-2xl border-b luxury-border sticky top-0 z-40 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-8">
@@ -278,8 +331,8 @@ export default function Dashboard() {
                               <Edit2 size={16} />
                             </button>
                             <button
-                              onClick={() => handleDelete(product.id)}
-                              className="p-3 bg-rose/5 text-rose rounded-xl hover:bg-rose hover:text-white transition-all shadow-xl shadow-rose/5"
+                              onClick={() => handleDeleteClick(product.id)}
+                              className="p-3 bg-rose/5 text-rose rounded-xl hover:bg-rose hover:text-white transition-all cursor-pointer shadow-xl"
                             >
                               <Trash2 size={16} />
                             </button>
