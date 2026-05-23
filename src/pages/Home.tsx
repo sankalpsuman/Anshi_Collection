@@ -51,25 +51,25 @@ function RecentlyViewed({
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="mt-20 border-t border-gold/15 pt-12 space-y-6 text-left"
+      className="mt-20 border-t border-theme-border pt-12 space-y-6 text-left"
     >
       <div className="flex items-center gap-3">
         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-rose">Recently Visited Collections</span>
-        <div className="h-[1px] flex-1 bg-gold/10"></div>
+        <div className="h-[1px] flex-1 bg-theme-border"></div>
       </div>
       <div className="flex gap-6 overflow-x-auto pb-6 pt-1 no-scrollbar -mx-4 px-4 sm:mx-0">
         {viewedProducts.map((p) => (
           <div 
             key={p.id}
             onClick={() => onSelectProduct(p)}
-            className="group cursor-pointer bg-white dark:bg-dark-card border border-gold/10 dark:border-white/5 rounded-3xl p-3 w-40 hover:-translate-y-1.5 transition-all duration-350 shadow-sm hover:shadow-lg flex-shrink-0"
+            className="group cursor-pointer bg-theme-surface border border-theme-border rounded-3xl p-3 w-40 hover:-translate-y-1.5 transition-all duration-350 shadow-sm hover:shadow-glow flex-shrink-0"
           >
-            <div className="aspect-[4/5] rounded-2.5xl overflow-hidden bg-ink/5 dark:bg-white/5">
+            <div className="aspect-[4/5] rounded-2.5xl overflow-hidden bg-theme-bg/10">
               <img src={p.imageUrl} alt={p.name} referrerPolicy="no-referrer" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="mt-3.5 space-y-1 overflow-hidden">
-              <h4 className="font-serif font-black text-xs text-ink dark:text-dark-text group-hover:text-gold transition-colors truncate">{p.name}</h4>
-              <p className="text-[10px] font-mono font-black text-[#6366f1] dark:text-gold">₹{p.price.toLocaleString('en-IN')}</p>
+              <h4 className="font-serif font-black text-xs text-theme-text-primary group-hover:text-theme-accent transition-colors truncate">{p.name}</h4>
+              <p className="text-[10px] font-mono font-black text-theme-primary">₹{p.price.toLocaleString('en-IN')}</p>
             </div>
           </div>
         ))}
@@ -200,12 +200,12 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-cream dark:bg-dark-surface selection:bg-gold/30 font-sans transition-colors duration-300">
+    <div className="min-h-screen bg-theme-bg selection:bg-gold/30 font-sans transition-colors duration-500">
       <div className="flex flex-col lg:flex-row min-h-screen silk-gradient">
         {/* Sidebar - Desktop Only sticky, Mobile Hero */}
-        <aside className="lg:w-[420px] xl:w-[480px] lg:border-r luxury-border lg:sticky lg:top-0 lg:h-screen flex flex-col justify-between bg-white dark:bg-dark-surface/50 lg:bg-transparent z-20 overflow-hidden">
+        <aside className="lg:w-[420px] xl:w-[480px] lg:border-r luxury-border lg:sticky lg:top-0 lg:h-screen flex flex-col justify-between bg-theme-surface/40 backdrop-blur-sm lg:bg-transparent z-20 overflow-hidden">
           {/* Decorative background elements */}
-          <div className="absolute -top-12 -left-12 lg:-top-24 lg:-left-24 w-48 h-48 lg:w-64 lg:h-64 bg-saffron/10 rounded-full blur-3xl -z-10" />
+          <div className="absolute -top-12 -left-12 lg:-top-24 lg:-left-24 w-48 h-48 lg:w-64 lg:h-64 bg-theme-accent/5 rounded-full blur-3xl -z-10" />
           <div className="absolute top-1/2 -right-16 lg:-right-32 w-64 h-64 lg:w-80 lg:h-80 bg-rose/5 rounded-full blur-3xl -z-10" />
 
           <div className="p-6 sm:p-10 lg:p-12 xl:p-16 space-y-10 lg:space-y-16">
@@ -215,8 +215,8 @@ export default function Home() {
               transition={{ duration: 0.8 }}
               className="flex items-center justify-between"
             >
-              <Link to="/" className="brand-logo serif text-3xl sm:text-4xl tracking-[4px] sm:tracking-[6px] text-maroon dark:text-saffron border-b-4 border-saffron dark:border-rose pb-2 sm:pb-3 flex items-center gap-3 font-black">
-                <Sparkles className="text-saffron w-8 h-8 sm:w-10 sm:h-10 shrink-0" fill="currentColor" />
+              <Link to="/" className="brand-logo serif text-3xl sm:text-4xl tracking-[4px] sm:tracking-[6px] text-theme-primary border-b-4 border-theme-accent pb-2 sm:pb-3 flex items-center gap-3 font-black">
+                <Sparkles className="text-theme-accent w-8 h-8 sm:w-10 sm:h-10 shrink-0" fill="currentColor" />
                 ANSHI COLLECTION
               </Link>
               <div className="lg:hidden">
@@ -234,13 +234,13 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] sm:tracking-[0.4em] text-indigo dark:text-gold font-bold block mb-3 sm:mb-4 border-l-2 border-indigo dark:border-gold pl-3">
+                <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] sm:tracking-[0.4em] text-theme-text-secondary font-bold block mb-3 sm:mb-4 border-l-2 border-theme-accent pl-3">
                   Est. 2026 — The Artisan Label
                 </span>
-                <h1 className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-serif text-ink dark:text-dark-text leading-[1] lg:leading-[0.85] mb-6 sm:mb-8 font-bold">
+                <h1 className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-serif text-theme-text-primary leading-[1] lg:leading-[0.85] mb-6 sm:mb-8 font-bold">
                   Wear<br />
                   <span className="text-rose italic font-medium">Stories</span><br />
-                  <span className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl block mt-4 border-t luxury-border pt-4 text-ink/40 dark:text-dark-muted font-light">Not Just Silk.</span>
+                  <span className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl block mt-4 border-t luxury-border pt-4 text-theme-text-muted font-light">Not Just Silk.</span>
                 </h1>
               </motion.div>
               
@@ -248,7 +248,7 @@ export default function Home() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1, delay: 0.5 }}
-                className="text-sm sm:text-base font-sans leading-relaxed text-ink/60 dark:text-dark-text/60 max-w-sm font-medium"
+                className="text-sm sm:text-base font-sans leading-relaxed text-theme-text-secondary max-w-sm font-medium"
               >
                 A sanctuary of handcrafted ethnic silhouettes. We curate threads of heritage into modern masterpieces for the discerning soul.
               </motion.p>
@@ -261,26 +261,26 @@ export default function Home() {
                     const el = document.getElementById('collection');
                     el?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="wa-button !bg-indigo !text-cream hover:!bg-maroon shadow-2xl w-full lg:w-max text-center font-black tracking-[0.3em] py-4 sm:py-5 px-8 sm:px-10 text-xs"
+                  className="wa-button w-full lg:w-max text-center font-black tracking-[0.3em] py-4 sm:py-5 px-8 sm:px-10 text-xs shadow-glow"
                 >
                   Explore Collection
                 </motion.button>
                 <div className="flex items-center space-x-6 pt-4 sm:pt-6">
-                  <a href="#" onClick={(e) => { e.preventDefault(); window.open('https://instagram.com', '_blank') }} className="text-maroon/40 hover:text-rose transition-all hover:scale-125 p-2 -ml-2">
+                  <a href="#" onClick={(e) => { e.preventDefault(); window.open('https://instagram.com', '_blank') }} className="text-theme-text-secondary/50 hover:text-rose transition-all hover:scale-125 p-2 -ml-2">
                     <Instagram size={20} />
                   </a>
-                  <a href="#" onClick={(e) => { e.preventDefault(); window.open('https://wa.me/7979005226', '_blank') }} className="text-maroon/40 hover:text-indigo transition-all hover:scale-125 p-2">
+                  <a href="#" onClick={(e) => { e.preventDefault(); window.open('https://wa.me/7979005226', '_blank') }} className="text-theme-text-secondary/50 hover:text-theme-accent transition-all hover:scale-125 p-2">
                     <MessageCircle size={20} />
                   </a>
-                  <span className="h-[1px] w-8 sm:w-12 bg-gold/30"></span>
-                  <span className="text-[9px] sm:text-[10px] uppercase tracking-widest text-ink/30 font-bold">Social</span>
+                  <span className="h-[1px] w-8 sm:w-12 bg-theme-border"></span>
+                  <span className="text-[9px] sm:text-[10px] uppercase tracking-widest text-theme-text-muted font-bold">Social</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="p-6 sm:p-10 lg:p-12 xl:p-16 pt-8 border-t luxury-border mt-8 lg:mt-0 bg-white/20 backdrop-blur-sm self-end w-full">
-            <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-ink/20 font-semibold tracking-[0.2em]">{`© 2026 Anshi Collection`}</p>
+          <div className="p-6 sm:p-10 lg:p-12 xl:p-16 pt-8 border-t luxury-border mt-8 lg:mt-0 bg-theme-surface/10 backdrop-blur-sm self-end w-full">
+            <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-theme-text-muted/40 font-semibold tracking-[0.2em]">{`© 2026 Anshi Collection`}</p>
           </div>
         </aside>
 
@@ -288,53 +288,53 @@ export default function Home() {
         <main id="collection" className="flex-1 p-4 sm:p-8 md:p-10 lg:p-12 lg:pl-16">
           {/* Top Search & Filter Bar */}
           <div className="flex flex-col space-y-6 sm:space-y-10 mb-12 sm:mb-20">
-            <div className="flex flex-col lg:flex-row justify-between items-center gap-6 sm:gap-8 luxury-border bg-white/60 dark:bg-dark-card/60 p-4 sm:p-6 rounded-3xl border border-white/80 dark:border-white/5 backdrop-blur-2xl shadow-2xl shadow-indigo/5">
+            <div className="flex flex-col lg:flex-row justify-between items-center gap-6 sm:gap-8 luxury-border bg-theme-surface/60 p-4 sm:p-6 rounded-3xl border border-theme-border backdrop-blur-2xl shadow-luxury">
               <div className="w-full lg:max-w-2xl relative group">
                 <input 
                   type="text" 
-                  className="w-full bg-cream/50 dark:bg-dark-surface/50 backdrop-blur-sm border-2 border-gold/10 dark:border-gold/5 rounded-2xl pl-14 sm:pl-16 pr-6 py-4 sm:py-5 text-sm sm:text-base outline-none focus:border-rose/50 dark:focus:border-gold focus:ring-4 focus:ring-rose/5 transition-all placeholder:text-ink/20 dark:placeholder:text-white/10 font-medium dark:text-dark-text"
+                  className="w-full bg-theme-bg/50 backdrop-blur-sm border-2 border-theme-border rounded-2xl pl-14 sm:pl-16 pr-6 py-4 sm:py-5 text-sm sm:text-base outline-none focus:border-theme-accent/50 focus:ring-4 focus:ring-theme-accent/5 transition-all placeholder:text-theme-text-muted/50 font-medium text-theme-text-primary"
                   placeholder="Masterpiece name, silhouette, or product code... (e.g. Kurta)" 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <div className="absolute left-5 sm:left-6 top-1/2 -translate-y-1/2 text-ink/20 group-focus-within:text-rose dark:group-focus-within:text-gold transition-colors">
+                <div className="absolute left-5 sm:left-6 top-1/2 -translate-y-1/2 text-theme-text-muted/50 group-focus-within:text-theme-accent transition-colors">
                   <Search size={24} strokeWidth={2.5} />
                 </div>
               </div>
               
               <div className="flex items-center gap-4 self-center lg:self-center pr-2">
-                <div className="hidden lg:flex items-center gap-2 bg-cream/50 dark:bg-dark-surface/50 p-1 rounded-xl border border-gold/10 dark:border-gold/5 mr-4">
+                <div className="hidden lg:flex items-center gap-2 bg-theme-bg/50 p-1 rounded-xl border border-theme-border mr-4">
                   {[1, 2, 3, 4].map((num) => (
                     <button
                       key={num}
                       onClick={() => setGridCols(num)}
                       className={`w-8 h-8 flex items-center justify-center rounded-lg text-[10px] font-black transition-all ${
                         gridCols === num 
-                          ? 'bg-ink text-white dark:bg-gold dark:text-ink shadow-lg' 
-                          : 'text-indigo/30 dark:text-dark-muted hover:text-indigo hover:bg-white dark:hover:text-dark-text dark:hover:bg-dark-card'
+                          ? 'bg-theme-primary text-theme-btn-text shadow-lg' 
+                          : 'text-theme-text-secondary/55 hover:text-theme-text-primary hover:bg-theme-surface/50'
                       }`}
                     >
                       {num}
                     </button>
                   ))}
                 </div>
-                <div className="hidden lg:block h-10 w-[1px] bg-gold/10"></div>
+                <div className="hidden lg:block h-10 w-[1px] bg-theme-border"></div>
                 <div className="flex flex-col items-center lg:items-end">
-                  <div className="font-display font-black text-indigo dark:text-gold text-xl sm:text-2xl tracking-tighter leading-none">
+                  <div className="font-display font-black text-theme-primary text-xl sm:text-2xl tracking-tighter leading-none">
                     {filteredProducts.length}
                   </div>
-                  <div className="text-[10px] uppercase font-black tracking-widest text-ink/20 dark:text-dark-muted">
+                  <div className="text-[10px] uppercase font-black tracking-widest text-theme-text-muted">
                     Pieces Curated
                   </div>
                 </div>
               </div>
             </div>
-
+ 
             {/* Category Filter */}
             <div className="flex flex-col space-y-4">
               <div className="flex items-center gap-3">
-                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo/30 dark:text-gold/30">Collections</span>
-                <div className="h-[1px] flex-1 bg-gold/10"></div>
+                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-theme-text-muted">Collections</span>
+                <div className="h-[1px] flex-1 bg-theme-border"></div>
               </div>
               <div className="flex overflow-x-auto pb-4 sm:pb-2 gap-3 sm:gap-4 px-1 no-scrollbar -mx-4 px-4 sm:mx-0">
                 {categories.map((cat) => (
@@ -343,8 +343,8 @@ export default function Home() {
                     onClick={() => setActiveCategory(cat || 'All')}
                     className={`px-6 sm:px-10 py-3 sm:py-4 rounded-2xl text-[10px] sm:text-xs uppercase tracking-[0.2em] font-black transition-all whitespace-nowrap border-2 ${
                       activeCategory === (cat || 'All')
-                        ? 'bg-ink text-white border-ink dark:bg-gold dark:text-ink dark:border-gold shadow-2xl -translate-y-1 scale-105'
-                        : 'bg-white text-ink/40 border-gold/5 dark:bg-dark-card dark:text-dark-muted dark:border-white/5 hover:border-saffron hover:text-ink hover:shadow-lg dark:hover:text-dark-text'
+                        ? 'bg-theme-primary text-theme-btn-text border-theme-primary shadow-glow -translate-y-0.5'
+                        : 'bg-theme-surface text-theme-text-secondary border-theme-border hover:border-theme-accent hover:text-theme-text-primary'
                     }`}
                   >
                     {cat || 'Originals'}
@@ -526,7 +526,7 @@ export default function Home() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsInquiryOpen(true)}
-              className="flex items-center gap-2.5 px-6 py-4.5 bg-indigo dark:bg-gold text-white dark:text-ink font-sans text-xs uppercase font-black tracking-widest rounded-full shadow-[0_15px_30px_rgba(99,102,241,0.25)] relative border border-gold/15 dark:border-white/5 cursor-pointer"
+              className="flex items-center gap-2.5 px-6 py-4.5 bg-theme-primary text-theme-btn-text font-sans text-xs uppercase font-black tracking-widest rounded-full shadow-glow relative border border-theme-border cursor-pointer"
             >
               <ShoppingBag size={15} />
               <span>Inquiry List</span>

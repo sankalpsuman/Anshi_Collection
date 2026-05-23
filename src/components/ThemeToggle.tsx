@@ -28,7 +28,7 @@ export default function ThemeToggle() {
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-      className="p-3 rounded-2xl bg-white/10 dark:bg-black/20 border border-gold/20 backdrop-blur-md shadow-lg transition-colors hover:border-gold/50"
+      className="p-3 rounded-2xl bg-theme-surface/60 dark:bg-theme-surface/30 border border-theme-border backdrop-blur-md shadow-luxury hover:shadow-glow transition-all hover:border-theme-accent/50 hover:scale-105"
       title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
     >
       <AnimatePresence mode="wait">

@@ -110,7 +110,7 @@ export default function InquiryCart({ isOpen, onClose }: InquiryCartProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-ink/70 dark:bg-black/80 backdrop-blur-md z-40"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
           />
 
           {/* Slide Over Drawer Frame */}
@@ -119,18 +119,18 @@ export default function InquiryCart({ isOpen, onClose }: InquiryCartProps) {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 26, stiffness: 240 }}
-            className="fixed top-0 right-0 bottom-0 w-full max-w-md bg-cream dark:bg-dark-surface border-l border-gold/15 dark:border-white/5 shadow-[0_0_50px_rgba(0,0,0,0.4)] z-50 flex flex-col h-full"
+            className="fixed top-0 right-0 bottom-0 w-full max-w-md bg-theme-bg border-l border-theme-border shadow-luxury z-50 flex flex-col h-full"
           >
             {/* Header */}
-            <div className="p-6 border-b border-gold/10 dark:border-white/5 flex items-center justify-between">
+            <div className="p-6 border-b border-theme-border flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <ShoppingBag className="text-maroon dark:text-gold" size={20} />
-                <h3 className="font-serif font-black text-xl text-ink dark:text-dark-text uppercase tracking-wider">Inquiry List</h3>
+                <ShoppingBag className="text-theme-primary" size={20} />
+                <h3 className="font-serif font-black text-xl text-theme-text-primary uppercase tracking-wider">Inquiry List</h3>
                 <span className="bg-rose text-white text-[10px] font-bold px-2.5 py-1 rounded-full">{items.length}</span>
               </div>
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-rose/10 hover:text-rose rounded-full text-ink/40 dark:text-dark-muted transition-all"
+                className="p-2 hover:bg-rose/10 hover:text-rose rounded-full text-theme-text-muted transition-all"
               >
                 <X size={20} />
               </button>
@@ -140,18 +140,18 @@ export default function InquiryCart({ isOpen, onClose }: InquiryCartProps) {
             <div className="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar">
               {items.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center space-y-6">
-                  <div className="w-16 h-16 rounded-full bg-gold/5 flex items-center justify-center text-gold/40 border border-gold/10 animate-bounce">
+                  <div className="w-16 h-16 rounded-full bg-theme-accent/5 flex items-center justify-center text-theme-accent/60 border border-theme-border animate-pulse">
                     <ShoppingBag size={24} />
                   </div>
                   <div>
-                    <h4 className="font-serif font-black text-lg text-ink dark:text-dark-text">Your list is empty</h4>
-                    <p className="text-xs text-ink/40 dark:text-dark-muted mt-2 leading-relaxed">
+                    <h4 className="font-serif font-black text-lg text-theme-text-primary">Your list is empty</h4>
+                    <p className="text-xs text-theme-text-secondary mt-2 leading-relaxed">
                       Wander across the Anshi collection and select items to compose your curated inquiry list.
                     </p>
                   </div>
                   <button
                     onClick={onClose}
-                    className="px-6 py-3 bg-indigo text-white dark:bg-gold dark:text-ink hover:scale-105 active:scale-95 transition-all outline-none rounded-xl text-[10px] font-black uppercase tracking-widest mt-4"
+                    className="px-6 py-3 bg-theme-primary text-theme-btn-text hover:scale-105 active:scale-95 transition-all outline-none rounded-xl text-[10px] font-black uppercase tracking-widest mt-4"
                   >
                     Start Curating
                   </button>
@@ -160,7 +160,7 @@ export default function InquiryCart({ isOpen, onClose }: InquiryCartProps) {
                 items.map((item) => (
                   <div 
                     key={item.cartId}
-                    className="relative p-4 rounded-3xl bg-white dark:bg-dark-card border border-gold/10 dark:border-white/5 shadow-sm flex items-start gap-4 hover:shadow-md transition-shadow"
+                    className="relative p-4 rounded-3xl bg-theme-surface border border-theme-border shadow-sm flex items-start gap-4 hover:shadow-glow transition-shadow"
                   >
                     <div className="w-20 aspect-[4/5] rounded-xl overflow-hidden shrink-0">
                       <img src={item.product.imageUrl} alt={item.product.name} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
@@ -168,25 +168,25 @@ export default function InquiryCart({ isOpen, onClose }: InquiryCartProps) {
 
                     <div className="flex-1 space-y-2 text-left">
                       <div>
-                        <h4 className="font-serif font-black text-xs text-ink dark:text-dark-text line-clamp-1">{item.product.name}</h4>
-                        <p className="text-[10px] font-mono font-bold text-ink/30 dark:text-dark-muted mt-0.5 uppercase">CODE: {item.product.code}</p>
+                        <h4 className="font-serif font-black text-xs text-theme-text-primary line-clamp-1">{item.product.name}</h4>
+                        <p className="text-[10px] font-mono font-bold text-theme-text-muted mt-0.5 uppercase">CODE: {item.product.code}</p>
                       </div>
 
                       <div className="flex flex-wrap gap-1.5 text-[10px] uppercase font-black">
-                        <span className="bg-cream dark:bg-dark-surface text-indigo dark:text-gold px-2.5 py-1 rounded-md border border-gold/10">Size: {item.size}</span>
-                        <span className="bg-cream dark:bg-dark-surface text-indigo dark:text-gold px-2.5 py-1 rounded-md border border-gold/10">Color: {item.color}</span>
+                        <span className="bg-theme-bg text-theme-primary px-2.5 py-1 rounded-md border border-theme-border">Size: {item.size}</span>
+                        <span className="bg-theme-bg text-theme-primary px-2.5 py-1 rounded-md border border-theme-border">Color: {item.color}</span>
                       </div>
 
                       <div className="flex items-center justify-between pt-1">
                         {/* Quantity edits */}
-                        <div className="flex items-center bg-cream/50 dark:bg-dark-surface/50 rounded-xl p-0.5 border border-gold/10">
+                        <div className="flex items-center bg-theme-bg rounded-xl p-0.5 border border-theme-border">
                           <button
                             onClick={() => updateQuantity(item.cartId, -1)}
                             className="p-1 hover:text-rose rounded transition-colors"
                           >
                             <Minus size={10} />
                           </button>
-                          <span className="w-8 text-center text-[11px] font-display font-black text-indigo dark:text-gold">{item.quantity}</span>
+                          <span className="w-8 text-center text-[11px] font-display font-black text-theme-text-primary">{item.quantity}</span>
                           <button
                             onClick={() => updateQuantity(item.cartId, 1)}
                             className="p-1 hover:text-green-500 rounded transition-colors"
@@ -195,7 +195,7 @@ export default function InquiryCart({ isOpen, onClose }: InquiryCartProps) {
                           </button>
                         </div>
 
-                        <p className="text-xs font-display font-black text-indigo dark:text-gold">₹{(item.product.price * item.quantity).toLocaleString('en-IN')}</p>
+                        <p className="text-xs font-display font-black text-theme-primary">₹{(item.product.price * item.quantity).toLocaleString('en-IN')}</p>
                       </div>
                     </div>
 
@@ -213,15 +213,15 @@ export default function InquiryCart({ isOpen, onClose }: InquiryCartProps) {
 
             {/* Footer Summary */}
             {items.length > 0 && (
-              <div className="p-6 bg-white dark:bg-dark-card border-t border-gold/10 dark:border-white/5 space-y-4">
+              <div className="p-6 bg-theme-surface border-t border-theme-border space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] uppercase tracking-widest text-ink/30 dark:text-dark-muted font-bold">Inquiry total estimate</span>
-                  <p className="text-xl font-display font-black text-indigo dark:text-gold">₹{totalEstimate.toLocaleString('en-IN')}</p>
+                  <span className="text-[10px] uppercase tracking-widest text-theme-text-muted font-bold">Inquiry total estimate</span>
+                  <p className="text-xl font-display font-black text-theme-primary">₹{totalEstimate.toLocaleString('en-IN')}</p>
                 </div>
 
-                <div className="bg-cream dark:bg-dark-surface border border-gold/10 dark:border-white/5 p-4 rounded-2xl flex items-center gap-3">
-                  <ShieldCheck size={18} className="text-indigo dark:text-gold shrink-0 animate-pulse" />
-                  <p className="text-[9px] text-ink/40 dark:text-dark-muted font-bold uppercase leading-relaxed text-left">
+                <div className="bg-theme-bg border border-theme-border p-4 rounded-2xl flex items-center gap-3">
+                  <ShieldCheck size={18} className="text-theme-accent shrink-0 animate-pulse" />
+                  <p className="text-[9px] text-theme-text-secondary font-bold uppercase leading-relaxed text-left">
                     Direct Inquiry. Curated handloom sizing consultation provided on WhatsApp free of cost.
                   </p>
                 </div>

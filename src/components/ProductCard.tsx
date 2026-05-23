@@ -78,9 +78,9 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
       viewport={{ once: true }}
       transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
       onClick={() => onClick(product)}
-      className="group cursor-pointer glass-card p-0 overflow-hidden hover:-translate-y-2 dark:bg-dark-card dark:border-white/5"
+      className="group cursor-pointer glass-card p-0 overflow-hidden hover:-translate-y-2 hover:shadow-glow duration-500 rounded-3xl"
     >
-      <div className="relative aspect-[4/5] overflow-hidden bg-ink/5 dark:bg-white/5">
+      <div className="relative aspect-[4/5] overflow-hidden bg-theme-bg/10">
         <img
           src={product.imageUrl}
           alt={product.name}
@@ -116,13 +116,13 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
         ) : null}
         
         {/* Overlay Gradients */}
-        <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent opacity-40 md:opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-40 md:opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         
         {/* Action Buttons */}
         <div className="absolute top-4 right-4 z-10 flex flex-col space-y-2 translate-x-0 opacity-100 md:translate-x-12 md:opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 delay-100">
           <button 
             onClick={handleShare}
-            className="p-3 bg-white/90 dark:bg-dark-surface/90 backdrop-blur-sm rounded-full text-maroon dark:text-saffron hover:bg-rose hover:text-white dark:hover:bg-gold dark:hover:text-ink shadow-xl transition-all"
+            className="p-3 bg-theme-surface/90 backdrop-blur-sm rounded-full text-theme-primary hover:bg-theme-accent hover:text-theme-btn-text shadow-xl transition-all"
           >
             <Share2 size={16} />
           </button>
@@ -130,7 +130,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
 
         {/* Category Badge */}
         <div className="absolute bottom-4 left-4 z-10 translate-y-0 opacity-100 md:translate-y-8 md:opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-200">
-           <span className="bg-saffron text-ink text-[8px] sm:text-[10px] font-display font-bold uppercase tracking-widest px-2 sm:px-3 py-1 rounded-sm shadow-lg">
+           <span className="bg-theme-accent text-theme-btn-text text-[8px] sm:text-[10px] font-display font-bold uppercase tracking-widest px-2.5 sm:px-3 py-1 rounded-md shadow-lg">
             {product.category || 'Limited Edition'}
           </span>
         </div>
@@ -138,12 +138,12 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
       
       <div className="p-5 sm:p-6 space-y-3 sm:space-y-4">
         <div className="flex justify-between items-start gap-3 sm:gap-4">
-          <h2 className="text-xl sm:text-2xl font-serif text-ink dark:text-dark-text group-hover:text-maroon dark:group-hover:text-gold transition-colors leading-tight line-clamp-2">
+          <h2 className="text-xl sm:text-2xl font-serif text-theme-text-primary group-hover:text-theme-accent transition-colors leading-tight line-clamp-2">
             {product.name}
           </h2>
           <div className="flex flex-col items-end">
-            <span className="text-[10px] uppercase tracking-widest text-ink/30 dark:text-dark-muted mb-1 font-bold">Price</span>
-            <p className="text-indigo dark:text-gold font-display font-bold text-base sm:text-lg whitespace-nowrap">₹{product.price.toLocaleString('en-IN')}</p>
+            <span className="text-[10px] uppercase tracking-widest text-theme-text-muted mb-1 font-bold">Price</span>
+            <p className="text-theme-primary font-display font-bold text-base sm:text-lg whitespace-nowrap">₹{product.price.toLocaleString('en-IN')}</p>
           </div>
         </div>
 
@@ -154,7 +154,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
             e.stopPropagation();
             onClick(product);
           }}
-          className="wa-button w-full rounded-xl !py-4 group-hover:shadow-[0_0_20px_rgba(114,28,36,0.2)] text-[10px] sm:text-xs"
+          className="wa-button w-full rounded-xl !py-4 group-hover:shadow-glow text-[10px] sm:text-xs"
         >
           <MessageCircle size={14} className="group-hover:animate-bounce" />
           <span>Curate & Inquire</span>

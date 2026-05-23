@@ -1,11 +1,51 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
+:root {
+  --color-primary-val: #721c24; /* Rich Maroon */
+  --color-primary-hover-val: #0D0D0D;
+  --color-accent-val: #D4AF37; /* Gold */
+  --color-background-val: #FDFBF7; /* Cream */
+  --color-surface-val: #ffffff; /* Pure White */
+  --color-text-primary-val: #0D0D0D; /* Deep Espresso Ink */
+  --color-text-secondary-val: #2D3E50; /* Velvet Slate Blue */
+  --color-text-muted-val: #6e7278; /* Soft Charcol */
+  --color-border-theme-val: rgba(212, 175, 55, 0.18);
+  --color-button-bg: #721c24;
+  --color-button-text: #FDFBF7;
+}
+
+.dark {
+  --color-primary-val: #D4AF37; /* Radiant Gold */
+  --color-primary-hover-val: #F4C430; /* Golden Saffron */
+  --color-accent-val: #F4C430; /* Golden Saffron */
+  --color-background-val: #0a0a0a; /* Deep Ink Eclipse */
+  --color-surface-val: #141414; /* Shadow Card Obsidian */
+  --color-text-primary-val: #e5e5e5; /* Luxe Off-White */
+  --color-text-secondary-val: #ababab; /* Soft Silver */
+  --color-text-muted-val: #666666; /* Obsidian Muted Gray */
+  --color-border-theme-val: rgba(212, 175, 55, 0.1);
+  --color-button-bg: rgba(212, 175, 55, 0.08);
+  --color-button-text: #D4AF37;
+}
+
 @theme {
   --font-serif: "Playfair Display", serif;
   --font-sans: "Inter", sans-serif;
   --font-display: "Space Grotesk", sans-serif;
   
+  --color-theme-primary: var(--color-primary-val);
+  --color-theme-primary-hover: var(--color-primary-hover-val);
+  --color-theme-accent: var(--color-accent-val);
+  --color-theme-bg: var(--color-background-val);
+  --color-theme-surface: var(--color-surface-val);
+  --color-theme-text-primary: var(--color-text-primary-val);
+  --color-theme-text-secondary: var(--color-text-secondary-val);
+  --color-theme-text-muted: var(--color-text-muted-val);
+  --color-theme-border: var(--color-border-theme-val);
+  --color-theme-btn-bg: var(--color-button-bg);
+  --color-theme-btn-text: var(--color-button-text);
+
   --color-cream: #FDFBF7;
   --color-gold: #D4AF37; /* More vibrant gold */
   --color-maroon: #721c24; /* Deeper maroon */
@@ -14,8 +54,8 @@
   --color-indigo: #2D3E50; /* New accent */
   --color-rose: #E0115F; /* New accent */
   
-  --shadow-luxury: 0 20px 40px -15px rgba(114, 28, 36, 0.1);
-  --shadow-glow: 0 0 20px rgba(212, 175, 55, 0.2);
+  --shadow-luxury: 0 20px 40px -15px rgba(114, 28, 36, 0.06);
+  --shadow-glow: 0 0 24px rgba(212, 175, 55, 0.15);
 
   /* Dark Mode Palette */
   --color-dark-surface: #0a0a0a;
@@ -27,11 +67,7 @@
 
 @layer base {
   body {
-    @apply bg-cream text-ink font-sans antialiased selection:bg-rose/20 transition-colors duration-300;
-  }
-  
-  .dark body {
-    @apply bg-dark-surface text-dark-text;
+    @apply bg-theme-bg text-theme-text-primary font-sans antialiased selection:bg-rose/20 transition-colors duration-500 ease-[cubic-bezier(0.4,0,0.2,1)];
   }
   
   h1, h2, h3, h4, h5, h6, .serif {
@@ -44,19 +80,11 @@
 }
 
 .luxury-border {
-  @apply border-gold/15 transition-colors;
-}
-
-.dark .luxury-border {
-  @apply border-gold/5;
+  @apply border-theme-border transition-colors duration-500;
 }
 
 .glass-card {
-  @apply bg-white/40 backdrop-blur-md border border-white/20 shadow-luxury transition-all;
-}
-
-.dark .glass-card {
-  @apply bg-dark-card/60 border-gold/5 shadow-none;
+  @apply bg-theme-surface/60 backdrop-blur-md border border-theme-border shadow-luxury transition-all duration-500;
 }
 
 .staggered-text span {
@@ -85,9 +113,5 @@
 }
 
 .wa-button {
-  @apply relative overflow-hidden bg-maroon text-cream flex items-center justify-center gap-2 py-4 px-8 text-[10px] font-bold uppercase tracking-[0.2em] transition-all hover:bg-ink active:scale-95 shadow-lg;
-}
-
-.dark .wa-button {
-  @apply bg-gold/10 text-gold border border-gold/20 hover:bg-gold/20;
+  @apply relative overflow-hidden bg-theme-btn-bg text-theme-btn-text flex items-center justify-center gap-2 py-4 px-8 text-[10px] font-bold uppercase tracking-[0.2em] transition-all hover:opacity-90 active:scale-95 shadow-lg border border-theme-border rounded-xl;
 }

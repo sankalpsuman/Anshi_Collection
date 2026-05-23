@@ -166,7 +166,7 @@ function ProductModalContent({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-ink/80 dark:bg-black/85 backdrop-blur-xl z-40 transition-colors"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-colors"
         />
 
         {/* Modal Window */}
@@ -175,12 +175,12 @@ function ProductModalContent({
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 30 }}
           transition={{ type: "spring", damping: 24, stiffness: 220 }}
-          className="relative w-full max-w-6xl bg-cream dark:bg-dark-surface overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.6)] flex flex-col max-h-[92vh] rounded-[40px] border border-gold/15 dark:border-white/5 z-50 mt-4 md:mt-0"
+          className="relative w-full max-w-6xl bg-theme-bg overflow-hidden shadow-luxury flex flex-col max-h-[92vh] rounded-[40px] border border-theme-border z-50 mt-4 md:mt-0"
         >
           {/* Close Trigger Button */}
           <button
             onClick={onClose}
-            className="absolute right-5 top-5 z-50 p-3 bg-white/90 dark:bg-dark-card/90 hover:bg-rose hover:text-white dark:hover:bg-rose dark:hover:text-white rounded-full text-ink dark:text-dark-text shadow-xl transition-all hover:scale-110 active:scale-95 duration-300"
+            className="absolute right-5 top-5 z-50 p-3 bg-theme-surface/90 hover:bg-rose hover:text-white rounded-full text-theme-text-primary shadow-xl transition-all hover:scale-110 active:scale-95 duration-300"
           >
             <X size={18} />
           </button>
@@ -193,12 +193,12 @@ function ProductModalContent({
               <div className="md:col-span-7 space-y-6 flex flex-col justify-start">
                 
                 {/* Media frame with Zoom Container */}
-                <div className="relative aspect-[4/5] rounded-[32px] overflow-hidden bg-white dark:bg-dark-card border border-gold/10 dark:border-white/5 shadow-inner">
+                <div className="relative aspect-[4/5] rounded-[32px] overflow-hidden bg-theme-surface border border-theme-border shadow-inner">
                   
                   {/* Badge & Discounts Overlay */}
                   {product.badge && (
                     <div className="absolute top-4 left-4 z-30">
-                      <span className="bg-ink dark:bg-gold text-white dark:text-ink text-[9px] sm:text-[10px] uppercase font-black tracking-widest px-4 py-2 rounded-full shadow-2xl">
+                      <span className="bg-theme-primary text-theme-btn-text text-[9px] sm:text-[10px] uppercase font-black tracking-widest px-4 py-2 rounded-full shadow-2xl">
                         {badgeLabels[product.badge] || product.badge.replace('_', ' ')}
                       </span>
                     </div>
@@ -256,11 +256,11 @@ function ProductModalContent({
 
                   {/* Media Switch tabs (Toggles when product has video URL available) */}
                   {product.videoUrl && (
-                    <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 bg-black/55 backdrop-blur-xl p-1.5 rounded-full border border-white/10 shadow-2xl">
+                    <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 bg-black/55 backdrop-blur-xl p-1.5 rounded-full border border-theme-border shadow-2xl">
                       <button
                         onClick={() => setActiveMediaTab('image')}
                         className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all ${
-                          activeMediaTab === 'image' ? 'bg-white text-ink shadow' : 'text-white/60 hover:text-white'
+                          activeMediaTab === 'image' ? 'bg-theme-surface text-theme-text-primary shadow' : 'text-white/60 hover:text-white'
                         }`}
                       >
                         Photos
@@ -284,7 +284,7 @@ function ProductModalContent({
                     <button
                       onClick={() => setActiveImageIndex(-1)}
                       className={`relative w-20 aspect-square rounded-2xl overflow-hidden border-2 flex-shrink-0 transition-all ${
-                        activeImageIndex === -1 ? 'border-maroon dark:border-gold scale-105' : 'border-gold/10 hover:border-gold/40'
+                        activeImageIndex === -1 ? 'border-theme-accent scale-105' : 'border-theme-border hover:border-theme-accent/50'
                       }`}
                     >
                       <img src={product.imageUrl} alt="Thumbnail Main" referrerPolicy="no-referrer" className="w-full h-full object-cover" />
@@ -296,7 +296,7 @@ function ProductModalContent({
                         key={idx}
                         onClick={() => setActiveImageIndex(idx + 1)}
                         className={`relative w-20 aspect-square rounded-2xl overflow-hidden border-2 flex-shrink-0 transition-all ${
-                          activeImageIndex === idx + 1 ? 'border-maroon dark:border-gold scale-105' : 'border-gold/10 hover:border-gold/40'
+                          activeImageIndex === idx + 1 ? 'border-theme-accent scale-105' : 'border-theme-border hover:border-theme-accent/50'
                         }`}
                       >
                         <img src={img} alt={`Thumbnail ${idx}`} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
@@ -313,10 +313,10 @@ function ProductModalContent({
                   {/* Category, views count & Title */}
                   <div>
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-[10px] font-black text-saffron dark:text-gold uppercase tracking-[0.3em]">
+                      <span className="text-[10px] font-black text-theme-accent uppercase tracking-[0.3em]">
                         {product.category || 'Luxury Original'}
                       </span>
-                      <div className="flex items-center gap-1.5 text-rose dark:text-gold/60">
+                      <div className="flex items-center gap-1.5 text-rose">
                         <svg className="animate-pulse w-3 h-3 block fill-current" viewBox="0 0 24 24">
                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
                         </svg>
@@ -326,30 +326,30 @@ function ProductModalContent({
                       </div>
                     </div>
 
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-ink dark:text-dark-text leading-tight font-bold">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-theme-text-primary leading-tight font-bold">
                       {product.name}
                     </h2>
 
                     <div className="flex items-baseline gap-3 mt-4 sm:mt-5">
-                      <p className="text-3xl font-display font-black text-[#6366f1] dark:text-gold">
+                      <p className="text-3xl font-display font-black text-theme-primary">
                         ₹{product.price.toLocaleString('en-IN')}
                       </p>
                       {product.offerPercent && product.offerPercent > 0 ? (
-                        <p className="text-sm line-through text-ink/20 dark:text-dark-muted font-bold">
+                        <p className="text-sm line-through text-theme-text-muted font-bold">
                           ₹{Math.round(product.price * (1 + product.offerPercent/100)).toLocaleString('en-IN')}
                         </p>
                       ) : null}
                     </div>
 
-                    <p className="text-[10px] font-mono font-black text-indigo/40 dark:text-gold/40 uppercase tracking-widest mt-2">
+                    <p className="text-[10px] font-mono font-black text-theme-text-muted uppercase tracking-widest mt-2">
                       CODE: {product.code || 'ANS-N/A'}
                     </p>
                   </div>
 
                   {/* Stock and specifications parameters in table */}
-                  <div className="grid grid-cols-2 gap-4 bg-white/50 dark:bg-dark-card/30 p-5 rounded-3xl border border-gold/10 dark:border-white/5 text-xs font-semibold">
+                  <div className="grid grid-cols-2 gap-4 bg-theme-surface/50 p-5 rounded-3xl border border-theme-border text-xs font-semibold">
                     <div className="space-y-1">
-                      <span className="text-[9px] uppercase tracking-widest text-ink/30 dark:text-dark-muted block">Availability</span>
+                      <span className="text-[9px] uppercase tracking-widest text-theme-text-muted block">Availability</span>
                       {product.stockStatus === 'out_of_stock' ? (
                         <span className="text-rose text-[10px] uppercase font-black tracking-wider block">🔴 Out of Stock</span>
                       ) : product.stockStatus === 'low_stock' ? (
@@ -359,22 +359,22 @@ function ProductModalContent({
                       )}
                     </div>
 
-                    <div className="space-y-1 border-l border-gold/10 pl-4">
-                      <span className="text-[9px] uppercase tracking-widest text-ink/30 dark:text-dark-muted block">Fabric / Material</span>
-                      <span className="text-ink dark:text-dark-text text-[11px] uppercase tracking-tighter block truncate" title={product.fabric || 'Heritage Weave'}>
+                    <div className="space-y-1 border-l border-theme-border pl-4">
+                      <span className="text-[9px] uppercase tracking-widest text-theme-text-muted block">Fabric / Material</span>
+                      <span className="text-theme-text-primary text-[11px] uppercase tracking-tighter block truncate" title={product.fabric || 'Heritage Weave'}>
                         {product.fabric || 'Heritage Weave'}
                       </span>
                     </div>
 
-                    <div className="space-y-1 pt-3.5 border-t border-gold/10">
-                      <span className="text-[9px] uppercase tracking-widest text-ink/30 dark:text-dark-muted block">Est. Delivery</span>
-                      <span className="text-ink dark:text-dark-text text-[11px] block">
+                    <div className="space-y-1 pt-3.5 border-t border-theme-border">
+                      <span className="text-[9px] uppercase tracking-widest text-theme-text-muted block">Est. Delivery</span>
+                      <span className="text-theme-text-primary text-[11px] block">
                         {product.deliveryTime || '3-5 Working Days'}
                       </span>
                     </div>
 
-                    <div className="space-y-1 pt-3.5 border-t border-gold/10 border-l pl-4">
-                      <span className="text-[9px] uppercase tracking-widest text-ink/30 dark:text-dark-muted block">Shipping Cost</span>
+                    <div className="space-y-1 pt-3.5 border-t border-theme-border border-l pl-4">
+                      <span className="text-[9px] uppercase tracking-widest text-theme-text-muted block">Shipping Cost</span>
                       <span className="text-green-500 text-[11px] uppercase font-bold tracking-tight block">🟢 Free Across India</span>
                     </div>
                   </div>
@@ -384,10 +384,10 @@ function ProductModalContent({
                     {/* Sizes Selection */}
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
-                        <label className="text-[10px] font-black uppercase tracking-[0.25em] text-indigo/50 dark:text-gold/50">
+                        <label className="text-[10px] font-black uppercase tracking-[0.25em] text-theme-text-muted">
                           Select Size
                         </label>
-                        <span className="text-[9px] text-indigo/30 dark:text-dark-muted font-black uppercase">Tailored fit available</span>
+                        <span className="text-[9px] text-theme-text-muted/60 font-black uppercase">Tailored fit available</span>
                       </div>
                       <div className="flex flex-wrap gap-2">
                         {availableSizes.map((size) => (
@@ -396,8 +396,8 @@ function ProductModalContent({
                             onClick={() => setSelectedSize(size)}
                             className={`min-w-11 h-11 px-3 flex items-center justify-center font-mono text-xs font-bold rounded-xl border-2 transition-all cursor-pointer ${
                               selectedSize === size
-                                ? 'bg-indigo border-indigo text-white dark:bg-gold dark:border-gold dark:text-ink shadow-md'
-                                : 'bg-white/40 dark:bg-dark-card/40 border-gold/10 dark:border-white/5 text-ink/65 dark:text-dark-text hover:border-gold'
+                                ? 'bg-theme-primary border-theme-primary text-theme-btn-text shadow-md'
+                                : 'bg-theme-surface border-theme-border text-theme-text-secondary hover:border-theme-accent'
                             }`}
                           >
                             {size}
@@ -408,7 +408,7 @@ function ProductModalContent({
 
                     {/* Colors Selection */}
                     <div className="space-y-3">
-                      <label className="block text-[10px] font-black uppercase tracking-[0.25em] text-indigo/50 dark:text-gold/50">
+                      <label className="block text-[10px] font-black uppercase tracking-[0.25em] text-theme-text-muted">
                         Select Craft Color
                       </label>
                       <div className="flex flex-wrap gap-2.5">
@@ -418,11 +418,11 @@ function ProductModalContent({
                             onClick={() => setSelectedColor(color)}
                             className={`px-4 py-2.5 text-xs font-bold rounded-full border-2 transition-all cursor-pointer flex items-center gap-2 ${
                               selectedColor === color
-                                ? 'bg-indigo border-indigo text-white dark:bg-gold dark:border-gold dark:text-ink shadow-sm'
-                                : 'bg-white/40 dark:bg-dark-card/40 border-gold/10 dark:border-white/5 text-ink/65 dark:text-dark-text hover:border-gold'
+                                ? 'bg-theme-primary border-theme-primary text-theme-btn-text shadow-sm'
+                                : 'bg-theme-surface border-theme-border text-theme-text-secondary hover:border-theme-accent'
                             }`}
                           >
-                            <span className="w-2.5 h-2.5 rounded-full bg-gold shrink-0 border border-white/10" style={{
+                            <span className="w-2.5 h-2.5 rounded-full bg-theme-accent shrink-0 border border-white/10" style={{
                               backgroundColor: color.toLowerCase().includes('black') ? '#000000' :
                                               color.toLowerCase().includes('white') ? '#ffffff' :
                                               color.toLowerCase().includes('red') ? '#ef4444' :
@@ -437,39 +437,39 @@ function ProductModalContent({
 
                     {/* Quantity Selector */}
                     <div className="space-y-3">
-                      <label className="block text-[10px] font-black uppercase tracking-[0.25em] text-indigo/50 dark:text-gold/50">
+                      <label className="block text-[10px] font-black uppercase tracking-[0.25em] text-theme-text-muted">
                         Quantity
                       </label>
                       <div className="flex items-center space-x-4">
-                        <div className="flex items-center bg-white/50 dark:bg-dark-card/50 border border-gold/15 dark:border-white/5 rounded-2xl p-1 shrink-0">
+                        <div className="flex items-center bg-theme-surface/50 border border-theme-border rounded-2xl p-1 shrink-0">
                           <button
                             onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
-                            className="w-10 h-10 flex items-center justify-center text-ink/50 dark:text-dark-text hover:bg-rose/5 hover:text-rose rounded-xl transition-all font-black cursor-pointer"
+                            className="w-10 h-10 flex items-center justify-center text-theme-text-primary hover:bg-rose/5 hover:text-rose rounded-xl transition-all font-black cursor-pointer"
                           >
                             <Minus size={14} />
                           </button>
-                          <span className="w-12 text-center text-sm font-display font-black text-indigo dark:text-gold">
+                          <span className="w-12 text-center text-sm font-display font-black text-theme-text-primary">
                             {quantity}
                           </span>
                           <button
                             onClick={() => setQuantity(prev => Math.min(20, prev + 1))}
-                            className="w-10 h-10 flex items-center justify-center text-ink/50 dark:text-dark-text hover:bg-green-500/5 hover:text-green-500 rounded-xl transition-all font-black cursor-pointer"
+                            className="w-10 h-10 flex items-center justify-center text-theme-text-primary hover:bg-green-500/5 hover:text-green-500 rounded-xl transition-all font-black cursor-pointer"
                           >
                             <Plus size={14} />
                           </button>
                         </div>
-                        <span className="text-[10px] uppercase text-ink/30 dark:text-dark-muted font-bold tracking-wider">pieces in order</span>
+                        <span className="text-[10px] uppercase text-theme-text-muted font-bold tracking-wider">pieces in order</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Narrative details */}
                   <div className="space-y-3 border-t luxury-border pt-6">
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo dark:text-gold flex items-center gap-2">
-                      <Eye size={12} fill="currentColor" className="text-saffron shrink-0" />
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-theme-primary flex items-center gap-2">
+                      <Eye size={12} fill="currentColor" className="text-theme-accent shrink-0" />
                       Artisan Narrative
                     </h3>
-                    <p className="text-ink/65 dark:text-dark-text/60 leading-relaxed font-sans text-xs sm:text-sm font-medium">
+                    <p className="text-theme-text-secondary leading-relaxed font-sans text-xs sm:text-sm font-medium">
                       {product.description || "Every thread tells a story of heritage and passion. This masterpiece from Anshi Collection combines traditional weaving techniques with contemporary silhouettes."}
                     </p>
                   </div>
@@ -495,10 +495,10 @@ function ProductModalContent({
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={handleCartAdd}
-                      className={`flex-1 select-none flex items-center justify-center gap-2.5 py-4.5 rounded-2xl cursor-pointer text-xs uppercase font-black tracking-widest border border-indigo/25 transition-all ${
+                      className={`flex-1 select-none flex items-center justify-center gap-2.5 py-4.5 rounded-2xl cursor-pointer text-xs uppercase font-black tracking-widest border border-theme-primary/20 transition-all ${
                         addedSuccess 
-                          ? 'bg-indigo text-white border-indigo dark:bg-gold dark:border-gold dark:text-ink' 
-                          : 'bg-indigo/5 text-indigo hover:bg-indigo hover:text-white dark:bg-gold/5 dark:text-gold dark:hover:bg-gold dark:hover:text-ink'
+                          ? 'bg-theme-primary text-theme-btn-text border-theme-primary shadow-glow' 
+                          : 'bg-theme-primary/10 text-theme-primary hover:bg-theme-primary hover:text-theme-btn-text'
                       }`}
                     >
                       {addedSuccess ? <Check size={18} /> : <ShoppingBag size={18} />}
@@ -509,7 +509,7 @@ function ProductModalContent({
                   {/* Share option */}
                   <button
                     onClick={handleShare}
-                    className="w-full justify-center flex items-center gap-2 py-3 bg-white/40 dark:bg-dark-card/40 border border-gold/10 dark:border-white/5 text-maroon/50 hover:text-maroon dark:text-saffron/60 dark:hover:text-saffron text-[9px] uppercase tracking-[0.2em] font-black rounded-xl transition-all"
+                    className="w-full justify-center flex items-center gap-2 py-3 bg-theme-surface border border-theme-border text-theme-text-secondary hover:text-theme-text-primary text-[9px] uppercase tracking-[0.2em] font-black rounded-xl transition-all"
                   >
                     <Share2 size={13} />
                     <span>Share With Beloved</span>
@@ -523,9 +523,9 @@ function ProductModalContent({
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <span className="text-[10px] font-black uppercase tracking-[0.4em] text-rose">Curator suggestions</span>
-                  <h3 className="text-xl sm:text-2xl font-serif text-ink dark:text-dark-text font-bold">Related Masterpieces</h3>
+                  <h3 className="text-xl sm:text-2xl font-serif text-theme-text-primary font-bold">Related Masterpieces</h3>
                 </div>
-                <div className="w-16 h-[1px] bg-gold/30"></div>
+                <div className="w-16 h-[1px] bg-theme-border"></div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -533,15 +533,15 @@ function ProductModalContent({
                   <div 
                     key={relProduct.id}
                     onClick={() => onSelectProduct(relProduct)}
-                    className="group cursor-pointer glass-card p-0 rounded-2xl overflow-hidden border border-gold/10 dark:border-white/5 flex flex-row items-center gap-4 bg-white/40 dark:bg-dark-card/30 hover:shadow-lg transition-all"
+                    className="group cursor-pointer glass-card p-0 rounded-2xl overflow-hidden border border-theme-border flex flex-row items-center gap-4 bg-theme-surface hover:shadow-glow hover:border-theme-accent/50 transition-all"
                   >
                     <div className="w-20 aspect-square overflow-hidden shrink-0">
                       <img src={relProduct.imageUrl} alt={relProduct.name} referrerPolicy="no-referrer" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     </div>
                     <div className="p-3 overflow-hidden text-left flex-1 space-y-1">
-                      <h4 className="text-xs font-serif font-black text-ink dark:text-dark-text group-hover:text-gold transition-colors truncate">{relProduct.name}</h4>
-                      <p className="text-[10px] font-mono tracking-widest text-[#6366f1] dark:text-gold font-black">₹{relProduct.price.toLocaleString('en-IN')}</p>
-                      <span className="text-[8px] uppercase tracking-widest font-black text-ink/30 dark:text-dark-muted block truncate">{relProduct.category || 'Silhouettes'}</span>
+                      <h4 className="text-xs font-serif font-black text-theme-text-primary group-hover:text-theme-accent transition-colors truncate">{relProduct.name}</h4>
+                      <p className="text-[10px] font-mono tracking-widest text-theme-primary font-black">₹{relProduct.price.toLocaleString('en-IN')}</p>
+                      <span className="text-[8px] uppercase tracking-widest font-black text-theme-text-muted block truncate">{relProduct.category || 'Silhouettes'}</span>
                     </div>
                   </div>
                 ))}
