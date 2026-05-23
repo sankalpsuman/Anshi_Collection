@@ -133,7 +133,7 @@ export default function FeedbackSection({ productId }: FeedbackSectionProps) {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-theme-primary text-theme-btn-text py-3 rounded-xl font-black uppercase tracking-widest text-[10px] hover:opacity-95 transition-all flex items-center justify-center gap-2 shadow-xl shadow-theme-primary/5 disabled:opacity-50 cursor-pointer"
+          className="w-full bg-theme-primary text-theme-primary-text py-3 rounded-xl font-black uppercase tracking-widest text-[10px] hover:opacity-95 transition-all flex items-center justify-center gap-2 shadow-xl shadow-theme-primary/5 disabled:opacity-50 cursor-pointer"
         >
           {isSubmitting ? (
             <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />

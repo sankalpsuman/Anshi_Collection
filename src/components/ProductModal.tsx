@@ -198,7 +198,7 @@ function ProductModalContent({
                   {/* Badge & Discounts Overlay */}
                   {product.badge && (
                     <div className="absolute top-4 left-4 z-30">
-                      <span className="bg-theme-primary text-theme-btn-text text-[9px] sm:text-[10px] uppercase font-black tracking-widest px-4 py-2 rounded-full shadow-2xl">
+                      <span className="bg-theme-primary text-theme-primary-text text-[9px] sm:text-[10px] uppercase font-black tracking-widest px-4 py-2 rounded-full shadow-2xl">
                         {badgeLabels[product.badge] || product.badge.replace('_', ' ')}
                       </span>
                     </div>
@@ -396,7 +396,7 @@ function ProductModalContent({
                             onClick={() => setSelectedSize(size)}
                             className={`min-w-11 h-11 px-3 flex items-center justify-center font-mono text-xs font-bold rounded-xl border-2 transition-all cursor-pointer ${
                               selectedSize === size
-                                ? 'bg-theme-primary border-theme-primary text-theme-btn-text shadow-md'
+                                ? 'bg-theme-primary border-theme-primary text-theme-primary-text shadow-md'
                                 : 'bg-theme-surface border-theme-border text-theme-text-secondary hover:border-theme-accent'
                             }`}
                           >
@@ -418,7 +418,7 @@ function ProductModalContent({
                             onClick={() => setSelectedColor(color)}
                             className={`px-4 py-2.5 text-xs font-bold rounded-full border-2 transition-all cursor-pointer flex items-center gap-2 ${
                               selectedColor === color
-                                ? 'bg-theme-primary border-theme-primary text-theme-btn-text shadow-sm'
+                                ? 'bg-theme-primary border-theme-primary text-theme-primary-text shadow-sm'
                                 : 'bg-theme-surface border-theme-border text-theme-text-secondary hover:border-theme-accent'
                             }`}
                           >
@@ -497,8 +497,8 @@ function ProductModalContent({
                       onClick={handleCartAdd}
                       className={`flex-1 select-none flex items-center justify-center gap-2.5 py-4.5 rounded-2xl cursor-pointer text-xs uppercase font-black tracking-widest border border-theme-primary/20 transition-all ${
                         addedSuccess 
-                          ? 'bg-theme-primary text-theme-btn-text border-theme-primary shadow-glow' 
-                          : 'bg-theme-primary/10 text-theme-primary hover:bg-theme-primary hover:text-theme-btn-text'
+                          ? 'bg-theme-primary text-theme-primary-text border-theme-primary shadow-glow' 
+                          : 'bg-theme-primary/10 text-theme-primary hover:bg-theme-primary hover:text-theme-primary-text'
                       }`}
                     >
                       {addedSuccess ? <Check size={18} /> : <ShoppingBag size={18} />}

@@ -310,7 +310,7 @@ export default function Home() {
                       onClick={() => setGridCols(num)}
                       className={`w-8 h-8 flex items-center justify-center rounded-lg text-[10px] font-black transition-all ${
                         gridCols === num 
-                          ? 'bg-theme-primary text-theme-btn-text shadow-lg' 
+                          ? 'bg-theme-primary text-theme-primary-text shadow-lg' 
                           : 'text-theme-text-secondary/55 hover:text-theme-text-primary hover:bg-theme-surface/50'
                       }`}
                     >
@@ -343,7 +343,7 @@ export default function Home() {
                     onClick={() => setActiveCategory(cat || 'All')}
                     className={`px-6 sm:px-10 py-3 sm:py-4 rounded-2xl text-[10px] sm:text-xs uppercase tracking-[0.2em] font-black transition-all whitespace-nowrap border-2 ${
                       activeCategory === (cat || 'All')
-                        ? 'bg-theme-primary text-theme-btn-text border-theme-primary shadow-glow -translate-y-0.5'
+                        ? 'bg-theme-primary text-theme-primary-text border-theme-primary shadow-glow -translate-y-0.5'
                         : 'bg-theme-surface text-theme-text-secondary border-theme-border hover:border-theme-accent hover:text-theme-text-primary'
                     }`}
                   >
@@ -526,7 +526,7 @@ export default function Home() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsInquiryOpen(true)}
-              className="flex items-center gap-2.5 px-6 py-4.5 bg-theme-primary text-theme-btn-text font-sans text-xs uppercase font-black tracking-widest rounded-full shadow-glow relative border border-theme-border cursor-pointer"
+              className="flex items-center gap-2.5 px-6 py-4.5 bg-theme-primary text-theme-primary-text font-sans text-xs uppercase font-black tracking-widest rounded-full shadow-glow relative border border-theme-border cursor-pointer"
             >
               <ShoppingBag size={15} />
               <span>Inquiry List</span>

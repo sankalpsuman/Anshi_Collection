@@ -151,7 +151,7 @@ export default function InquiryCart({ isOpen, onClose }: InquiryCartProps) {
                   </div>
                   <button
                     onClick={onClose}
-                    className="px-6 py-3 bg-theme-primary text-theme-btn-text hover:scale-105 active:scale-95 transition-all outline-none rounded-xl text-[10px] font-black uppercase tracking-widest mt-4"
+                    className="px-6 py-3 bg-theme-primary text-theme-primary-text hover:scale-105 active:scale-95 transition-all outline-none rounded-xl text-[10px] font-black uppercase tracking-widest mt-4"
                   >
                     Start Curating
                   </button>

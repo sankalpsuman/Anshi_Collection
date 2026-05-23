@@ -13,6 +13,8 @@
   --color-border-theme-val: rgba(212, 175, 55, 0.18);
   --color-button-bg: #721c24;
   --color-button-text: #FDFBF7;
+  --color-primary-text-val: #FDFBF7; /* Cream text on solid maroon primary bg */
+  --color-accent-text-val: #0D0D0D; /* Dark text on solid gold accent bg */
 }
 
 .dark {
@@ -27,6 +29,8 @@
   --color-border-theme-val: rgba(212, 175, 55, 0.1);
   --color-button-bg: rgba(212, 175, 55, 0.08);
   --color-button-text: #D4AF37;
+  --color-primary-text-val: #0D0D0D; /* Dark text on solid gold primary bg */
+  --color-accent-text-val: #0D0D0D; /* Dark text on solid saffron accent bg */
 }
 
 @theme {
@@ -36,7 +40,9 @@
   
   --color-theme-primary: var(--color-primary-val);
   --color-theme-primary-hover: var(--color-primary-hover-val);
+  --color-theme-primary-text: var(--color-primary-text-val);
   --color-theme-accent: var(--color-accent-val);
+  --color-theme-accent-text: var(--color-accent-text-val);
   --color-theme-bg: var(--color-background-val);
   --color-theme-surface: var(--color-surface-val);
   --color-theme-text-primary: var(--color-text-primary-val);

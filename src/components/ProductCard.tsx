@@ -122,7 +122,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
         <div className="absolute top-4 right-4 z-10 flex flex-col space-y-2 translate-x-0 opacity-100 md:translate-x-12 md:opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 delay-100">
           <button 
             onClick={handleShare}
-            className="p-3 bg-theme-surface/90 backdrop-blur-sm rounded-full text-theme-primary hover:bg-theme-accent hover:text-theme-btn-text shadow-xl transition-all"
+            className="p-3 bg-theme-surface/90 backdrop-blur-sm rounded-full text-theme-primary hover:bg-theme-accent hover:text-theme-accent-text shadow-xl transition-all"
           >
             <Share2 size={16} />
           </button>
@@ -130,7 +130,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
 
         {/* Category Badge */}
         <div className="absolute bottom-4 left-4 z-10 translate-y-0 opacity-100 md:translate-y-8 md:opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-200">
-           <span className="bg-theme-accent text-theme-btn-text text-[8px] sm:text-[10px] font-display font-bold uppercase tracking-widest px-2.5 sm:px-3 py-1 rounded-md shadow-lg">
+           <span className="bg-theme-accent text-theme-accent-text text-[8px] sm:text-[10px] font-display font-bold uppercase tracking-widest px-2.5 sm:px-3 py-1 rounded-md shadow-lg">
             {product.category || 'Limited Edition'}
           </span>
         </div>
