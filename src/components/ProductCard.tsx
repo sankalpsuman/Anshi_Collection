@@ -29,9 +29,9 @@ function RatingSummary({ productId }: { productId: string }) {
 
   if (stats.count === 0) {
     return (
-      <div className="flex items-center gap-1 opacity-20">
-        <Star size={10} className="text-gold" />
-        <span className="text-[9px] font-bold uppercase tracking-tighter">No reviews</span>
+      <div className="flex items-center gap-1 opacity-40">
+        <Star size={10} className="text-theme-accent" />
+        <span className="text-[9px] font-bold uppercase tracking-tighter text-theme-text-muted">No reviews</span>
       </div>
     );
   }
@@ -43,12 +43,12 @@ function RatingSummary({ productId }: { productId: string }) {
           <Star 
             key={s} 
             size={10} 
-            fill={s <= Math.round(stats.avg) ? "#C5A059" : "none"} 
-            className={s <= Math.round(stats.avg) ? "text-gold" : "text-gold/20"} 
+            fill={s <= Math.round(stats.avg) ? "currentColor" : "none"} 
+            className={s <= Math.round(stats.avg) ? "text-theme-accent" : "text-theme-text-muted/20"} 
           />
         ))}
       </div>
-      <span className="text-[10px] font-black text-gold uppercase tracking-tighter">
+      <span className="text-[10px] font-black text-theme-accent uppercase tracking-tighter">
         {stats.avg} ({stats.count})
       </span>
     </div>

@@ -24,8 +24,8 @@
   --color-background-val: #0a0a0a; /* Deep Ink Eclipse */
   --color-surface-val: #141414; /* Shadow Card Obsidian */
   --color-text-primary-val: #e5e5e5; /* Luxe Off-White */
-  --color-text-secondary-val: #ababab; /* Soft Silver */
-  --color-text-muted-val: #666666; /* Obsidian Muted Gray */
+  --color-text-secondary-val: #cbd5e1; /* Soft Silver with Higher Contrast */
+  --color-text-muted-val: #9ca3af; /* Obsidian Muted Gray with WCAG AA Contrast */
   --color-border-theme-val: rgba(212, 175, 55, 0.1);
   --color-button-bg: rgba(212, 175, 55, 0.08);
   --color-button-text: #D4AF37;

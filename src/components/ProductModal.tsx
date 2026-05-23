@@ -241,11 +241,11 @@ function ProductModalContent({
                         />
                       ) : (
                         <div className="p-8 text-center space-y-4">
-                          <Play size={44} className="text-saffron mx-auto animate-bounce" />
+                          <Play size={44} className="text-theme-accent mx-auto animate-bounce" />
                           <p className="text-xs uppercase font-black text-white/50 tracking-wider">Preview reel walkthrough</p>
                           <button
                             onClick={() => window.open(product.videoUrl, '_blank')}
-                            className="px-6 py-2.5 bg-saffron text-ink font-bold text-[10px] tracking-wider rounded-xl uppercase"
+                            className="px-6 py-2.5 bg-theme-accent text-theme-accent-text font-bold text-[10px] tracking-wider rounded-xl uppercase cursor-pointer hover:opacity-90"
                           >
                             Open Reel Video &rarr;
                           </button>
@@ -316,7 +316,7 @@ function ProductModalContent({
                       <span className="text-[10px] font-black text-theme-accent uppercase tracking-[0.3em]">
                         {product.category || 'Luxury Original'}
                       </span>
-                      <div className="flex items-center gap-1.5 text-rose">
+                      <div className="flex items-center gap-1.5 text-rose dark:text-rose-400">
                         <svg className="animate-pulse w-3 h-3 block fill-current" viewBox="0 0 24 24">
                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
                         </svg>

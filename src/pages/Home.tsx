@@ -79,9 +79,23 @@ function RecentlyViewed({
 }
 
 export default function Home() {
-  const [products, setProducts] = React.useState<Product[]>([]);
+  const [products, setProducts] = React.useState<Product[]>(() => {
+    try {
+      const cached = localStorage.getItem('ansi_cached_products');
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
   const [selectedProduct, setSelectedProduct] = React.useState<Product | null>(null);
-  const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = React.useState(() => {
+    try {
+      const cached = localStorage.getItem('ansi_cached_products');
+      return !cached || JSON.parse(cached).length === 0;
+    } catch {
+      return true;
+    }
+  });
   const [error, setError] = React.useState<string | null>(null);
   const [activeCategory, setActiveCategory] = React.useState('All');
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -111,15 +125,23 @@ export default function Home() {
         setProducts(data);
         setLoading(false);
         setError(null);
+        try {
+          localStorage.setItem('ansi_cached_products', JSON.stringify(data));
+        } catch (e) {
+          console.error("Failed to cache products:", e);
+        }
       },
       (err) => {
         console.error("Subscription error:", err);
-        setError("Unable to connect to the gallery. Please try again later.");
+        // Only show error if we possess no cached data
+        if (products.length === 0) {
+          setError("Unable to connect to the gallery. Please try again later.");
+        }
         setLoading(false);
       }
     );
     return () => unsubscribe();
-  }, []);
+  }, [products.length]);
 
   // Sync floating inquiry list item numbers reactive
   React.useEffect(() => {
@@ -364,17 +386,17 @@ export default function Home() {
             {loading ? (
                Array(3).fill(0).map((_, i) => (
                   <div key={i} className="animate-pulse space-y-4">
-                    <div className="aspect-[3/4] bg-gold/5 rounded-sm" />
-                    <div className="h-4 w-2/3 bg-gold/5" />
-                    <div className="h-4 w-1/3 bg-gold/5" />
+                    <div className="aspect-[3/4] bg-theme-accent/5 rounded-xl" />
+                    <div className="h-4 w-2/3 bg-theme-accent/5 rounded" />
+                    <div className="h-4 w-1/3 bg-theme-accent/5 rounded" />
                   </div>
                ))
             ) : error ? (
-              <div className="col-span-full py-20 text-center border border-rose/10 bg-rose/5 rounded-2xl">
+              <div className="col-span-full py-20 text-center border border-rose/15 bg-rose/5 rounded-2xl">
                 <p className="text-rose font-serif italic">{error}</p>
                 <button 
                   onClick={() => window.location.reload()}
-                  className="mt-4 text-xs font-black uppercase tracking-widest text-ink border-b border-ink/20"
+                  className="mt-4 text-xs font-black uppercase tracking-widest text-theme-text-primary border-b border-theme-border cursor-pointer hover:text-theme-accent transition-colors"
                 >
                   Retry &rarr;
                 </button>
@@ -391,8 +413,8 @@ export default function Home() {
           </div>
 
           {!loading && filteredProducts.length === 0 && (
-            <div className="text-center py-32 border border-dashed luxury-border bg-ink/[0.02]">
-              <p className="text-ink/30 font-serif text-2xl italic">The collection awaits its next masterpiece.</p>
+            <div className="text-center py-32 border border-dashed luxury-border bg-theme-surface/30 rounded-3xl">
+              <p className="text-theme-text-muted font-serif text-2xl italic">The collection awaits its next masterpiece.</p>
             </div>
           )}
 
@@ -407,53 +429,53 @@ export default function Home() {
             <section className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <div className="space-y-8">
                 <div className="space-y-4">
-                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-saffron">Our Legacy</span>
-                  <h2 className="text-5xl font-serif font-bold text-ink dark:text-dark-text leading-tight">The Soul of<br />Anshi Collection</h2>
+                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-theme-accent">Our Legacy</span>
+                  <h2 className="text-5xl font-serif font-bold text-theme-text-primary leading-tight">The Soul of<br />Anshi Collection</h2>
                 </div>
-                <p className="text-ink/60 dark:text-dark-text/60 leading-relaxed font-medium">
+                <p className="text-theme-text-secondary leading-relaxed font-medium">
                   Born from a deep passion for India's rich textile heritage, Anshi Collection was founded by <b>Richa Verma</b>. Our journey began with a vision to preserve the art of handcrafted ethnic wear, ensuring each piece resonates with timeless grace.
                 </p>
                 <div className="grid grid-cols-1 gap-8 py-6 border-y luxury-border">
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-full bg-indigo/5 dark:bg-gold/5 flex items-center justify-center text-indigo dark:text-gold flex-shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-theme-accent/10 flex items-center justify-center text-theme-accent flex-shrink-0">
                       <span className="text-xs font-black">01</span>
                     </div>
                     <div>
-                      <h4 className="text-sm font-black uppercase tracking-widest text-indigo dark:text-gold mb-1">100% Genuine</h4>
-                      <p className="text-xs text-ink/40 dark:text-dark-muted leading-relaxed">Every piece is verified for authentic silk and superior artisan-grade craftsmanship.</p>
+                      <h4 className="text-sm font-black uppercase tracking-widest text-theme-accent mb-1">100% Genuine</h4>
+                      <p className="text-xs text-theme-text-muted leading-relaxed">Every piece is verified for authentic silk and superior artisan-grade craftsmanship.</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-full bg-indigo/5 dark:bg-gold/5 flex items-center justify-center text-indigo dark:text-gold flex-shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-theme-accent/10 flex items-center justify-center text-theme-accent flex-shrink-0">
                       <span className="text-xs font-black">02</span>
                     </div>
                     <div>
-                      <h4 className="text-sm font-black uppercase tracking-widest text-indigo dark:text-gold mb-1">Direct Trust</h4>
-                      <p className="text-xs text-ink/40 dark:text-dark-muted leading-relaxed">No middlemen involved. You interact directly with the curator who brings these designs to life.</p>
+                      <h4 className="text-sm font-black uppercase tracking-widest text-theme-accent mb-1">Direct Trust</h4>
+                      <p className="text-xs text-theme-text-muted leading-relaxed">No middlemen involved. You interact directly with the curator who brings these designs to life.</p>
                     </div>
                   </div>
                 </div>
               </div>
               
-              <div className="bg-white dark:bg-dark-card p-12 lg:p-20 rounded-[40px] shadow-luxury border border-gold/10 flex flex-col items-center justify-center text-center space-y-6">
-                 <div className="w-20 h-[1px] bg-gold/30" />
-                 <h3 className="text-2xl font-serif italic text-ink/60 dark:text-dark-text/60 leading-relaxed">"Every weave tells a story of heritage and passion."</h3>
+              <div className="bg-theme-surface border border-theme-border p-12 lg:p-20 rounded-[40px] shadow-luxury flex flex-col items-center justify-center text-center space-y-6">
+                 <div className="w-20 h-[1px] bg-theme-border" />
+                 <h3 className="text-2xl font-serif italic text-theme-text-secondary leading-relaxed">"Every weave tells a story of heritage and passion."</h3>
                  <div className="space-y-1">
-                   <p className="text-sm font-black uppercase tracking-widest text-maroon dark:text-gold">Richa Verma</p>
-                   <p className="text-[10px] uppercase tracking-tighter text-ink/30 dark:text-dark-muted">Founder & Curator</p>
+                   <p className="text-sm font-black uppercase tracking-widest text-theme-primary">Richa Verma</p>
+                   <p className="text-[10px] uppercase tracking-tighter text-theme-text-muted">Founder & Curator</p>
                  </div>
-                 <div className="w-20 h-[1px] bg-gold/30" />
+                 <div className="w-20 h-[1px] bg-theme-border" />
               </div>
             </section>
 
             {/* How to Order Guide */}
-            <section className="bg-ink dark:bg-dark-card text-white p-10 md:p-20 rounded-[60px] shadow-2xl relative overflow-hidden">
-               <div className="absolute top-0 right-0 w-1/2 h-full bg-rose/[0.03] -skew-x-12" />
+            <section className="bg-theme-surface border border-theme-border text-theme-text-primary p-10 md:p-20 rounded-[60px] shadow-2xl relative overflow-hidden">
+               <div className="absolute top-0 right-0 w-1/2 h-full bg-theme-accent/[0.03] -skew-x-12" />
                
                <div className="relative z-10">
                  <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
-                    <span className="text-[10px] font-black uppercase tracking-[0.5em] text-rose">Order Process</span>
-                    <h2 className="text-4xl md:text-5xl font-serif font-bold">How to Order</h2>
+                    <span className="text-[10px] font-black uppercase tracking-[0.5em] text-theme-accent">Order Process</span>
+                    <h2 className="text-4xl md:text-5xl font-serif font-bold text-theme-text-primary">How to Order</h2>
                  </div>
 
                  <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -462,10 +484,10 @@ export default function Home() {
                       { step: '02', title: 'Inquire', desc: 'Click "Reserve on WhatsApp" to initiate a direct consultation with Richa Verma regarding size and availability.' },
                       { step: '03', title: 'Confirm', desc: 'Once your selection is finalized, we will provide payment details for a secure transaction through WhatsApp.' },
                     ].map((item, idx) => (
-                      <div key={idx} className="space-y-6 group p-8 rounded-3xl border border-white/5 bg-white/[0.02]">
-                        <span className="text-4xl font-serif text-saffron/40 font-bold block">{item.step}</span>
-                        <h4 className="text-xl font-serif font-bold text-saffron">{item.title}</h4>
-                        <p className="text-white/40 text-sm leading-relaxed">{item.desc}</p>
+                      <div key={idx} className="space-y-6 group p-8 rounded-3xl border border-theme-border bg-theme-bg/50">
+                        <span className="text-4xl font-serif text-theme-accent/40 font-bold block">{item.step}</span>
+                        <h4 className="text-xl font-serif font-bold text-theme-accent">{item.title}</h4>
+                        <p className="text-theme-text-secondary text-sm leading-relaxed">{item.desc}</p>
                       </div>
                     ))}
                  </div>
@@ -473,25 +495,25 @@ export default function Home() {
             </section>
           </div>
 
-          <footer className="mt-20 pt-10 pb-20 border-t border-gold/10 text-center space-y-6">
-            <div className="brand-logo serif text-2xl tracking-[4px] text-maroon dark:text-gold font-black opacity-30 flex items-center justify-center gap-2">
-              <Sparkles size={24} fill="currentColor" className="text-saffron" />
+          <footer className="mt-20 pt-10 pb-20 border-t border-theme-border text-center space-y-6">
+            <div className="brand-logo serif text-2xl tracking-[4px] text-theme-primary font-black opacity-60 flex items-center justify-center gap-2">
+              <Sparkles size={24} fill="currentColor" className="text-theme-accent animate-pulse" />
               ANSHI COLLECTION
             </div>
             <div className="flex flex-col items-center gap-4">
-              <Link to="/admin" className="text-[10px] uppercase tracking-[0.4em] font-black text-rose hover:text-maroon dark:hover:text-gold transition-colors flex items-center gap-2" id="artisan-access-btn">
-                <span className={`w-1.5 h-1.5 rounded-full ${isAdminUser ? 'bg-indigo dark:bg-gold' : 'bg-rose'} animate-pulse`}></span>
+              <Link to="/admin" className="text-[10px] uppercase tracking-[0.4em] font-black text-theme-accent hover:text-theme-primary transition-colors flex items-center gap-2" id="artisan-access-btn">
+                <span className={`w-1.5 h-1.5 rounded-full ${isAdminUser ? 'bg-theme-primary' : 'bg-rose'} animate-pulse`}></span>
                 {isAdminUser ? 'Collector Dashboard' : 'Artisan Access'}
               </Link>
               <div className="space-y-2">
-                <p className="text-[10px] uppercase font-black tracking-[0.2em] text-ink/40 dark:text-dark-muted max-w-xs mx-auto">
+                <p className="text-[10px] uppercase font-black tracking-[0.2em] text-theme-text-muted max-w-xs mx-auto">
                   102 AITA TOWER, AVILALA, TIRUPATI
                 </p>
                 <div className="space-y-1">
-                  <p className="text-[10px] uppercase font-black tracking-widest text-ink/20 dark:text-white/10">
+                  <p className="text-[10px] uppercase font-black tracking-widest text-theme-text-muted/55">
                     Crafting Elegance Since 2026
                   </p>
-                  <p className="text-[10px] uppercase font-bold tracking-tighter text-ink/10 dark:text-white/5">
+                  <p className="text-[10px] uppercase font-bold tracking-tighter text-theme-text-muted/30">
                     &copy; 2026 Anshi Collection. All Rights Reserved.
                   </p>
                 </div>

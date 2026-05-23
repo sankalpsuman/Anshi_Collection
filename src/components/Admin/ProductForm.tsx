@@ -442,10 +442,10 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
           </div>
 
           {/* Video or Reels URL */}
-          <div className="bg-white/50 dark:bg-dark-card/30 p-6 rounded-[28px] border border-gold/10 dark:border-white/5">
+          <div className="bg-theme-surface p-6 rounded-[28px] border border-theme-border shadow-luxury">
             <div className="flex items-center gap-2.5 mb-3">
               <Video className="text-rose shrink-0" size={18} />
-              <label className="block text-[10px] font-black uppercase tracking-widest text-indigo/70 dark:text-gold/70">
+              <label className="block text-[10px] font-black uppercase tracking-widest text-theme-accent">
                 Reel / Video showcase url (Optional)
               </label>
             </div>
@@ -454,9 +454,9 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
               placeholder="e.g. https://instagram.com/p/reel_url or CDN mp4 link"
               value={formData.videoUrl}
               onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
-              className="w-full bg-cream/30 dark:bg-dark-surface/30 border border-gold/10 dark:border-white/5 rounded-2xl px-4 py-3.5 text-xs outline-none focus:border-maroon dark:focus:border-gold transition-all text-ink dark:text-dark-text font-medium"
+              className="w-full bg-theme-surface border border-theme-border rounded-2xl px-4 py-3.5 text-xs outline-none focus:border-theme-primary transition-all text-theme-text-primary font-medium"
             />
-            <span className="text-[8px] sm:text-[9px] uppercase font-black text-ink/30 dark:text-dark-muted block mt-2 ml-1">
+            <span className="text-[8px] sm:text-[9px] uppercase font-black text-theme-text-muted block mt-2 ml-1">
               Provides direct video reels or walk-throughs in the product layout.
             </span>
           </div>
@@ -466,59 +466,59 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
         <div className="space-y-8">
           {/* E-Commerce Metrics section */}
           <div className="space-y-6">
-            <div className="relative border-b border-gold/10 pb-2">
-              <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 dark:text-gold/40 mb-2">Artisan Model Name</label>
+            <div className="relative border-b border-theme-border pb-2">
+              <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-theme-accent mb-2">Artisan Model Name</label>
               <input
                 required
                 type="text"
                 placeholder="e.g. Maharani Crimson Silk Jhumka"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full bg-transparent py-2.5 font-serif text-2xl outline-none placeholder:text-ink/10 dark:placeholder:text-white/10 transition-all font-bold dark:text-dark-text"
+                className="w-full bg-transparent py-2.5 font-serif text-2xl outline-none placeholder:text-theme-text-muted/40 transition-all font-bold text-theme-text-primary"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-6">
-              <div className="relative border-b border-gold/10 pb-2">
-                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 dark:text-gold/40 mb-1">Product Code</label>
+              <div className="relative border-b border-theme-border pb-2">
+                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-theme-accent mb-1">Product Code</label>
                 <input
                   required
                   type="text"
                   placeholder="e.g. ANS102"
                   value={formData.code}
                   onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-                  className="w-full bg-transparent py-2 uppercase font-mono font-bold text-lg outline-none placeholder:text-ink/10 dark:placeholder:text-white/10 transition-all dark:text-dark-text"
+                  className="w-full bg-transparent py-2 uppercase font-mono font-bold text-lg outline-none placeholder:text-theme-text-muted/40 transition-all text-theme-text-primary"
                 />
               </div>
 
-              <div className="relative border-b border-gold/10 pb-2">
-                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 dark:text-gold/40 mb-1">Price (INR ₹)</label>
+              <div className="relative border-b border-theme-border pb-2">
+                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-theme-accent mb-1">Price (INR ₹)</label>
                 <input
                   required
                   type="number"
                   placeholder="e.g. 1999"
                   value={formData.price || ''}
                   onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
-                  className="w-full bg-transparent py-2 font-display font-black text-lg outline-none placeholder:text-ink/10 dark:placeholder:text-white/10 transition-all dark:text-dark-text"
+                  className="w-full bg-transparent py-2 font-display font-black text-lg outline-none placeholder:text-theme-text-muted/40 transition-all text-theme-text-primary"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-6">
-              <div className="relative border-b border-gold/10 pb-2">
-                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 dark:text-gold/40 mb-1">Category / Silhouette</label>
+              <div className="relative border-b border-theme-border pb-2">
+                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-theme-accent mb-1">Category / Silhouette</label>
                 <input
                   required
                   type="text"
                   placeholder="e.g. Saree, Kurta"
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full bg-transparent py-2 font-serif italic text-base outline-none placeholder:text-ink/10 dark:placeholder:text-white/10 transition-all dark:text-dark-text"
+                  className="w-full bg-transparent py-2 font-serif italic text-base outline-none placeholder:text-theme-text-muted/40 transition-all text-theme-text-primary"
                 />
               </div>
 
-              <div className="relative border-b border-gold/10 pb-2">
-                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 dark:text-gold/40 mb-1">Offer Discount (%)</label>
+              <div className="relative border-b border-theme-border pb-2">
+                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-theme-accent mb-1">Offer Discount (%)</label>
                 <input
                   type="number"
                   min="0"
@@ -526,95 +526,95 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
                   placeholder="e.g. 20 for 20% Off"
                   value={formData.offerPercent || ''}
                   onChange={(e) => setFormData({ ...formData, offerPercent: Number(e.target.value) })}
-                  className="w-full bg-transparent py-2 font-mono font-semibold text-base outline-none placeholder:text-ink/10 dark:placeholder:text-white/10 transition-all dark:text-dark-text"
+                  className="w-full bg-transparent py-2 font-mono font-semibold text-base outline-none placeholder:text-theme-text-muted/40 transition-all text-theme-text-primary"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-6">
-              <div className="relative border-b border-gold/10 pb-2">
-                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 dark:text-gold/40 mb-1">Sizes (Comma separated)</label>
+              <div className="relative border-b border-theme-border pb-2">
+                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-theme-accent mb-1">Sizes (Comma separated)</label>
                 <input
                   type="text"
                   placeholder="S, M, L, XL"
                   value={formData.sizes}
                   onChange={(e) => setFormData({ ...formData, sizes: e.target.value })}
-                  className="w-full bg-transparent py-2 font-mono text-xs font-semibold outline-none transition-all dark:text-dark-text"
+                  className="w-full bg-transparent py-2 font-mono text-xs font-semibold outline-none placeholder:text-theme-text-muted/40 transition-all text-theme-text-primary"
                 />
               </div>
 
-              <div className="relative border-b border-gold/10 pb-2">
-                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 dark:text-gold/40 mb-1">Colors (Comma separated)</label>
+              <div className="relative border-b border-theme-border pb-2">
+                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-theme-accent mb-1">Colors (Comma separated)</label>
                 <input
                   type="text"
                   placeholder="e.g. Black, Silk Red, Ivory"
                   value={formData.colors}
                   onChange={(e) => setFormData({ ...formData, colors: e.target.value })}
-                  className="w-full bg-transparent py-2 font-sans text-xs font-semibold outline-none transition-all dark:text-dark-text"
+                  className="w-full bg-transparent py-2 font-sans text-xs font-semibold outline-none placeholder:text-theme-text-muted/40 transition-all text-theme-text-primary"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-6">
-              <div className="relative border-b border-gold/10 pb-2">
-                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 dark:text-gold/40 mb-1">Fabric Details</label>
+              <div className="relative border-b border-theme-border pb-2">
+                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-theme-accent mb-1">Fabric Details</label>
                 <input
                   type="text"
                   placeholder="e.g. 100% Pure Organza Silk"
                   value={formData.fabric}
                   onChange={(e) => setFormData({ ...formData, fabric: e.target.value })}
-                  className="w-full bg-transparent py-2 font-sans text-xs font-semibold outline-none transition-all dark:text-dark-text"
+                  className="w-full bg-transparent py-2 font-sans text-xs font-semibold outline-none placeholder:text-theme-text-muted/40 transition-all text-theme-text-primary"
                 />
               </div>
 
-              <div className="relative border-b border-gold/10 pb-2">
-                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 dark:text-gold/40 mb-1">Delivery Estimate</label>
+              <div className="relative border-b border-theme-border pb-2">
+                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-theme-accent mb-1">Delivery Estimate</label>
                 <input
                   type="text"
                   placeholder="e.g. 3-5 Working Days"
                   value={formData.deliveryTime}
                   onChange={(e) => setFormData({ ...formData, deliveryTime: e.target.value })}
-                  className="w-full bg-transparent py-2 font-sans text-xs font-semibold outline-none transition-all dark:text-dark-text"
+                  className="w-full bg-transparent py-2 font-sans text-xs font-semibold outline-none placeholder:text-theme-text-muted/40 transition-all text-theme-text-primary"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-6">
               <div className="relative">
-                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 dark:text-gold/40 mb-2">Badge Status</label>
+                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-theme-accent mb-2">Badge Status</label>
                 <select
                   value={formData.badge}
                   onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
-                  className="w-full bg-white dark:bg-dark-card border border-gold/15 dark:border-white/5 rounded-2xl px-4 py-3 text-xs outline-none focus:border-maroon dark:focus:border-gold transition-all text-ink dark:text-dark-text font-bold"
+                  className="w-full bg-theme-surface border border-theme-border rounded-2xl px-4 py-3 text-xs outline-none focus:border-theme-primary transition-all text-theme-text-primary font-bold"
                 >
-                  <option value="">No Badge Selected</option>
-                  <option value="new_arrival">✨ New Arrival</option>
-                  <option value="trending">🔥 Trending Now</option>
-                  <option value="fast_selling">⚡ Fast Selling</option>
-                  <option value="limited_stock">⚠️ Limited Stock</option>
-                  <option value="sale">🏷️ On Sale</option>
+                  <option value="" className="bg-theme-surface text-theme-text-primary">No Badge Selected</option>
+                  <option value="new_arrival" className="bg-theme-surface text-theme-text-primary">✨ New Arrival</option>
+                  <option value="trending" className="bg-theme-surface text-theme-text-primary">🔥 Trending Now</option>
+                  <option value="fast_selling" className="bg-theme-surface text-theme-text-primary">⚡ Fast Selling</option>
+                  <option value="limited_stock" className="bg-theme-surface text-theme-text-primary">⚠️ Limited Stock</option>
+                  <option value="sale" className="bg-theme-surface text-theme-text-primary">🏷️ On Sale</option>
                 </select>
               </div>
 
               <div className="relative">
-                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 dark:text-gold/40 mb-2">Stock Availability</label>
+                <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-theme-accent mb-2">Stock Availability</label>
                 <select
                   value={formData.stockStatus}
                   onChange={(e) => setFormData({ ...formData, stockStatus: e.target.value })}
-                  className="w-full bg-white dark:bg-dark-card border border-gold/15 dark:border-white/5 rounded-2xl px-4 py-3 text-xs outline-none focus:border-maroon dark:focus:border-gold transition-all text-ink dark:text-dark-text font-bold"
+                  className="w-full bg-theme-surface border border-theme-border rounded-2xl px-4 py-3 text-xs outline-none focus:border-theme-primary transition-all text-theme-text-primary font-bold"
                 >
-                  <option value="in_stock">🟢 In Stock (Ready to ship)</option>
-                  <option value="low_stock">🟡 Low Stock (Hurry up)</option>
-                  <option value="out_of_stock">🔴 Out Of Stock (Curated on order)</option>
+                  <option value="in_stock" className="bg-theme-surface text-theme-text-primary">🟢 In Stock (Ready to ship)</option>
+                  <option value="low_stock" className="bg-theme-surface text-theme-text-primary">🟡 Low Stock (Hurry up)</option>
+                  <option value="out_of_stock" className="bg-theme-surface text-theme-text-primary">🔴 Out Of Stock (Curated on order)</option>
                 </select>
               </div>
             </div>
           </div>
 
           {/* Textareas */}
-          <div className="space-y-6 bg-cream/10 dark:bg-dark-card/10 p-6 rounded-[28px] border border-gold/10 dark:border-white/5">
+          <div className="space-y-6 bg-theme-surface p-6 rounded-[28px] border border-theme-border shadow-luxury">
             <div>
-              <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 dark:text-gold/40 mb-2">
+              <label className="block text-[10px] font-black uppercase tracking-[0.4em] text-theme-accent mb-2">
                 Artisan Story / Description
               </label>
               <textarea
@@ -623,26 +623,26 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
                 placeholder="Give details about the craftsmanship, the dye process, materials, or special care instructions..."
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full bg-white/80 dark:bg-dark-surface/60 border border-gold/10 dark:border-white/5 p-4 rounded-2xl text-xs outline-none resize-none placeholder:text-ink/20 dark:placeholder:text-white/10 transition-all font-medium dark:text-dark-text"
+                className="w-full bg-theme-surface border border-theme-border p-4 rounded-2xl text-xs outline-none resize-none placeholder:text-theme-text-muted/40 transition-all font-medium text-theme-text-primary"
               />
             </div>
 
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo/40 dark:text-gold/40 flex items-center gap-1.5">
+                <label className="text-[10px] font-black uppercase tracking-[0.4em] text-theme-accent flex items-center gap-1.5">
                   Custom WhatsApp message override
-                  <span className="cursor-help text-indigo dark:text-gold" title="Optional: Customizes the initial text that users send to you on WhatsApp. Leaves details tags in context automatically.">
+                  <span className="cursor-help text-theme-primary" title="Optional: Customizes the initial text that users send to you on WhatsApp. Leaves details tags in context automatically.">
                     <HelpCircle size={12} />
                   </span>
                 </label>
-                <span className="text-[8px] text-ink/30 dark:text-dark-muted font-bold uppercase tracking-wider">Optional override</span>
+                <span className="text-[8px] text-theme-text-muted font-bold uppercase tracking-wider">Optional override</span>
               </div>
               <textarea
                 rows={3}
                 placeholder="Hi, I'm absolutely loving this handloom saree! Can you confirm availability and customize length for me?"
                 value={formData.customMessage}
                 onChange={(e) => setFormData({ ...formData, customMessage: e.target.value })}
-                className="w-full bg-white/80 dark:bg-dark-surface/60 border border-gold/10 dark:border-white/5 p-4 rounded-2xl text-xs outline-none resize-none placeholder:text-ink/20 dark:placeholder:text-white/10 transition-all font-medium dark:text-dark-text"
+                className="w-full bg-theme-surface border border-theme-border p-4 rounded-2xl text-xs outline-none resize-none placeholder:text-theme-text-muted/40 transition-all font-medium text-theme-text-primary"
               />
             </div>
           </div>
@@ -654,7 +654,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loading || isUploadingPrimary || isUploadingExtra}
-              className="flex-1 text-center justify-center flex items-center gap-3 bg-indigo hover:bg-indigo-600 dark:bg-gold dark:hover:bg-amber-400 text-cream dark:text-ink py-4 sm:py-5 rounded-2xl shadow-xl shadow-indigo/10 dark:shadow-gold/5 disabled:opacity-40 disabled:scale-100 transition-all uppercase text-[10px] tracking-[0.2em] font-black cursor-pointer"
+              className="flex-1 text-center justify-center flex items-center gap-3 bg-theme-primary text-theme-primary-text py-4 sm:py-5 rounded-2xl shadow-xl disabled:opacity-40 disabled:scale-100 transition-all uppercase text-[10px] tracking-[0.2em] font-black cursor-pointer hover:opacity-90"
             >
               {loading ? <Loader2 className="animate-spin" size={18} /> : <CheckCircle2 size={18} />}
               <span>{initialData ? 'Archive Modified Piece' : 'Commit to Boutique Collection'}</span>
@@ -664,7 +664,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
               whileTap={{ scale: 0.98 }}
               type="button"
               onClick={onCancel}
-              className="px-8 py-4 sm:py-5 border border-ink/10 dark:border-white/10 text-ink/50 dark:text-white/40 font-black uppercase tracking-widest text-[10px] hover:bg-rose/5 hover:text-rose hover:border-rose/20 transition-all rounded-2xl cursor-pointer"
+              className="px-8 py-4 sm:py-5 border border-theme-border text-theme-text-secondary font-black uppercase tracking-widest text-[10px] hover:bg-rose/5 hover:text-rose hover:border-rose/20 transition-all rounded-2xl cursor-pointer"
             >
               Discard Changes
             </motion.button>

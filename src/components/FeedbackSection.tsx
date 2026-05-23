@@ -19,6 +19,8 @@ export default function FeedbackSection({ productId }: FeedbackSectionProps) {
   const [rating, setRating] = useState(5);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   useEffect(() => {
     // Check admin status
@@ -48,6 +50,7 @@ export default function FeedbackSection({ productId }: FeedbackSectionProps) {
     if (!userName || !comment) return;
 
     setIsSubmitting(true);
+    setErrorMessage(null);
     try {
       await feedbackService.addFeedback({
         productId,
@@ -60,19 +63,24 @@ export default function FeedbackSection({ productId }: FeedbackSectionProps) {
       setRating(5);
     } catch (error) {
       console.error('Error adding feedback:', error);
-      alert('Failed to add feedback. Please try again.');
+      setErrorMessage('Failed to add feedback. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDelete = async (feedbackId: string) => {
-    if (window.confirm('Are you sure you want to remove this feedback?')) {
-      try {
-        await feedbackService.deleteFeedback(feedbackId);
-      } catch (error) {
-        console.error('Error deleting feedback:', error);
-      }
+    setDeleteConfirmId(feedbackId);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteConfirmId) return;
+    try {
+      await feedbackService.deleteFeedback(deleteConfirmId);
+    } catch (error) {
+      console.error('Error deleting feedback:', error);
+    } finally {
+      setDeleteConfirmId(null);
     }
   };
 
@@ -91,7 +99,12 @@ export default function FeedbackSection({ productId }: FeedbackSectionProps) {
       </div>
 
       {/* Add Feedback Form */}
-      <form onSubmit={handleSubmit} className="bg-theme-surface/50 p-6 rounded-2xl border border-theme-border space-y-4">
+      <form onSubmit={handleSubmit} className="bg-theme-surface/50 p-6 rounded-2xl border border-theme-border space-y-4 relative">
+        {errorMessage && (
+          <div className="p-3 bg-rose/10 border border-rose/20 text-rose rounded-xl text-xs font-semibold">
+            {errorMessage}
+          </div>
+        )}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="relative">
             <input
@@ -114,8 +127,8 @@ export default function FeedbackSection({ productId }: FeedbackSectionProps) {
               >
                 <Star
                   size={16}
-                  fill={star <= rating ? "#C5A059" : "none"}
-                  className={star <= rating ? "text-gold" : "text-gold/30"}
+                  fill={star <= rating ? "currentColor" : "none"}
+                  className={star <= rating ? "text-theme-accent" : "text-theme-text-muted/30"}
                 />
               </button>
             ))}
@@ -146,6 +159,49 @@ export default function FeedbackSection({ productId }: FeedbackSectionProps) {
         </button>
       </form>
 
+      {/* Confirmation Dialog Overlay */}
+      <AnimatePresence>
+        {deleteConfirmId && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setDeleteConfirmId(null)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative bg-theme-bg p-8 rounded-[32px] border border-theme-border shadow-luxury max-w-sm w-full text-center space-y-6 z-10"
+            >
+              <Trash2 className="mx-auto text-rose" size={40} />
+              <div className="space-y-2">
+                <h4 className="font-serif text-xl font-bold text-theme-text-primary">Confirm Deletion</h4>
+                <p className="text-xs text-theme-text-secondary leading-relaxed">
+                  Are you absolutely sure you want to remove this feedback from the curator gallery?
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setDeleteConfirmId(null)}
+                  className="flex-1 py-3 border border-theme-border rounded-xl text-[10px] uppercase tracking-widest font-black text-theme-text-secondary cursor-pointer hover:bg-theme-surface"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="flex-1 py-3 bg-rose text-white rounded-xl text-[10px] uppercase tracking-widest font-black cursor-pointer hover:opacity-90"
+                >
+                  Delete
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Feedback List */}
       <div className="space-y-6">
         <AnimatePresence mode="popLayout">
@@ -169,8 +225,8 @@ export default function FeedbackSection({ productId }: FeedbackSectionProps) {
                         <Star
                           key={i}
                           size={10}
-                          fill={i < fb.rating ? "#C5A059" : "none"}
-                          className={i < fb.rating ? "text-gold" : "text-gold/20"}
+                          fill={i < fb.rating ? "currentColor" : "none"}
+                          className={i < fb.rating ? "text-theme-accent" : "text-theme-text-muted/20"}
                         />
                       ))}
                     </div>
