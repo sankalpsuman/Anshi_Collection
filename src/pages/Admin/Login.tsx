@@ -8,7 +8,7 @@ import ThemeToggle from '../../components/ThemeToggle';
 
 import { adminService } from '../../services/adminService';
 
-export default function Login() {
+export default function Login({ onBackToBoutique }: { onBackToBoutique?: () => void } = {}) {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const navigate = useNavigate();
@@ -142,7 +142,16 @@ export default function Login() {
         </motion.button>
 
         <div className="pt-8 flex flex-col space-y-6">
-          <Link to="/" className="text-xs text-theme-text-secondary hover:text-theme-accent transition-colors flex items-center justify-center gap-3">
+          <Link 
+            to="/" 
+            onClick={(e) => {
+              if (onBackToBoutique) {
+                e.preventDefault();
+                onBackToBoutique();
+              }
+            }}
+            className="text-xs text-theme-text-secondary hover:text-theme-accent transition-colors flex items-center justify-center gap-3"
+          >
              <span className="w-10 h-[1px] bg-theme-border"></span>
              Boutique View
              <span className="w-10 h-[1px] bg-theme-border"></span>

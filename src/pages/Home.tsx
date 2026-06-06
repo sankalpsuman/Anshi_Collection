@@ -539,7 +539,7 @@ export default function Home({
               </div>
             ) : (
               <div className="max-w-xl mx-auto py-4">
-                <Login />
+                <Login onBackToBoutique={() => setActiveModule('gallery')} />
               </div>
             )}
           </div>

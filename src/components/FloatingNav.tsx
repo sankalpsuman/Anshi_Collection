@@ -36,12 +36,6 @@ export default function FloatingNav({
       label: 'My Bag',
       icon: ShoppingBag,
       badge: cartCount
-    },
-    {
-      id: 'artisan' as AppModule,
-      label: isAdminUser ? 'Collector' : 'Artisan',
-      icon: isAdminUser ? Sliders : Shield,
-      badge: 0
     }
   ];
 

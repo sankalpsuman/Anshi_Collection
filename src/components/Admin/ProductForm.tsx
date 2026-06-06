@@ -675,7 +675,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
                 whileTap={{ scale: 0.99 }}
                 type="submit"
                 disabled={loading || isUploadingPrimary}
-                className="flex-1 flex items-center justify-center gap-2 bg-theme-primary text-theme-primary-text py-3.5 rounded-xl shadow-md disabled:opacity-40 disabled:scale-100 transition-all uppercase text-[10px] tracking-[0.15em] font-black cursor-pointer hover:opacity-90"
+                className="flex-1 w-full h-12 flex items-center justify-center gap-2 bg-theme-primary text-theme-primary-text rounded-xl shadow-md disabled:opacity-40 disabled:scale-100 transition-all uppercase text-[10px] tracking-[0.15em] font-black cursor-pointer hover:opacity-90 animate-none"
               >
                 {loading ? <Loader2 className="animate-spin shrink-0" size={14} /> : <CheckCircle2 className="shrink-0" size={14} />}
                 <span>{initialData ? 'Archive Modified Piece' : 'Commit to Boutique Collection'}</span>
@@ -685,7 +685,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
                 whileTap={{ scale: 0.99 }}
                 type="button"
                 onClick={onCancel}
-                className="px-8 py-3.5 border border-theme-border text-theme-text-secondary font-black uppercase tracking-widest text-[10px] hover:bg-rose/5 hover:text-rose hover:border-rose/20 transition-all rounded-xl cursor-pointer"
+                className="flex-1 w-full h-12 flex items-center justify-center border border-theme-border text-theme-text-secondary font-black uppercase tracking-widest text-[10px] hover:bg-rose/5 hover:text-rose hover:border-rose/20 transition-all rounded-xl cursor-pointer"
               >
                 Discard Changes
               </motion.button>
