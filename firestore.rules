@@ -8,14 +8,14 @@ service cloud.firestore {
     function isSignedIn() { return request.auth != null; }
 
     function isSuperAdmin() {
-      return isSignedIn() && request.auth.token.email == 'sankalpsmn@gmail.com' && request.auth.token.email_verified == true;
+      return isSignedIn() && request.auth.token.email.lower() == 'sankalpsmn@gmail.com' && request.auth.token.email_verified == true;
     }
 
     function isAdmin() { 
       return isSuperAdmin() || (
         isSignedIn() && 
-        exists(/databases/$(database)/documents/admins/$(request.auth.token.email)) &&
-        get(/databases/$(database)/documents/admins/$(request.auth.token.email)).data.status == 'active'
+        exists(/databases/$(database)/documents/admins/$(request.auth.token.email.lower())) &&
+        get(/databases/$(database)/documents/admins/$(request.auth.token.email.lower())).data.status == 'active'
       );
     }
 
@@ -24,14 +24,13 @@ service cloud.firestore {
     function isValidId(id) { return id is string && id.size() <= 128; }
 
     function isValidProduct(data) {
-      return data.keys().hasAll(['name', 'price', 'imageUrl', 'createdAt', 'updatedAt']) 
-        && data.name is string && data.name.size() <= 200
+      return data.name is string && data.name.size() <= 200
         && data.price is number && data.price >= 0
-        && data.imageUrl is string && data.imageUrl.size() <= 3000
+        && (data.get('imageUrl', '') is string && data.get('imageUrl', '').size() <= 1500000)
         && (data.get('description', '') is string && data.get('description', '').size() <= 2000)
         && (data.get('category', '') is string && data.get('category', '').size() <= 100)
-        && data.createdAt is timestamp
-        && data.updatedAt is timestamp;
+        && (data.get('createdAt', request.time) is timestamp)
+        && (data.get('updatedAt', request.time) is timestamp);
     }
 
     function isValidFeedback(data) {
@@ -53,8 +52,8 @@ service cloud.firestore {
 
     match /products/{productId} {
       allow read: if true;
-      allow create: if isAdmin() && isValidId(productId) && isValidProduct(incoming()) && incoming().createdAt == request.time && incoming().updatedAt == request.time;
-      allow update: if isAdmin() && isValidProduct(incoming()) && incoming().createdAt == existing().createdAt && incoming().updatedAt == request.time && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'price', 'imageUrl', 'description', 'category', 'updatedAt']);
+      allow create: if isAdmin() && isValidId(productId) && isValidProduct(incoming()) && incoming().get('createdAt', request.time) == request.time && incoming().get('updatedAt', request.time) == request.time;
+      allow update: if isAdmin() && isValidProduct(incoming()) && incoming().get('createdAt', request.time) == existing().get('createdAt', request.time) && incoming().get('updatedAt', request.time) == request.time && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'price', 'imageUrl', 'description', 'category', 'updatedAt', 'code', 'sizes', 'colors', 'fabric', 'deliveryTime', 'offerPercent', 'customMessage', 'stockStatus', 'badge', 'videoUrl', 'publicId', 'imageUrls', 'publicIds', 'peopleInterested', 'views']);
       allow delete: if isAdmin();
     }
 
@@ -66,7 +65,7 @@ service cloud.firestore {
     }
 
     match /admins/{email} {
-      allow get: if isSignedIn() && (request.auth.token.email == email || isSuperAdmin());
+      allow get: if isSignedIn() && (request.auth.token.email.lower() == email || isSuperAdmin());
       allow list: if isSuperAdmin();
       allow create, update: if isSuperAdmin() && isValidAdmin(incoming()) && incoming().createdAt == (resource == null ? request.time : resource.data.createdAt);
       allow delete: if isSuperAdmin() && email != 'sankalpsmn@gmail.com';
