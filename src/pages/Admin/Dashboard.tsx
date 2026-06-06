@@ -7,7 +7,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import ProductForm from '../../components/Admin/ProductForm';
 import AdminControlPanel from '../../components/Admin/AdminControlPanel';
 import ThemeToggle from '../../components/ThemeToggle';
-import { Plus, LogOut, Edit2, Trash2, LayoutGrid, List, ShoppingBag, Sparkles, Users, UserRoundCog, ShieldCheck } from 'lucide-react';
+import { Plus, LogOut, Edit2, Trash2, LayoutGrid, List, ShoppingBag, Sparkles, Users, UserRoundCog, ShieldCheck, Eye } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { adminService } from '../../services/adminService';
 
@@ -22,6 +22,7 @@ export default function Dashboard() {
   const [authInitialized, setAuthInitialized] = React.useState(false);
   const [isSuperAdmin, setIsSuperAdmin] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState<'collection' | 'personnel'>('collection');
+  const [layoutMode, setLayoutMode] = React.useState<'grid' | 'list'>('grid');
   const [deleteConfirmId, setDeleteConfirmId] = React.useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -296,68 +297,193 @@ export default function Dashboard() {
                 <p className="text-theme-text-muted text-base sm:text-lg font-medium max-w-xl">Curate your legacy. Add, refine, or archive pieces from your global boutique.</p>
               </div>
               <div className="flex items-center gap-2 bg-theme-surface/50 p-2 rounded-2xl border luxury-border self-start">
-                <button className="p-3 sm:p-4 bg-theme-primary text-theme-primary-text rounded-xl shadow-xl"><LayoutGrid size={18} /></button>
-                <button className="p-3 sm:p-4 text-theme-text-muted/60 hover:text-theme-primary transition-colors"><List size={18} /></button>
+                <button 
+                  onClick={() => setLayoutMode('grid')}
+                  className={`p-3 sm:p-4 rounded-xl transition-all cursor-pointer ${
+                    layoutMode === 'grid' 
+                      ? 'bg-theme-primary text-theme-primary-text shadow-xl' 
+                      : 'text-theme-text-muted/60 hover:text-theme-primary'
+                  }`}
+                  aria-label="Grid Layout"
+                >
+                  <LayoutGrid size={18} />
+                </button>
+                <button 
+                  onClick={() => setLayoutMode('list')}
+                  className={`p-3 sm:p-4 rounded-xl transition-all cursor-pointer ${
+                    layoutMode === 'list' 
+                      ? 'bg-theme-primary text-theme-primary-text shadow-xl' 
+                      : 'text-theme-text-muted/60 hover:text-theme-primary'
+                  }`}
+                  aria-label="List Layout"
+                >
+                  <List size={18} />
+                </button>
               </div>
             </motion.div>
 
-            {/* Product List Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-10">
-              <AnimatePresence mode="popLayout">
-                {(products || []).map((product) => {
-                  const stableKey = product.publicId || product.id;
-                  return (
-                    <motion.div
-                      layout
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      key={stableKey}
-                      className="glass-card p-0 group flex flex-col h-full rounded-3xl overflow-hidden hover:shadow-[0_40px_80px_-20px_rgba(45,62,80,0.15)] bg-theme-surface border border-theme-border"
-                    >
-                      <div className="aspect-[4/5] overflow-hidden relative">
-                        <img 
-                          src={product.imageUrl} 
-                          alt={product.name} 
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-                          referrerPolicy="no-referrer"
-                          loading="lazy"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent" />
-                        
-                        <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30 text-[8px] text-white font-black uppercase tracking-widest">
-                          ID: {product.id.substring(0, 8)}
-                        </div>
-                      </div>
-
-                      <div className="p-8 flex-1 flex flex-col justify-between">
-                        <div>
-                          <h3 className="text-[10px] uppercase tracking-[0.3em] text-theme-accent font-black mb-3">{product.category || 'Legacy'}</h3>
-                          <h4 className="text-2xl font-serif text-theme-text-primary font-bold leading-tight group-hover:text-theme-accent transition-colors line-clamp-2">{product.name}</h4>
-                        </div>
-                        <div className="mt-8 flex items-center justify-between">
-                          <p className="text-theme-primary font-display font-black text-xl">₹{product.price.toLocaleString('en-IN')}</p>
-                          <div className="flex gap-2">
-                             <button
-                              onClick={() => handleEdit(product)}
-                              className="p-3 bg-theme-accent/5 text-theme-accent rounded-xl hover:bg-theme-accent hover:text-theme-accent-text transition-all cursor-pointer shadow-lg"
-                            >
-                              <Edit2 size={16} />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteClick(product.id)}
-                              className="p-3 bg-rose/5 text-rose rounded-xl hover:bg-rose hover:text-white transition-all cursor-pointer shadow-xl"
-                            >
-                              <Trash2 size={16} />
-                            </button>
+            {/* Product List Renderers */}
+            {layoutMode === 'grid' ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-10">
+                <AnimatePresence mode="popLayout">
+                  {(products || []).map((product) => {
+                    const stableKey = product.publicId || product.id;
+                    return (
+                      <motion.div
+                        layout
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        key={stableKey}
+                        className="glass-card p-0 group flex flex-col h-full rounded-3xl overflow-hidden hover:shadow-[0_40px_80px_-20px_rgba(45,62,80,0.15)] bg-theme-surface border border-theme-border animate-premium-glow"
+                      >
+                        <div className="aspect-[4/5] overflow-hidden relative">
+                          <img 
+                            src={product.imageUrl} 
+                            alt={product.name} 
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                            referrerPolicy="no-referrer"
+                            loading="lazy"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent" />
+                          
+                          <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30 text-[8px] text-white font-black uppercase tracking-widest">
+                            ID: {product.id.substring(0, 8)}
                           </div>
                         </div>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </AnimatePresence>
-            </div>
+
+                        <div className="p-8 flex-1 flex flex-col justify-between">
+                          <div>
+                            <h3 className="text-[10px] uppercase tracking-[0.3em] text-theme-accent font-black mb-3">{product.category || 'Legacy'}</h3>
+                            <h4 className="text-2xl font-serif text-theme-text-primary font-bold leading-tight group-hover:text-theme-accent transition-colors line-clamp-2">{product.name}</h4>
+                          </div>
+                          <div className="mt-8 flex items-center justify-between">
+                            <p className="text-theme-primary font-display font-black text-xl">₹{product.price.toLocaleString('en-IN')}</p>
+                            <div className="flex gap-2">
+                               <button
+                                onClick={() => handleEdit(product)}
+                                className="p-3 bg-theme-accent/5 text-theme-accent rounded-xl hover:bg-theme-accent hover:text-theme-accent-text transition-all cursor-pointer shadow-lg"
+                                title="Edit Details"
+                              >
+                                <Edit2 size={16} />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteClick(product.id)}
+                                className="p-3 bg-rose/5 text-rose rounded-xl hover:bg-rose hover:text-white transition-all cursor-pointer shadow-xl"
+                                title="Archive Piece"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+              </div>
+            ) : (
+              /* Beautiful table row list view */
+              <div className="bg-theme-surface rounded-[24px] sm:rounded-[32px] border border-theme-border overflow-hidden shadow-luxury">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse min-w-[700px]">
+                    <thead>
+                      <tr className="border-b border-theme-border text-theme-text-secondary/75 uppercase text-[9px] tracking-[0.2em] font-black bg-theme-bg/30">
+                        <th className="py-6 px-8">Piece Information</th>
+                        <th className="py-6 px-6">Category</th>
+                        <th className="py-6 px-6">Price</th>
+                        <th className="py-6 px-8 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <AnimatePresence mode="popLayout">
+                        {(products || []).map((product) => {
+                          const stableKey = product.publicId || product.id;
+                          return (
+                            <motion.tr
+                              layout
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                              key={stableKey}
+                              className="border-b border-theme-border/60 hover:bg-theme-accent/5 transition-colors group"
+                            >
+                              <td className="py-5 px-8">
+                                <div className="flex items-center gap-5">
+                                  <div className="w-16 h-20 rounded-xl overflow-hidden bg-theme-bg border border-theme-border flex-shrink-0 shadow-inner">
+                                    <img 
+                                      src={product.imageUrl} 
+                                      alt={product.name} 
+                                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                      referrerPolicy="no-referrer"
+                                      loading="lazy"
+                                    />
+                                  </div>
+                                  <div className="space-y-1">
+                                    <h4 className="text-sm sm:text-base font-serif font-bold text-theme-text-primary group-hover:text-theme-accent transition-colors">
+                                      {product.name}
+                                    </h4>
+                                    <p className="text-xs text-theme-text-secondary line-clamp-1">
+                                      {product.description || 'No custom description provided.'}
+                                    </p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="py-5 px-6">
+                                <div className="space-y-1.5">
+                                  <span className="text-[10px] font-sans tracking-widest bg-theme-accent/15 text-theme-accent px-3 py-1 rounded-full inline-block uppercase font-black">
+                                    {product.category || 'Legacy'}
+                                  </span>
+                                  <p className="text-[10px] text-theme-text-muted font-mono tracking-tighter">
+                                    ID: {product.id.substring(0, 8)}
+                                  </p>
+                                </div>
+                              </td>
+                              <td className="py-5 px-6">
+                                <span className="font-display font-black text-base text-theme-primary">
+                                  ₹{product.price.toLocaleString('en-IN')}
+                                </span>
+                              </td>
+                              <td className="py-5 px-8 text-right">
+                                <div className="flex gap-2 justify-end items-center">
+                                  {/* View in Boutique/Storefront Button */}
+                                  <button
+                                    onClick={() => {
+                                      navigate(`/?product=${product.id}`);
+                                    }}
+                                    className="px-4 py-2.5 bg-theme-primary/10 text-theme-primary text-[10px] font-black uppercase tracking-wider rounded-xl hover:bg-theme-primary hover:text-theme-primary-text transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
+                                    title="View Piece Details"
+                                  >
+                                    <Eye size={12} className="stroke-[3]" />
+                                    <span>View</span>
+                                  </button>
+                                  {/* Edit details */}
+                                  <button
+                                    onClick={() => handleEdit(product)}
+                                    className="p-2.5 bg-theme-accent/5 text-theme-accent rounded-xl hover:bg-theme-accent hover:text-theme-accent-text transition-all cursor-pointer shadow-sm"
+                                    title="Edit details"
+                                  >
+                                    <Edit2 size={14} />
+                                  </button>
+                                  {/* Delete detail */}
+                                  <button
+                                    onClick={() => handleDeleteClick(product.id)}
+                                    className="p-2.5 bg-rose/5 text-rose rounded-xl hover:bg-rose hover:text-white transition-all cursor-pointer shadow-sm"
+                                    title="Archive item"
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
+                                </div>
+                              </td>
+                            </motion.tr>
+                          );
+                        })}
+                      </AnimatePresence>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
 
              {products.length === 0 && (
                <div className="text-center py-32 border-2 border-dashed border-theme-border rounded-xl bg-theme-surface/50">

@@ -98,14 +98,16 @@ export default function Login({ onBackToBoutique }: { onBackToBoutique?: () => v
         className="w-full max-w-md bg-theme-surface p-8 sm:p-12 md:p-16 text-center shadow-[0_40px_100px_-20px_rgba(0,0,0,0.1)] space-y-8 sm:space-y-10 rounded-[30px] sm:rounded-[40px] border border-theme-border backdrop-blur-sm transition-colors"
       >
         <div className="space-y-3 sm:space-y-4">
-          <motion.div
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            className="brand-logo serif text-2xl sm:text-4xl tracking-[4px] sm:tracking-[8px] text-theme-primary border-b-4 border-theme-accent pb-2 sm:pb-3 flex items-center justify-center gap-3 font-black"
-          >
-            <Sparkles className="text-theme-accent w-8 h-8 sm:w-10 sm:h-10 shrink-0" fill="currentColor" />
-            ANSHI COLLECTION
-          </motion.div>
+          <Link to="/" className="hover:opacity-95 block select-none">
+            <motion.div
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              className="brand-logo serif text-2xl sm:text-4xl tracking-[4px] sm:tracking-[8px] text-theme-primary border-b-4 border-theme-accent pb-2 sm:pb-3 flex items-center justify-center gap-3 font-black"
+            >
+              <Sparkles className="text-theme-accent w-8 h-8 sm:w-10 sm:h-10 shrink-0" fill="currentColor" />
+              ANSHI COLLECTION
+            </motion.div>
+          </Link>
           <h2 className="text-[10px] sm:text-sm uppercase tracking-[0.3em] sm:tracking-[0.4em] text-theme-accent font-black">Authorized Artisan Portal</h2>
         </div>
         

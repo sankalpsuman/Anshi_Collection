@@ -186,11 +186,27 @@ export default function Home({
 
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const productId = params.get('product');
-    if (productId && products.length > 0 && !selectedProduct) {
-      const product = products.find(p => p.id === productId);
-      if (product) {
-        setSelectedProduct(product);
+    let productId = params.get('product');
+    
+    // Also support hash-based query parameter formats for deep SPA routing (e.g. #/?product=XYZ)
+    if (!productId && window.location.hash.includes('?')) {
+      try {
+        const hashQuery = window.location.hash.split('?')[1];
+        if (hashQuery) {
+          const hashParams = new URLSearchParams(hashQuery);
+          productId = hashParams.get('product');
+        }
+      } catch (err) {
+        console.warn("Error parsing hash params:", err);
+      }
+    }
+
+    if (productId && products.length > 0) {
+      if (!selectedProduct || selectedProduct.id !== productId) {
+        const product = products.find(p => p.id === productId);
+        if (product) {
+          setSelectedProduct(product);
+        }
       }
     }
   }, [products, selectedProduct]);
