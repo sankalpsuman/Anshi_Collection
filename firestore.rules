@@ -50,6 +50,13 @@ service cloud.firestore {
         && data.createdAt is timestamp;
     }
 
+    function isValidUserImage(data) {
+      return data.get('userId', '') is string && data.get('userId', '').size() <= 128
+        && data.get('imageUrl', '') is string && data.get('imageUrl', '').size() <= 1500000
+        && data.get('publicId', '') is string && data.get('publicId', '').size() <= 500
+        && data.get('createdAt', request.time) is timestamp;
+    }
+
     match /products/{productId} {
       allow read: if true;
       allow create: if isAdmin() && isValidId(productId) && isValidProduct(incoming()) && incoming().get('createdAt', request.time) == request.time && incoming().get('updatedAt', request.time) == request.time;
@@ -69,6 +76,13 @@ service cloud.firestore {
       allow list: if isSuperAdmin();
       allow create, update: if isSuperAdmin() && isValidAdmin(incoming()) && incoming().createdAt == (resource == null ? request.time : resource.data.createdAt);
       allow delete: if isSuperAdmin() && email != 'sankalpsmn@gmail.com';
+    }
+
+    match /user_images/{imageId} {
+      allow read: if isSignedIn() && resource.data.get('userId', '') == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(imageId) && isValidUserImage(incoming()) && incoming().get('userId', '') == request.auth.uid && incoming().get('createdAt', request.time) == request.time;
+      allow update: if false;
+      allow delete: if isSignedIn() && resource.data.get('userId', '') == request.auth.uid;
     }
   }
 }

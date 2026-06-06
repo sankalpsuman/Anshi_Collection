@@ -1,8 +1,10 @@
 import React from 'react';
 import { productService } from '../../services/productService';
 import { Product } from '../../types';
-import { Upload, X, Loader2, AlertCircle, CheckCircle2, Video, HelpCircle, ChevronDown } from 'lucide-react';
+import { Upload, X, Loader2, AlertCircle, CheckCircle2, Video, HelpCircle, ChevronDown, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { imageService } from '../../services/imageService';
+import ImageLibraryModal from './ImageLibraryModal';
 
 interface ProductFormProps {
   initialData?: Product;
@@ -69,6 +71,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
   const [primaryUploadProgress, setPrimaryUploadProgress] = React.useState(0);
 
   const [uploadError, setUploadError] = React.useState<string | null>(null);
+  const [isLibraryOpen, setIsLibraryOpen] = React.useState(false);
 
   const [validationModal, setValidationModal] = React.useState<{
     isOpen: boolean;
@@ -245,6 +248,11 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
       setUploadedUrl(res.url);
       setUploadedPublicId(res.publicId);
       setPrimaryUploadProgress(100);
+      try {
+        await imageService.saveUserImage(res.url, res.publicId || '');
+      } catch (saveErr) {
+        console.warn("Failed to automatically record image in portfolio:", saveErr);
+      }
     } catch (err: any) {
       console.error("Primary upload failed:", err);
       setUploadError(err.message || "Failed to upload primary masterpiece.");
@@ -433,6 +441,20 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
                 </label>
               )}
             </div>
+
+            {/* Auxiliary Library Reuse Selector Button */}
+            {!previewUrl && (
+              <div className="border-t border-theme-border/20 pt-1 flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => setIsLibraryOpen(true)}
+                  className="w-full h-11 flex items-center justify-center gap-1.5 bg-theme-surface hover:bg-theme-accent/10 hover:text-theme-accent border border-theme-border hover:border-theme-accent/40 rounded-xl transition-all duration-300 shadow-sm cursor-pointer text-theme-text-secondary"
+                >
+                  <Sparkles size={13} className="text-theme-accent animate-pulse shrink-0" />
+                  <span className="uppercase text-[9px] font-black tracking-widest">Choose From My Images</span>
+                </button>
+              </div>
+            )}
 
             <div className="border-t border-theme-border/40 pt-4 space-y-2">
               <div className="flex items-center gap-2">
@@ -752,6 +774,17 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
           </div>
         )}
       </AnimatePresence>
+
+      <ImageLibraryModal
+        isOpen={isLibraryOpen}
+        onClose={() => setIsLibraryOpen(false)}
+        onSelect={(imageUrl, publicId) => {
+          setPreviewUrl(imageUrl);
+          setUploadedUrl(imageUrl);
+          setUploadedPublicId(publicId || '');
+          setUploadError(null);
+        }}
+      />
     </>
   );
 }

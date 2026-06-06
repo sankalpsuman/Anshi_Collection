@@ -39,6 +39,18 @@
         "updatedAt": { "type": "string", "format": "date-time" }
       },
       "required": ["name", "price", "imageUrl"]
+    },
+    "UserImage": {
+      "title": "UserImage",
+      "description": "User-uploaded image records for reuse",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "The UID of the user who uploaded the image" },
+        "imageUrl": { "type": "string", "format": "uri", "description": "Link to the uploaded image" },
+        "publicId": { "type": "string", "description": "Cloudinary public ID reference" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "imageUrl", "publicId", "createdAt"]
     }
   },
   "firestore": {
@@ -53,6 +65,10 @@
     "/admins/{uid}": {
       "schema": "Admin",
       "description": "Authorized administrators list"
+    },
+    "/user_images/{imageId}": {
+      "schema": "UserImage",
+      "description": "Collection of user-uploaded images for reuse"
     }
   }
 }
