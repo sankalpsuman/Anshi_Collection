@@ -33,6 +33,20 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
     let authChecked = false;
     let productsChecked = false;
 
+    // Use fast cache-first heuristic so initial draw doesn't wait on Firestore
+    try {
+      const cached = localStorage.getItem('ansi_cached_products');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          productsList = parsed;
+          productsChecked = true;
+        }
+      }
+    } catch (cacheErr) {
+      console.warn("Fast Cache preloading skipped:", cacheErr);
+    }
+
     // 1. Authenticate check in the background
     const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -50,71 +64,68 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
       authChecked = true;
     });
 
-    // 2. Fetch products in the background
+    // 2. Fetch products in parallel
     const loadProductsAndPreloadImages = async () => {
       try {
         const fetched = await productService.getProducts();
         productsList = fetched;
+        productsChecked = true;
         
-        // Cache fetched products to standard storage bypass in future sessions
         try {
           localStorage.setItem('ansi_cached_products', JSON.stringify(fetched));
         } catch (err) {
           console.error("Local caching error inside splash:", err);
         }
 
-        // Preload first 6 high priority images for immediate aesthetic show
-        const priorityImages = fetched.slice(0, 6).map(p => p.imageUrl);
+        // Fast concurrent preloading for the showcase image list
+        const priorityImages = fetched.slice(0, 4).map(p => p.imageUrl);
         const imagePromises = priorityImages.map(url => {
           return new Promise<void>((resolve) => {
             const img = new Image();
             img.src = url;
             img.referrerPolicy = "no-referrer";
             img.onload = () => resolve();
-            img.onerror = () => resolve(); // Always resolve so we don't block startup
+            img.onerror = () => resolve();
           });
         });
 
         await Promise.all(imagePromises);
       } catch (err) {
         console.error("Products preloading error:", err);
+        productsChecked = true; // Still resolve to prevent blocking
       }
-      productsChecked = true;
     };
 
     loadProductsAndPreloadImages();
 
-    // 3. Smooth, cinematic loading timeline simulation
+    // 3. Fast & responsive modern loading speed
     const startTime = Date.now();
-    const duration = 2800; // 2.8 seconds minimum display to look high-end and luxurious
+    const hasCache = productsList.length > 0;
+    const duration = hasCache ? 250 : 500; // snappiest performance while keeping elegant visual transition
 
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
       const computedPercentage = Math.min(Math.round((elapsed / duration) * 100), 99);
       
-      // Only complete if background routines are actually ready
       if (elapsed >= duration && authChecked && productsChecked) {
         clearInterval(interval);
         setProgress(100);
         setLoadingText('Secured Premium Gateway Active.');
         
-        // Brief timeout for complete animation cycle
         setTimeout(() => {
           if (active) {
             unsubscribeAuth();
             onComplete(productsList, isAdminUser, loggedInUserId);
           }
-        }, 500);
+        }, 50);
       } else {
         setProgress(computedPercentage);
-        
-        // Update luxury descriptive tagline texts based on progress numbers
         const currentStage = loadingStages.find(stage => computedPercentage <= stage.threshold);
         if (currentStage) {
           setLoadingText(currentStage.text);
         }
       }
-    }, 45);
+    }, 25);
 
     return () => {
       active = false;
