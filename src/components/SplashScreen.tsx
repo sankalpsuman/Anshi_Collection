@@ -107,7 +107,10 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
       const elapsed = Date.now() - startTime;
       const computedPercentage = Math.min(Math.round((elapsed / duration) * 100), 99);
       
-      if (elapsed >= duration && authChecked && productsChecked) {
+      // Safe maximum timeout to guarantee immediate, lightning-fast boot on Safari/iOS
+      const forceComplete = elapsed >= 1200;
+      
+      if ((elapsed >= duration && authChecked && productsChecked) || forceComplete) {
         clearInterval(interval);
         setProgress(100);
         setLoadingText('Secured Premium Gateway Active.');
