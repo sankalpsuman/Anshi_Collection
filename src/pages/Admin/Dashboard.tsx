@@ -11,7 +11,11 @@ import { Plus, LogOut, Edit2, Trash2, LayoutGrid, List, ShoppingBag, Sparkles, U
 import { motion, AnimatePresence } from 'motion/react';
 import { adminService } from '../../services/adminService';
 
-export default function Dashboard() {
+interface DashboardProps {
+  onViewBoutique?: () => void;
+}
+
+export default function Dashboard({ onViewBoutique }: DashboardProps = {}) {
   const [user, setUser] = React.useState<any>(null);
   const [products, setProducts] = React.useState<Product[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -222,6 +226,19 @@ export default function Dashboard() {
 
               {/* Mobile utilities (rendered inside logo row for maximum space efficiency) */}
               <div className="flex md:hidden items-center gap-2">
+                <Link
+                  to="/"
+                  onClick={(e) => {
+                    if (onViewBoutique) {
+                      e.preventDefault();
+                      onViewBoutique();
+                    }
+                  }}
+                  className="p-3 bg-theme-primary/10 text-theme-primary rounded-xl hover:bg-theme-primary hover:text-theme-primary-text transition-all shadow-lg shrink-0 cursor-pointer flex items-center justify-center animate-premium-glow"
+                  title="Boutique View"
+                >
+                  <ShoppingBag size={16} />
+                </Link>
                 <ThemeToggle />
                 <button 
                   onClick={handleLogout} 
@@ -270,6 +287,20 @@ export default function Dashboard() {
               )}
               {/* Desktop-only utilities */}
               <div className="hidden md:flex items-center gap-3">
+                <Link
+                  to="/"
+                  onClick={(e) => {
+                    if (onViewBoutique) {
+                      e.preventDefault();
+                      onViewBoutique();
+                    }
+                  }}
+                  className="px-5 py-3 bg-theme-primary/10 text-theme-primary hover:bg-theme-primary hover:text-theme-primary-text rounded-xl transition-all shadow-lg shrink-0 cursor-pointer flex items-center gap-2 text-xs font-black uppercase tracking-wider animate-premium-glow"
+                  title="Boutique View"
+                >
+                  <ShoppingBag size={14} className="shrink-0" />
+                  <span>Boutique View</span>
+                </Link>
                 <ThemeToggle />
                 <button 
                   onClick={handleLogout} 
@@ -516,6 +547,27 @@ export default function Dashboard() {
           </motion.div>
         )}
       </main>
+
+      {/* Symmetrical footer link to walk back to public boutique */}
+      <div className="pb-20 pt-8 flex flex-col items-center justify-center space-y-4">
+        <Link 
+          to="/" 
+          onClick={(e) => {
+            if (onViewBoutique) {
+              e.preventDefault();
+              onViewBoutique();
+            }
+          }}
+          className="text-xs text-theme-text-secondary hover:text-theme-accent transition-colors flex items-center justify-center gap-3"
+        >
+           <span className="w-10 h-[1px] bg-theme-border"></span>
+           Boutique View
+           <span className="w-10 h-[1px] bg-theme-border"></span>
+        </Link>
+        <p className="text-[10px] text-theme-text-muted/40 uppercase tracking-[0.3em] font-bold text-center">
+          Artisan Panel Secure Session Active
+        </p>
+      </div>
 
       {/* Form Modal */}
       <AnimatePresence>

@@ -551,7 +551,11 @@ export default function Home({
           <div className={activeModule === 'artisan' ? 'block' : 'hidden'}>
             {isAdminUser ? (
               <div className="w-full relative">
-                <Dashboard />
+                <Dashboard onViewBoutique={() => {
+                  setActiveModule('gallery');
+                  // Smoothly scroll to top of collection
+                  document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' });
+                }} />
               </div>
             ) : (
               <div className="max-w-xl mx-auto py-4">

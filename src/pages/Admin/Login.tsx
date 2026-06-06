@@ -14,56 +14,59 @@ export default function Login({ onBackToBoutique }: { onBackToBoutique?: () => v
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    let checkInProgress = true;
+    let isMounted = true;
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user && checkInProgress) {
-        checkInProgress = false;
+      if (!isMounted) return;
+
+      if (user) {
+        setLoading(true);
         try {
           const { authorized } = await adminService.checkAdminStatus(user.email || '');
+          if (!isMounted) return;
+
           if (authorized) {
             navigate('/admin/dashboard', { replace: true });
           } else {
             await signOut(auth);
-            setError("You are not authorized to access this portal.");
-            setLoading(false);
+            if (isMounted) {
+              setError("You are not authorized to access this portal.");
+              setLoading(false);
+            }
           }
         } catch (err) {
           console.error("Admin check failed:", err);
-          setError("Failed to verify access permissions.");
-          setLoading(false);
+          if (isMounted) {
+            setError("Failed to verify access permissions.");
+            setLoading(false);
+          }
         }
       } else {
         setLoading(false);
       }
     }, (err) => {
       console.error("Auth state error:", err);
-      setError("Failed to verify authentication status.");
-      setLoading(false);
+      if (isMounted) {
+        setError("Failed to verify authentication status.");
+        setLoading(false);
+      }
     });
+
     return () => {
-      checkInProgress = false;
+      isMounted = false;
       unsubscribe();
     };
   }, [navigate]);
 
   const handleLogin = async () => {
     setError(null);
+    setLoading(true);
     const provider = new GoogleAuthProvider();
     try {
-      const result = await signInWithPopup(auth, provider);
-      if (result.user) {
-        setLoading(true);
-        const { authorized } = await adminService.checkAdminStatus(result.user.email || '');
-        if (authorized) {
-          navigate('/admin/dashboard');
-        } else {
-          await signOut(auth);
-          setError("You are not authorized to access this portal.");
-          setLoading(false);
-        }
-      }
+      await signInWithPopup(auth, provider);
+      // Let onAuthStateChanged handle the navigation/status check seamlessly
     } catch (error: any) {
       console.error("Login failed:", error);
+      setLoading(false);
       if (error.code === 'auth/popup-blocked') {
         setError("Login popup was blocked. Please enable popups or try opening this app in a new tab.");
       } else if (error.code === 'auth/cancelled-popup-request') {
@@ -71,7 +74,6 @@ export default function Login({ onBackToBoutique }: { onBackToBoutique?: () => v
       } else {
         setError(error.message || "An unexpected error occurred during login.");
       }
-      setLoading(false);
     }
   };
 

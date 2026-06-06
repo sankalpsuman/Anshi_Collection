@@ -13,6 +13,16 @@ export default function App() {
   const [isAdmin, setIsAdmin] = React.useState(false);
   const [userId, setUserId] = React.useState<string | null>(null);
 
+  // Deep SPA routing path translation helper for live cloud deployment environments
+  React.useEffect(() => {
+    const currentPath = window.location.pathname;
+    if (currentPath === '/admin' || currentPath === '/admin/') {
+      window.location.replace('/#/admin');
+    } else if (currentPath.startsWith('/admin/dashboard')) {
+      window.location.replace('/#/admin/dashboard');
+    }
+  }, []);
+
   const handleInitializationComplete = (products: Product[], adminStatus: boolean, uid: string | null) => {
     setPreloadedProducts(products);
     setIsAdmin(adminStatus);
