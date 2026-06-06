@@ -1,7 +1,7 @@
 import React from 'react';
 import { productService } from '../../services/productService';
 import { Product } from '../../types';
-import { Upload, X, Loader2, AlertCircle, CheckCircle2, Video, HelpCircle } from 'lucide-react';
+import { Upload, X, Loader2, AlertCircle, CheckCircle2, Video, HelpCircle, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface ProductFormProps {
@@ -319,14 +319,14 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="space-y-10 pb-6">
+      <form onSubmit={handleSubmit} className="space-y-8 pb-4 text-left">
       {!hasConfig && (
-        <div className="bg-rose/5 border border-rose/20 p-5 rounded-2xl mb-8 shadow-sm">
+        <div className="bg-rose/5 border border-rose/20 p-5 rounded-2xl mb-6 shadow-sm">
           <div className="flex items-start">
             <div className="flex-shrink-0">
               <AlertCircle className="h-5 w-5 text-rose" />
             </div>
-            <div className="ml-4">
+            <div className="ml-4 text-left">
               <p className="text-xs text-rose font-black uppercase tracking-widest">
                 Configuration Required
               </p>
@@ -344,23 +344,25 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
         <motion.div 
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="flex items-center gap-3 text-rose bg-rose/5 p-4 rounded-2xl border border-rose/15"
+          className="flex items-center gap-3 text-rose bg-rose/5 p-4 rounded-2xl border border-rose/15 mb-6"
         >
           <AlertCircle size={16} className="shrink-0" />
           <p className="text-xs font-bold uppercase tracking-wider leading-relaxed">{uploadError}</p>
         </motion.div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-        {/* LEFT COLUMN: Visual Media Portfolio (Takes 5 cols on lg) */}
-        <div className="lg:col-span-5 space-y-6">
-          {/* Main Showcase Image */}
-          <div className="bg-theme-surface/50 p-5 rounded-[28px] border border-theme-border/60 shadow-sm">
-            <label className="block text-[10px] font-black uppercase tracking-[0.25em] text-theme-accent mb-3">
-              Masterpiece Showcase (Primary)
-            </label>
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        {/* LEFT COLUMN: Visual Media Portfolio (Symmetric card) */}
+        <div className="md:col-span-5 space-y-6 md:sticky md:top-4">
+          <div className="glass-card p-6 md:p-8 rounded-[32px] space-y-6">
+            <div className="border-b border-theme-border/40 pb-3">
+              <span className="text-[10px] font-black uppercase tracking-[0.25em] text-theme-accent">
+                Masterpiece Showcase (Primary)
+              </span>
+            </div>
+
             <div 
-              className={`relative group aspect-[4/5] border border-dashed transition-all duration-500 rounded-2xl overflow-hidden flex flex-col items-center justify-center bg-theme-surface ${
+              className={`relative group aspect-[4/5] border border-dashed transition-all duration-500 rounded-2xl overflow-hidden flex flex-col items-center justify-center bg-theme-bg/35 ${
                 previewUrl ? 'border-transparent' : 'border-theme-accent/25 hover:border-theme-primary/50'
               }`}
             >
@@ -382,10 +384,10 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
                           setUploadedPublicId('');
                           setPrimaryUploadProgress(0);
                         }}
-                        className="p-3.5 bg-rose text-white rounded-full shadow-2xl hover:scale-110 transition-transform duration-300 cursor-pointer"
+                        className="p-3 bg-rose text-white rounded-full shadow-2xl hover:scale-110 transition-transform duration-300 cursor-pointer"
                         title="Remove Showcase Image"
                       >
-                        <X size={18} />
+                        <X size={16} />
                       </button>
                     )}
                   </div>
@@ -418,214 +420,185 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
                     onChange={handlePrimaryImageChange} 
                     required={!initialData} 
                   />
-                  <div className="w-16 h-16 bg-theme-bg rounded-2xl flex items-center justify-center text-theme-primary border border-theme-border/50 group-hover:rotate-6 transition-transform shadow-sm">
-                    <Upload size={22} className="text-theme-accent" />
+                  <div className="w-14 h-14 bg-theme-bg rounded-2xl flex items-center justify-center text-theme-primary border border-theme-border/50 group-hover:rotate-6 transition-transform shadow-sm">
+                    <Upload size={20} className="text-theme-accent" />
                   </div>
                   <div className="text-center space-y-1">
-                    <p className="text-theme-text-primary font-serif text-base font-bold">Select Masterpiece</p>
+                    <p className="text-theme-text-primary font-serif text-sm font-bold">Select Masterpiece</p>
                     <p className="text-[8px] text-theme-text-muted uppercase tracking-widest font-black">PNG, JPG up to 10MB</p>
                   </div>
-                  <div className="px-4 py-1.5 bg-theme-accent/15 text-theme-accent text-[9px] font-black uppercase tracking-widest rounded-full border border-theme-accent/20">
+                  <div className="px-3.5 py-1.5 bg-theme-accent/15 text-theme-accent text-[8px] font-black uppercase tracking-widest rounded-full border border-theme-accent/20 transition-all group-hover:bg-theme-accent group-hover:text-theme-accent-text">
                     Browse Files
                   </div>
                 </label>
               )}
             </div>
-          </div>
 
-
-
-          {/* Video or Reels URL */}
-          <div className="bg-theme-surface/50 p-5 rounded-[28px] border border-theme-border/60 shadow-sm">
-            <div className="flex items-center gap-2 mb-3">
-              <Video className="text-rose shrink-0" size={16} />
-              <label className="block text-[10px] font-black uppercase tracking-widest text-theme-accent">
-                Reel / Video showcase url (Optional)
-              </label>
-            </div>
-            <div className="relative rounded-xl border border-theme-border/60 bg-theme-surface hover:border-theme-accent/40 focus-within:border-theme-primary transition-all duration-300">
+            <div className="border-t border-theme-border/40 pt-4 space-y-2">
+              <div className="flex items-center gap-2">
+                <Video className="text-rose shrink-0" size={14} />
+                <span className="text-[10px] font-black uppercase tracking-widest text-theme-accent">
+                  Reel / Video URL (Optional)
+                </span>
+              </div>
               <input
                 type="url"
                 placeholder="e.g. https://instagram.com/reel/... "
                 value={formData.videoUrl}
                 onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
-                className="w-full bg-transparent px-4 py-3 text-xs outline-none focus:ring-0 text-theme-text-primary"
+                className="w-full bg-theme-bg/60 border border-theme-border/60 hover:border-theme-accent/40 focus:border-theme-primary/95 focus:ring-1 focus:ring-theme-primary/20 rounded-xl px-4 py-3 text-xs text-theme-text-primary placeholder:text-theme-text-muted/40 transition-all duration-300 outline-none"
               />
+              <span className="text-[8px] uppercase font-black text-theme-text-muted mt-1 block leading-normal">
+                Inserts seamless video playbacks in the catalog.
+              </span>
             </div>
-            <span className="text-[8px] uppercase font-black text-theme-text-muted mt-2 block ml-1 leading-normal">
-              Inserts seamless video playbacks in the interactive client catalog.
-            </span>
           </div>
         </div>
 
-        {/* RIGHT COLUMN: Product Specifications & Logic (Takes 7 cols on lg) */}
-        <div className="lg:col-span-7 space-y-6">
-          <div className="bg-theme-surface/50 p-6 rounded-[28px] border border-theme-border/60 shadow-sm space-y-5">
+        {/* RIGHT COLUMN: Specifications & Details (Symmetric card) */}
+        <div className="md:col-span-7 space-y-6">
+          <div className="glass-card p-6 md:p-8 rounded-[32px] space-y-6">
+            <div className="border-b border-theme-border/40 pb-3">
+              <span className="text-[10px] font-black uppercase tracking-[0.25em] text-theme-accent">
+                Product Specifications
+              </span>
+            </div>
+
             {/* Artisan Model Name */}
-            <div className="space-y-1.5">
-              <label className="block text-[10px] font-black uppercase tracking-[0.25em] text-theme-accent">
+            <div className="flex flex-col space-y-1.5">
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-theme-accent/80">
                 Artisan Model Name
               </label>
-              <div className="relative rounded-2xl border border-theme-border/60 bg-theme-surface hover:border-theme-accent/40 focus-within:border-theme-primary focus-within:ring-1 focus-within:ring-theme-primary transition-all duration-300">
+              <input
+                required
+                type="text"
+                placeholder="e.g. Maharani Crimson Silk Jhumka"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full bg-theme-bg/60 border border-theme-border/60 hover:border-theme-accent/40 focus:border-theme-primary/95 focus:ring-1 focus:ring-theme-primary/20 rounded-xl px-4 py-3 text-sm font-semibold tracking-wide outline-none placeholder:text-theme-text-muted/40 text-theme-text-primary transition-all duration-300"
+              />
+            </div>
+
+            {/* Specifications Fields Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex flex-col space-y-1.5">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-theme-accent/80">
+                  Product Code
+                </label>
                 <input
                   required
                   type="text"
-                  placeholder="e.g. Maharani Crimson Silk Jhumka"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-transparent px-4 py-4 font-serif text-lg font-bold outline-none placeholder:text-theme-text-muted/40 text-theme-text-primary"
+                  placeholder="e.g. ANS102"
+                  value={formData.code}
+                  onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
+                  className="w-full bg-theme-bg/60 border border-theme-border/60 hover:border-theme-accent/40 focus:border-theme-primary/95 focus:ring-1 focus:ring-theme-primary/20 rounded-xl px-4 py-3 text-xs font-mono font-bold uppercase tracking-wider text-theme-text-primary placeholder:text-theme-text-muted/40 outline-none transition-all duration-300"
                 />
               </div>
-            </div>
 
-            {/* Product Code and Price */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div className="space-y-1.5">
-                <label className="block text-[10px] font-black uppercase tracking-[0.25em] text-theme-accent">
-                  Product Code
-                </label>
-                <div className="relative rounded-2xl border border-theme-border/60 bg-theme-surface hover:border-theme-accent/40 focus-within:border-theme-primary focus-within:ring-1 focus-within:ring-theme-primary transition-all duration-300">
-                  <input
-                    required
-                    type="text"
-                    placeholder="e.g. ANS102"
-                    value={formData.code}
-                    onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-                    className="w-full bg-transparent px-4 py-3.5 uppercase font-mono font-bold text-sm outline-none placeholder:text-theme-text-muted/40 text-theme-text-primary"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="block text-[10px] font-black uppercase tracking-[0.25em] text-theme-accent">
+              <div className="flex flex-col space-y-1.5">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-theme-accent/80">
                   Price (INR ₹)
                 </label>
-                <div className="relative rounded-2xl border border-theme-border/60 bg-theme-surface hover:border-theme-accent/40 focus-within:border-theme-primary focus-within:ring-1 focus-within:ring-theme-primary transition-all duration-300">
-                  <input
-                    required
-                    type="number"
-                    placeholder="e.g. 1999"
-                    value={formData.price || ''}
-                    onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
-                    className="w-full bg-transparent px-4 py-3.5 font-display font-black text-sm outline-none placeholder:text-theme-text-muted/40 text-theme-text-primary"
-                  />
-                </div>
+                <input
+                  required
+                  type="number"
+                  placeholder="e.g. 1999"
+                  value={formData.price || ''}
+                  onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
+                  className="w-full bg-theme-bg/60 border border-theme-border/60 hover:border-theme-accent/40 focus:border-theme-primary/95 focus:ring-1 focus:ring-theme-primary/20 rounded-xl px-4 py-3 text-xs font-mono font-bold text-theme-text-primary placeholder:text-theme-text-muted/40 outline-none transition-all duration-300"
+                />
               </div>
-            </div>
 
-            {/* Category and Discount */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div className="space-y-1.5">
-                <label className="block text-[10px] font-black uppercase tracking-[0.25em] text-theme-accent">
+              <div className="flex flex-col space-y-1.5">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-theme-accent/80">
                   Category / Silhouette
                 </label>
-                <div className="relative rounded-2xl border border-theme-border/60 bg-theme-surface hover:border-theme-accent/40 focus-within:border-theme-primary focus-within:ring-1 focus-within:ring-theme-primary transition-all duration-300">
-                  <input
-                    required
-                    type="text"
-                    placeholder="e.g. Saree, Kurta"
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full bg-transparent px-4 py-3.5 font-serif italic text-sm outline-none placeholder:text-theme-text-muted/40 text-theme-text-primary"
-                  />
-                </div>
+                <input
+                  required
+                  type="text"
+                  placeholder="e.g. Saree, Kurta"
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  className="w-full bg-theme-bg/60 border border-theme-border/60 hover:border-theme-accent/40 focus:border-theme-primary/95 focus:ring-1 focus:ring-theme-primary/20 rounded-xl px-4 py-3 text-xs font-medium text-theme-text-primary placeholder:text-theme-text-muted/40 outline-none transition-all duration-300"
+                />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="block text-[10px] font-black uppercase tracking-[0.25em] text-theme-accent">
+              <div className="flex flex-col space-y-1.5">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-theme-accent/80">
                   Offer Discount (%)
                 </label>
-                <div className="relative rounded-2xl border border-theme-border/60 bg-theme-surface hover:border-theme-accent/40 focus-within:border-theme-primary focus-within:ring-1 focus-within:ring-theme-primary transition-all duration-300">
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    placeholder="e.g. 20 for 20% Off"
-                    value={formData.offerPercent || ''}
-                    onChange={(e) => setFormData({ ...formData, offerPercent: Number(e.target.value) })}
-                    className="w-full bg-transparent px-4 py-3.5 font-mono font-semibold text-sm outline-none placeholder:text-theme-text-muted/40 text-theme-text-primary"
-                  />
-                </div>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  placeholder="e.g. 20 for 20% Off"
+                  value={formData.offerPercent || ''}
+                  onChange={(e) => setFormData({ ...formData, offerPercent: Number(e.target.value) })}
+                  className="w-full bg-theme-bg/60 border border-theme-border/60 hover:border-theme-accent/40 focus:border-theme-primary/95 focus:ring-1 focus:ring-theme-primary/20 rounded-xl px-4 py-3 text-xs font-mono font-medium text-theme-text-primary placeholder:text-theme-text-muted/40 outline-none transition-all duration-300"
+                />
               </div>
-            </div>
 
-            {/* Sizes and Colors */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div className="space-y-1.5">
-                <label className="block text-[10px] font-black uppercase tracking-[0.25em] text-theme-accent">
-                  Sizes (Comma separated)
+              <div className="flex flex-col space-y-1.5">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-theme-accent/80">
+                  Sizes
                 </label>
-                <div className="relative rounded-2xl border border-theme-border/60 bg-theme-surface hover:border-theme-accent/40 focus-within:border-theme-primary focus-within:ring-1 focus-within:ring-theme-primary transition-all duration-300">
-                  <input
-                    type="text"
-                    placeholder="S, M, L, XL"
-                    value={formData.sizes}
-                    onChange={(e) => setFormData({ ...formData, sizes: e.target.value })}
-                    className="w-full bg-transparent px-4 py-3.5 font-mono text-xs font-semibold outline-none placeholder:text-theme-text-muted/40 text-theme-text-primary"
-                  />
-                </div>
+                <input
+                  type="text"
+                  placeholder="S, M, L, XL"
+                  value={formData.sizes}
+                  onChange={(e) => setFormData({ ...formData, sizes: e.target.value })}
+                  className="w-full bg-theme-bg/60 border border-theme-border/60 hover:border-theme-accent/40 focus:border-theme-primary/95 focus:ring-1 focus:ring-theme-primary/20 rounded-xl px-4 py-3 text-xs font-mono font-medium tracking-wide text-theme-text-primary placeholder:text-theme-text-muted/40 outline-none transition-all duration-300"
+                />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="block text-[10px] font-black uppercase tracking-[0.25em] text-theme-accent">
-                  Colors (Comma separated)
+              <div className="flex flex-col space-y-1.5">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-theme-accent/80">
+                  Colors
                 </label>
-                <div className="relative rounded-2xl border border-theme-border/60 bg-theme-surface hover:border-theme-accent/40 focus-within:border-theme-primary focus-within:ring-1 focus-within:ring-theme-primary transition-all duration-300">
-                  <input
-                    type="text"
-                    placeholder="e.g. Black, Silk Red, Ivory"
-                    value={formData.colors}
-                    onChange={(e) => setFormData({ ...formData, colors: e.target.value })}
-                    className="w-full bg-transparent px-4 py-3.5 font-sans text-xs font-semibold outline-none placeholder:text-theme-text-muted/40 text-theme-text-primary"
-                  />
-                </div>
+                <input
+                  type="text"
+                  placeholder="e.g. Black, Silk Red, Ivory"
+                  value={formData.colors}
+                  onChange={(e) => setFormData({ ...formData, colors: e.target.value })}
+                  className="w-full bg-theme-bg/60 border border-theme-border/60 hover:border-theme-accent/40 focus:border-theme-primary/95 focus:ring-1 focus:ring-theme-primary/20 rounded-xl px-4 py-3 text-xs font-medium tracking-wide text-theme-text-primary placeholder:text-theme-text-muted/40 outline-none transition-all duration-300"
+                />
               </div>
-            </div>
 
-            {/* Fabric and Delivery */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div className="space-y-1.5">
-                <label className="block text-[10px] font-black uppercase tracking-[0.25em] text-theme-accent">
+              <div className="flex flex-col space-y-1.5">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-theme-accent/80">
                   Fabric Details
                 </label>
-                <div className="relative rounded-2xl border border-theme-border/60 bg-theme-surface hover:border-theme-accent/40 focus-within:border-theme-primary focus-within:ring-1 focus-within:ring-theme-primary transition-all duration-300">
-                  <input
-                    type="text"
-                    placeholder="e.g. 100% Pure Organza Silk"
-                    value={formData.fabric}
-                    onChange={(e) => setFormData({ ...formData, fabric: e.target.value })}
-                    className="w-full bg-transparent px-4 py-3.5 font-sans text-xs font-semibold outline-none placeholder:text-theme-text-muted/40 text-theme-text-primary"
-                  />
-                </div>
+                <input
+                  type="text"
+                  placeholder="e.g. 100% Pure Organza Silk"
+                  value={formData.fabric}
+                  onChange={(e) => setFormData({ ...formData, fabric: e.target.value })}
+                  className="w-full bg-theme-bg/60 border border-theme-border/60 hover:border-theme-accent/40 focus:border-theme-primary/95 focus:ring-1 focus:ring-theme-primary/20 rounded-xl px-4 py-3 text-xs font-medium tracking-wide text-theme-text-primary placeholder:text-theme-text-muted/40 outline-none transition-all duration-300"
+                />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="block text-[10px] font-black uppercase tracking-[0.25em] text-theme-accent">
+              <div className="flex flex-col space-y-1.5">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-theme-accent/80">
                   Delivery Estimate
                 </label>
-                <div className="relative rounded-2xl border border-theme-border/60 bg-theme-surface hover:border-theme-accent/40 focus-within:border-theme-primary focus-within:ring-1 focus-within:ring-theme-primary transition-all duration-300">
-                  <input
-                    type="text"
-                    placeholder="e.g. 3-5 Working Days"
-                    value={formData.deliveryTime}
-                    onChange={(e) => setFormData({ ...formData, deliveryTime: e.target.value })}
-                    className="w-full bg-transparent px-4 py-3.5 font-sans text-xs font-semibold outline-none placeholder:text-theme-text-muted/40 text-theme-text-primary"
-                  />
-                </div>
+                <input
+                  type="text"
+                  placeholder="e.g. 3-5 Working Days"
+                  value={formData.deliveryTime}
+                  onChange={(e) => setFormData({ ...formData, deliveryTime: e.target.value })}
+                  className="w-full bg-theme-bg/60 border border-theme-border/60 hover:border-theme-accent/40 focus:border-theme-primary/95 focus:ring-1 focus:ring-theme-primary/20 rounded-xl px-4 py-3 text-xs font-medium tracking-wide text-theme-text-primary placeholder:text-theme-text-muted/40 outline-none transition-all duration-300"
+                />
               </div>
-            </div>
 
-            {/* Select options */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div className="space-y-1.5">
-                <label className="block text-[10px] font-black uppercase tracking-[0.25em] text-theme-accent">
+              <div className="flex flex-col space-y-1.5">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-theme-accent/80">
                   Badge Status
                 </label>
-                <div className="relative rounded-2xl border border-theme-border/60 bg-theme-surface focus-within:border-theme-primary transition-all duration-300">
+                <div className="relative flex items-center">
                   <select
                     value={formData.badge}
                     onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
-                    className="w-full bg-transparent px-4 py-3.5 text-xs outline-none text-theme-text-primary font-bold cursor-pointer"
+                    className="w-full bg-theme-bg/60 border border-theme-border/60 hover:border-theme-accent/40 focus:border-theme-primary/95 focus:ring-1 focus:ring-theme-primary/20 rounded-xl pl-4 pr-10 py-3 text-xs text-theme-text-primary font-semibold transition-all duration-300 outline-none appearance-none cursor-pointer"
                   >
                     <option value="" className="bg-theme-surface text-theme-text-primary">No Badge Selected</option>
                     <option value="new_arrival" className="bg-theme-surface text-theme-text-primary">✨ New Arrival</option>
@@ -634,95 +607,94 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
                     <option value="limited_stock" className="bg-theme-surface text-theme-text-primary">⚠️ Limited Stock</option>
                     <option value="sale" className="bg-theme-surface text-theme-text-primary">🏷️ On Sale</option>
                   </select>
+                  <ChevronDown size={14} className="absolute right-3.5 pointer-events-none text-theme-accent/60" />
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="block text-[10px] font-black uppercase tracking-[0.25em] text-theme-accent">
+              <div className="flex flex-col space-y-1.5">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-theme-accent/80">
                   Stock Availability
                 </label>
-                <div className="relative rounded-2xl border border-theme-border/60 bg-theme-surface focus-within:border-theme-primary transition-all duration-300">
+                <div className="relative flex items-center">
                   <select
                     value={formData.stockStatus}
                     onChange={(e) => setFormData({ ...formData, stockStatus: e.target.value })}
-                    className="w-full bg-transparent px-4 py-3.5 text-xs outline-none text-theme-text-primary font-bold cursor-pointer"
+                    className="w-full bg-theme-bg/60 border border-theme-border/60 hover:border-theme-accent/40 focus:border-theme-primary/95 focus:ring-1 focus:ring-theme-primary/20 rounded-xl pl-4 pr-10 py-3 text-xs text-theme-text-primary font-semibold transition-all duration-300 outline-none appearance-none cursor-pointer"
                   >
                     <option value="in_stock" className="bg-theme-surface text-theme-text-primary">🟢 In Stock (Ready to ship)</option>
                     <option value="low_stock" className="bg-theme-surface text-theme-text-primary">🟡 Low Stock (Hurry up)</option>
-                    <option value="out_of_stock" className="bg-theme-surface text-theme-text-primary">🔴 Out Of Stock (Curated on order)</option>
+                    <option value="out_of_stock" className="bg-theme-surface text-theme-text-primary">🔴 Out Of Stock</option>
                   </select>
+                  <ChevronDown size={14} className="absolute right-3.5 pointer-events-none text-theme-accent/60" />
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Textareas Section */}
-          <div className="bg-theme-surface/50 p-6 rounded-[28px] border border-theme-border/60 shadow-sm space-y-6">
-            <div className="space-y-1.5">
-              <label className="block text-[10px] font-black uppercase tracking-[0.25em] text-theme-accent">
-                Artisan Story / Description
-              </label>
-              <div className="relative rounded-2xl border border-theme-border/60 bg-theme-surface hover:border-theme-accent/40 focus-within:border-theme-primary transition-all duration-300">
+            {/* Stories and Override Textareas */}
+            <div className="border-t border-theme-border/40 pt-4 space-y-4">
+              <div className="flex flex-col space-y-1.5">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-theme-accent/80">
+                  Artisan Story / Description
+                </label>
                 <textarea
                   rows={3}
                   required
                   placeholder="Give details about the craftsmanship, materials, care instructions..."
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full bg-transparent p-4 text-xs outline-none resize-none placeholder:text-theme-text-muted/40 font-medium text-theme-text-primary"
+                  className="w-full bg-theme-bg/60 border border-theme-border/60 hover:border-theme-accent/40 focus:border-theme-primary/95 focus:ring-1 focus:ring-theme-primary/20 rounded-xl p-4 text-xs font-medium tracking-wide text-theme-text-primary placeholder:text-theme-text-muted/40 outline-none transition-all duration-300 resize-none"
                 />
               </div>
-            </div>
 
-            <div className="space-y-1.5">
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-                <label className="text-[10px] font-black uppercase tracking-[0.25em] text-theme-accent flex items-center gap-1.5">
-                  Custom WhatsApp message override
-                  <span className="cursor-help text-theme-primary inline-flex" title="Optional custom text client sends initially via WhatsApp.">
-                    <HelpCircle size={12} />
+              <div className="flex flex-col space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-theme-accent/80 flex items-center gap-1.5">
+                    Custom WhatsApp message override
+                    <span className="cursor-help text-theme-primary inline-flex" title="Optional custom text client sends initially via WhatsApp.">
+                      <HelpCircle size={12} />
+                    </span>
+                  </label>
+                  <span className="text-[8px] bg-theme-accent/10 text-theme-accent border border-theme-accent/25 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">
+                    Optional Override
                   </span>
-                </label>
-                <span className="text-[8px] bg-theme-accent/10 text-theme-accent border border-theme-accent/25 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest whitespace-nowrap">
-                  Optional Override
-                </span>
-              </div>
-              <div className="relative rounded-2xl border border-theme-border/60 bg-theme-surface hover:border-theme-accent/40 focus-within:border-theme-primary transition-all duration-300">
+                </div>
                 <textarea
-                  rows={3}
+                  rows={2}
                   placeholder="Hi, I'm absolutely loving this handloom saree! Can you confirm availability and customize length for me?"
                   value={formData.customMessage}
                   onChange={(e) => setFormData({ ...formData, customMessage: e.target.value })}
-                  className="w-full bg-transparent p-4 text-xs outline-none resize-none placeholder:text-theme-text-muted/40 font-medium text-theme-text-primary"
+                  className="w-full bg-theme-bg/60 border border-theme-border/60 hover:border-theme-accent/40 focus:border-theme-primary/95 focus:ring-1 focus:ring-theme-primary/20 rounded-xl p-4 text-xs font-medium tracking-wide text-theme-text-primary placeholder:text-theme-text-muted/40 outline-none transition-all duration-300 resize-none"
                 />
               </div>
             </div>
-          </div>
 
-          {/* Action buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 pt-2">
-            <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
-              type="submit"
-              disabled={loading || isUploadingPrimary}
-              className="flex-1 flex items-center justify-center gap-2.5 bg-theme-primary text-theme-primary-text py-4 rounded-xl shadow-md disabled:opacity-40 disabled:scale-100 transition-all uppercase text-[10px] tracking-[0.15em] font-black cursor-pointer hover:opacity-90"
-            >
-              {loading ? <Loader2 className="animate-spin shrink-0" size={16} /> : <CheckCircle2 className="shrink-0" size={16} />}
-              <span>{initialData ? 'Archive Modified Piece' : 'Commit to Boutique Collection'}</span>
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
-              type="button"
-              onClick={onCancel}
-              className="px-8 py-4 border border-theme-border text-theme-text-secondary font-black uppercase tracking-widest text-[10px] hover:bg-rose/5 hover:text-rose hover:border-rose/20 transition-all rounded-xl cursor-pointer"
-            >
-              Discard Changes
-            </motion.button>
+            {/* Action buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-theme-border/40">
+              <motion.button
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                type="submit"
+                disabled={loading || isUploadingPrimary}
+                className="flex-1 flex items-center justify-center gap-2 bg-theme-primary text-theme-primary-text py-3.5 rounded-xl shadow-md disabled:opacity-40 disabled:scale-100 transition-all uppercase text-[10px] tracking-[0.15em] font-black cursor-pointer hover:opacity-90"
+              >
+                {loading ? <Loader2 className="animate-spin shrink-0" size={14} /> : <CheckCircle2 className="shrink-0" size={14} />}
+                <span>{initialData ? 'Archive Modified Piece' : 'Commit to Boutique Collection'}</span>
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                type="button"
+                onClick={onCancel}
+                className="px-8 py-3.5 border border-theme-border text-theme-text-secondary font-black uppercase tracking-widest text-[10px] hover:bg-rose/5 hover:text-rose hover:border-rose/20 transition-all rounded-xl cursor-pointer"
+              >
+                Discard Changes
+              </motion.button>
+            </div>
           </div>
         </div>
       </div>
     </form>
+
       {/* Dynamic Image Size & Formatting Safes Dialog/Modal */}
       <AnimatePresence>
         {validationModal && validationModal.isOpen && (
@@ -746,7 +718,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
                 <AlertCircle size={32} />
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 text-center">
                 <h3 className="text-xl font-serif text-ink dark:text-dark-text font-bold leading-tight">
                   {validationModal.title}
                 </h3>
