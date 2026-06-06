@@ -205,41 +205,54 @@ export default function Dashboard() {
       {/* Navigation - Glassmorphism */}
       <nav className="bg-theme-surface/70 backdrop-blur-2xl border-b luxury-border sticky top-0 z-40 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-8">
-          <div className="flex flex-row justify-between items-center py-4 h-20 sm:h-24">
-            <div className="flex items-center space-x-3 sm:space-x-6">
-              <Link to="/" className="brand-logo serif text-lg sm:text-2xl tracking-[2px] sm:tracking-[4px] text-theme-primary font-black whitespace-nowrap flex items-center gap-2">
-                <Sparkles size={24} fill="currentColor" className="text-theme-accent" />
-                ANSHI
-              </Link>
-              <div className="h-6 w-[1px] bg-theme-border" />
-              <div className="flex items-center space-x-2 sm:space-x-3">
-                <span className="text-[8px] sm:text-[10px] uppercase font-black tracking-widest text-theme-text-muted bg-theme-accent/10 px-2 sm:px-3 py-1 rounded-full whitespace-nowrap">Dashboard</span>
+          <div className="flex flex-col md:flex-row justify-between md:items-center py-4 md:h-24 gap-4">
+            {/* Logo/AppName and Mobile Controls Row */}
+            <div className="flex flex-row justify-between items-center w-full md:w-auto">
+              <div className="flex items-center space-x-3 sm:space-x-6">
+                <Link to="/" className="brand-logo serif text-lg sm:text-2xl tracking-[2px] sm:tracking-[4px] text-theme-primary font-black whitespace-nowrap flex items-center gap-2">
+                  <Sparkles size={24} fill="currentColor" className="text-theme-accent shrink-0" />
+                  ANSHI
+                </Link>
+                <div className="h-6 w-[1px] bg-theme-border" />
+                <div className="flex items-center space-x-2 sm:space-x-3">
+                  <span className="text-[8px] sm:text-[10px] uppercase font-black tracking-widest text-theme-text-muted bg-theme-accent/10 px-2 sm:px-3 py-1 rounded-full whitespace-nowrap">Dashboard</span>
+                </div>
+              </div>
+
+              {/* Mobile utilities (rendered inside logo row for maximum space efficiency) */}
+              <div className="flex md:hidden items-center gap-2">
+                <ThemeToggle />
+                <button 
+                  onClick={handleLogout} 
+                  className="p-3 bg-rose/5 text-rose rounded-xl hover:bg-rose hover:text-white transition-all shadow-lg shrink-0 cursor-pointer"
+                  title="Logout"
+                >
+                  <LogOut size={16} />
+                </button>
               </div>
             </div>
             
-            <div className="flex items-center gap-1.5 sm:gap-4 overflow-x-auto no-scrollbar scroll-smooth pr-1">
-              <div className="hidden lg:block">
-                <ThemeToggle />
-              </div>
+            {/* Tabs and Actions Row */}
+            <div className="flex flex-row items-center justify-between md:justify-end gap-3 md:gap-4 w-full md:w-auto">
               {isSuperAdmin && (
                 <div className="flex items-center bg-theme-bg/50 p-1 rounded-2xl border border-theme-border shrink-0">
                   <button
                     onClick={() => setActiveTab('collection')}
-                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap cursor-pointer ${
+                    className={`flex items-center gap-1.5 px-3 py-2 sm:py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap cursor-pointer ${
                       activeTab === 'collection' ? 'bg-theme-primary text-theme-primary-text shadow-lg' : 'text-theme-text-secondary/60 hover:text-theme-primary'
                     }`}
                   >
                     <ShoppingBag size={14} className="shrink-0" />
-                    <span className="hidden sm:inline">Collection</span>
+                    <span>Collection</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('personnel')}
-                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap cursor-pointer ${
+                    className={`flex items-center gap-1.5 px-3 py-2 sm:py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap cursor-pointer ${
                       activeTab === 'personnel' ? 'bg-theme-primary text-theme-primary-text shadow-lg' : 'text-theme-text-secondary/60 hover:text-theme-primary'
                     }`}
                   >
                     <UserRoundCog size={14} className="shrink-0" />
-                    <span className="hidden sm:inline">Personnel</span>
+                    <span>Personnel</span>
                   </button>
                 </div>
               )}
@@ -248,22 +261,23 @@ export default function Dashboard() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => { setEditingProduct(undefined); setIsFormOpen(true); }}
-                  className="wa-button !bg-theme-primary !text-theme-primary-text shadow-2xl !py-2.5 sm:!py-4 rounded-xl !px-3 sm:!px-8 text-[9px] sm:text-xs whitespace-nowrap shrink-0 cursor-pointer"
+                  className="wa-button !bg-theme-primary !text-theme-primary-text shadow-2xl !py-2.5 rounded-xl !px-4 text-[9px] sm:text-xs whitespace-nowrap shrink-0 cursor-pointer flex items-center gap-1.5"
                 >
                   <Plus size={16} className="font-black shrink-0" />
-                  <span className="hidden sm:inline">Add Piece</span>
+                  <span>Add Piece</span>
                 </motion.button>
               )}
-              <div className="lg:hidden">
+              {/* Desktop-only utilities */}
+              <div className="hidden md:flex items-center gap-3">
                 <ThemeToggle />
+                <button 
+                  onClick={handleLogout} 
+                  className="p-3 sm:p-4 bg-rose/5 text-rose rounded-xl hover:bg-rose hover:text-white transition-all shadow-lg shadow-rose/5 shrink-0 cursor-pointer"
+                  title="Logout"
+                >
+                  <LogOut size={16} />
+                </button>
               </div>
-              <button 
-                onClick={handleLogout} 
-                className="p-3 sm:p-4 bg-rose/5 text-rose rounded-xl hover:bg-rose hover:text-white transition-all shadow-lg shadow-rose/5 shrink-0"
-                title="Logout"
-              >
-                <LogOut size={16} />
-              </button>
             </div>
           </div>
         </div>
@@ -392,7 +406,7 @@ export default function Dashboard() {
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="relative w-full max-w-4xl bg-theme-surface p-8 md:p-12 shadow-2xl max-h-[90vh] overflow-y-auto rounded-[40px] border border-theme-border"
+              className="relative w-full max-w-4xl bg-theme-surface p-5 sm:p-8 md:p-12 shadow-2xl max-h-[90vh] overflow-y-auto rounded-3xl sm:rounded-[40px] border border-theme-border"
             >
               <h3 className="text-3xl font-serif text-theme-primary mb-8 pb-4 border-b border-theme-border">
                 {editingProduct ? 'Edit Masterpiece' : 'New Collection Piece'}

@@ -654,9 +654,9 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loading || isUploadingPrimary || isUploadingExtra}
-              className="flex-1 text-center justify-center flex items-center gap-3 bg-theme-primary text-theme-primary-text py-4 sm:py-5 rounded-2xl shadow-xl disabled:opacity-40 disabled:scale-100 transition-all uppercase text-[10px] tracking-[0.2em] font-black cursor-pointer hover:opacity-90"
+              className="flex-1 flex items-center justify-center gap-2.5 bg-theme-primary text-theme-primary-text py-4 sm:py-5 rounded-2xl shadow-xl disabled:opacity-40 disabled:scale-100 transition-all uppercase text-[10px] tracking-wider sm:tracking-[0.2em] font-black cursor-pointer hover:opacity-90"
             >
-              {loading ? <Loader2 className="animate-spin" size={18} /> : <CheckCircle2 size={18} />}
+              {loading ? <Loader2 className="animate-spin shrink-0" size={18} /> : <CheckCircle2 className="shrink-0" size={18} />}
               <span>{initialData ? 'Archive Modified Piece' : 'Commit to Boutique Collection'}</span>
             </motion.button>
             <motion.button
@@ -664,7 +664,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
               whileTap={{ scale: 0.98 }}
               type="button"
               onClick={onCancel}
-              className="px-8 py-4 sm:py-5 border border-theme-border text-theme-text-secondary font-black uppercase tracking-widest text-[10px] hover:bg-rose/5 hover:text-rose hover:border-rose/20 transition-all rounded-2xl cursor-pointer"
+              className="px-8 py-4 sm:py-5 border border-theme-border text-theme-text-secondary font-black uppercase tracking-wider sm:tracking-widest text-[10px] hover:bg-rose/5 hover:text-rose hover:border-rose/20 transition-all rounded-2xl cursor-pointer"
             >
               Discard Changes
             </motion.button>
