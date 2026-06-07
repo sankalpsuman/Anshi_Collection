@@ -619,7 +619,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
                 <div className="relative flex items-center">
                   <select
                     value={formData.badge}
-                    onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
+                    onChange={(e) => setFormData({ ...formData, badge: e.target.value as 'new_arrival' | 'trending' | 'fast_selling' | 'limited_stock' | 'sale' | '' })}
                     className="w-full bg-theme-bg/60 border border-theme-border/60 hover:border-theme-accent/40 focus:border-theme-primary/95 focus:ring-1 focus:ring-theme-primary/20 rounded-xl pl-4 pr-10 py-3 text-xs text-theme-text-primary font-semibold transition-all duration-300 outline-none appearance-none cursor-pointer"
                   >
                     <option value="" className="bg-theme-surface text-theme-text-primary">No Badge Selected</option>
@@ -640,7 +640,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
                 <div className="relative flex items-center">
                   <select
                     value={formData.stockStatus}
-                    onChange={(e) => setFormData({ ...formData, stockStatus: e.target.value })}
+                    onChange={(e) => setFormData({ ...formData, stockStatus: e.target.value as 'in_stock' | 'low_stock' | 'out_of_stock' })}
                     className="w-full bg-theme-bg/60 border border-theme-border/60 hover:border-theme-accent/40 focus:border-theme-primary/95 focus:ring-1 focus:ring-theme-primary/20 rounded-xl pl-4 pr-10 py-3 text-xs text-theme-text-primary font-semibold transition-all duration-300 outline-none appearance-none cursor-pointer"
                   >
                     <option value="in_stock" className="bg-theme-surface text-theme-text-primary">🟢 In Stock (Ready to ship)</option>

@@ -139,6 +139,11 @@ export default function Home({
     return () => unsub();
   }, []);
 
+  const productsRef = React.useRef(products);
+  React.useEffect(() => {
+    productsRef.current = products;
+  }, [products]);
+
   React.useEffect(() => {
     const unsubscribe = productService.subscribeToProducts(
       (data) => {
@@ -154,14 +159,14 @@ export default function Home({
       (err) => {
         console.error("Subscription error:", err);
         // Only show error if we possess no cached data
-        if (products.length === 0) {
+        if (productsRef.current.length === 0) {
           setError("Unable to connect to the gallery. Please try again later.");
         }
         setLoading(false);
       }
     );
     return () => unsubscribe();
-  }, [products.length]);
+  }, []);
 
   // Sync floating inquiry list item numbers reactive
   React.useEffect(() => {

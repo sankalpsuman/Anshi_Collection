@@ -6,7 +6,92 @@
     <title>My Google AI Studio App</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Lightweight, super elegant initial fallback UI during React startup -->
+      <style>
+        body, html {
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          height: 100%;
+          background-color: #FDFBF7;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-family: Georgia, Garamond, serif;
+          -webkit-font-smoothing: antialiased;
+        }
+        @media (prefers-color-scheme: dark) {
+          body, html {
+            background-color: #0c0c0c;
+          }
+        }
+        .fallback-container {
+          text-align: center;
+          max-width: 320px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          animation: fadeInFallback/0.8s ease-out forwards;
+        }
+        .fallback-title {
+          font-size: 32px;
+          letter-spacing: 6px;
+          color: #721c24;
+          margin: 12px 0 6px 0;
+          text-transform: uppercase;
+          font-weight: 900;
+        }
+        @media (prefers-color-scheme: dark) {
+          .fallback-title {
+            color: #D4AF37;
+          }
+        }
+        .fallback-subtitle {
+          font-size: 9px;
+          letter-spacing: 3px;
+          color: #2D3E50;
+          text-transform: uppercase;
+          font-weight: 600;
+          opacity: 0.8;
+        }
+        @media (prefers-color-scheme: dark) {
+          .fallback-subtitle {
+            color: #cbd5e1;
+            opacity: 0.6;
+          }
+        }
+        .fallback-spinner {
+          width: 36px;
+          height: 36px;
+          border: 1.5px solid rgba(114, 28, 36, 0.08);
+          border-left-color: #721c24;
+          border-radius: 50%;
+          margin: 32px auto 0 auto;
+          animation: spinFallback 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+        @media (prefers-color-scheme: dark) {
+          .fallback-spinner {
+            border-color: rgba(212, 175, 55, 0.08);
+            border-left-color: #D4AF37;
+          }
+        }
+        @keyframes spinFallback {
+          to { transform: rotate(360deg); }
+        }
+        @keyframes fadeInFallback {
+          from { opacity: 0; transform: scale(0.97); }
+          to { opacity: 1; transform: scale(1); }
+        }
+      </style>
+      <div class="fallback-container">
+        <!-- Minimal, gorgeous premium layout matching layout splash screen -->
+        <div style="font-size: 20px; color: #D4AF37; line-height: 1;">✦</div>
+        <h1 class="fallback-title">ANSHI</h1>
+        <div class="fallback-subtitle">Curated Artistry</div>
+        <div class="fallback-spinner"></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -33,7 +33,8 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
     let authChecked = false;
     let productsChecked = false;
 
-    // Use fast cache-first heuristic so initial draw doesn't wait on Firestore
+    // Fast Cache check (read immediately from local storage)
+    let hasLocalCache = false;
     try {
       const cached = localStorage.getItem('ansi_cached_products');
       if (cached) {
@@ -41,74 +42,81 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
         if (Array.isArray(parsed) && parsed.length > 0) {
           productsList = parsed;
           productsChecked = true;
+          hasLocalCache = true;
         }
       }
     } catch (cacheErr) {
       console.warn("Fast Cache preloading skipped:", cacheErr);
     }
 
-    // 1. Authenticate check in the background
-    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        loggedInUserId = user.uid;
-        try {
-          const { authorized } = await adminService.checkAdminStatus(user.email || '');
-          isAdminUser = authorized;
-        } catch (e) {
-          console.error("Auth status error in splash:", e);
-        }
-      } else {
-        loggedInUserId = null;
-        isAdminUser = false;
-      }
-      authChecked = true;
-    });
+    // Modern snappiest non-blocking initialization schedule (keep duration short)
+    const startTime = Date.now();
+    const duration = hasLocalCache ? 150 : 350; 
 
-    // 2. Fetch products in parallel
-    const loadProductsAndPreloadImages = async () => {
+    // Handle authentication in parallel (fail-safe and non-blocking)
+    let unsubscribeAuth = () => {};
+    try {
+      unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+        try {
+          if (user) {
+            loggedInUserId = user.uid;
+            const { authorized } = await adminService.checkAdminStatus(user.email || '');
+            isAdminUser = authorized;
+          } else {
+            loggedInUserId = null;
+            isAdminUser = false;
+          }
+        } catch (e) {
+          console.error("Auth status sync error inside silent splash logic:", e);
+        } finally {
+          authChecked = true;
+        }
+      });
+    } catch (authSetupErr) {
+      console.error("Auth listener registration failed:", authSetupErr);
+      authChecked = true;
+    }
+
+    // Fetch and sync products in the background
+    const loadProductsBackground = async () => {
       try {
         const fetched = await productService.getProducts();
-        productsList = fetched;
-        productsChecked = true;
+        if (active) {
+          productsList = fetched;
+          productsChecked = true;
+        }
         
         try {
           localStorage.setItem('ansi_cached_products', JSON.stringify(fetched));
         } catch (err) {
-          console.error("Local caching error inside splash:", err);
+          console.error("Local caching sync error inside background task:", err);
         }
 
-        // Fast concurrent preloading for the showcase image list
+        // Preload preview imagery purely in the background (100% NON-BLOCKING)
         const priorityImages = fetched.slice(0, 4).map(p => p.imageUrl);
-        const imagePromises = priorityImages.map(url => {
-          return new Promise<void>((resolve) => {
-            const img = new Image();
-            img.src = url;
-            img.referrerPolicy = "no-referrer";
-            img.onload = () => resolve();
-            img.onerror = () => resolve();
-          });
+        priorityImages.forEach(url => {
+          const img = new Image();
+          img.src = url;
+          img.referrerPolicy = "no-referrer";
         });
-
-        await Promise.all(imagePromises);
       } catch (err) {
-        console.error("Products preloading error:", err);
-        productsChecked = true; // Still resolve to prevent blocking
+        console.error("Products background task failed:", err);
+        if (active) {
+          productsChecked = true; // Mark as done to avoid hanging
+        }
       }
     };
 
-    loadProductsAndPreloadImages();
+    // Trigger non-blocking catalog query
+    loadProductsBackground();
 
-    // 3. Fast & responsive modern loading speed
-    const startTime = Date.now();
-    const hasCache = productsList.length > 0;
-    const duration = hasCache ? 250 : 500; // snappiest performance while keeping elegant visual transition
-
+    // Visual loading progress ticks
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
       const computedPercentage = Math.min(Math.round((elapsed / duration) * 100), 99);
       
-      // Safe maximum timeout to guarantee immediate, lightning-fast boot on Safari/iOS
-      const forceComplete = elapsed >= 1200;
+      // Absolute hard fallback boundary to guarantee visual transition dismissal after 1.5s max
+      const forceComplete = elapsed >= 1500;
       
       if ((elapsed >= duration && authChecked && productsChecked) || forceComplete) {
         clearInterval(interval);
@@ -117,7 +125,11 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
         
         setTimeout(() => {
           if (active) {
-            unsubscribeAuth();
+            try {
+              unsubscribeAuth();
+            } catch (unsubErr) {
+              console.warn("Unsubscribe auth error during splash dismissal:", unsubErr);
+            }
             onComplete(productsList, isAdminUser, loggedInUserId);
           }
         }, 50);
@@ -128,12 +140,16 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
           setLoadingText(currentStage.text);
         }
       }
-    }, 25);
+    }, 20);
 
     return () => {
       active = false;
       clearInterval(interval);
-      unsubscribeAuth();
+      try {
+        unsubscribeAuth();
+      } catch (err) {
+        // Silent catch
+      }
     };
   }, [onComplete]);
 
