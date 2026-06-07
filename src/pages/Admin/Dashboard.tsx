@@ -119,6 +119,15 @@ export default function Dashboard({ onViewBoutique }: DashboardProps = {}) {
     setIsFormOpen(true);
   };
 
+  const handleBoutiqueRedirect = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (onViewBoutique) {
+      onViewBoutique();
+    } else {
+      navigate('/');
+    }
+  };
+
   if (!authInitialized || (loading && products.length === 0)) return (
     <div className="min-h-screen flex items-center justify-center bg-theme-bg transition-colors duration-300">
        <div className="flex flex-col items-center">
@@ -214,7 +223,11 @@ export default function Dashboard({ onViewBoutique }: DashboardProps = {}) {
             {/* Logo/AppName and Mobile Controls Row */}
             <div className="flex flex-row justify-between items-center w-full md:w-auto">
               <div className="flex items-center space-x-3 sm:space-x-6">
-                <Link to="/" className="brand-logo serif text-lg sm:text-2xl tracking-[2px] sm:tracking-[4px] text-theme-primary font-black whitespace-nowrap flex items-center gap-2">
+                <Link 
+                  to="/" 
+                  onClick={handleBoutiqueRedirect}
+                  className="brand-logo serif text-lg sm:text-2xl tracking-[2px] sm:tracking-[4px] text-theme-primary font-black whitespace-nowrap flex items-center gap-2"
+                >
                   <Sparkles size={24} fill="currentColor" className="text-theme-accent shrink-0" />
                   ANSHI
                 </Link>
@@ -228,12 +241,7 @@ export default function Dashboard({ onViewBoutique }: DashboardProps = {}) {
               <div className="flex md:hidden items-center gap-2">
                 <Link
                   to="/"
-                  onClick={(e) => {
-                    if (onViewBoutique) {
-                      e.preventDefault();
-                      onViewBoutique();
-                    }
-                  }}
+                  onClick={handleBoutiqueRedirect}
                   className="p-3 bg-theme-primary/10 text-theme-primary rounded-xl hover:bg-theme-primary hover:text-theme-primary-text transition-all shadow-lg shrink-0 cursor-pointer flex items-center justify-center animate-premium-glow"
                   title="Boutique View"
                 >
@@ -289,12 +297,7 @@ export default function Dashboard({ onViewBoutique }: DashboardProps = {}) {
               <div className="hidden md:flex items-center gap-3">
                 <Link
                   to="/"
-                  onClick={(e) => {
-                    if (onViewBoutique) {
-                      e.preventDefault();
-                      onViewBoutique();
-                    }
-                  }}
+                  onClick={handleBoutiqueRedirect}
                   className="px-5 py-3 bg-theme-primary/10 text-theme-primary hover:bg-theme-primary hover:text-theme-primary-text rounded-xl transition-all shadow-lg shrink-0 cursor-pointer flex items-center gap-2 text-xs font-black uppercase tracking-wider animate-premium-glow"
                   title="Boutique View"
                 >
@@ -552,12 +555,7 @@ export default function Dashboard({ onViewBoutique }: DashboardProps = {}) {
       <div className="pb-20 pt-8 flex flex-col items-center justify-center space-y-4">
         <Link 
           to="/" 
-          onClick={(e) => {
-            if (onViewBoutique) {
-              e.preventDefault();
-              onViewBoutique();
-            }
-          }}
+          onClick={handleBoutiqueRedirect}
           className="text-xs text-theme-text-secondary hover:text-theme-accent transition-colors flex items-center justify-center gap-3"
         >
            <span className="w-10 h-[1px] bg-theme-border"></span>
