@@ -13,6 +13,16 @@ export default function Login({ onBackToBoutique }: { onBackToBoutique?: () => v
   const [error, setError] = React.useState<string | null>(null);
   const navigate = useNavigate();
 
+  const handleBoutiqueRedirect = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (onBackToBoutique) {
+      onBackToBoutique();
+      navigate('/');
+    } else {
+      window.location.href = window.location.origin + '/';
+    }
+  };
+
   React.useEffect(() => {
     let isMounted = true;
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -100,7 +110,11 @@ export default function Login({ onBackToBoutique }: { onBackToBoutique?: () => v
         className="w-full max-w-md bg-theme-surface p-8 sm:p-12 md:p-16 text-center shadow-[0_40px_100px_-20px_rgba(0,0,0,0.1)] space-y-8 sm:space-y-10 rounded-[30px] sm:rounded-[40px] border border-theme-border backdrop-blur-sm transition-colors"
       >
         <div className="space-y-3 sm:space-y-4">
-          <Link to="/" className="hover:opacity-95 block select-none">
+          <Link 
+            to="/" 
+            onClick={handleBoutiqueRedirect}
+            className="hover:opacity-95 block select-none"
+          >
             <motion.div
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
@@ -148,12 +162,7 @@ export default function Login({ onBackToBoutique }: { onBackToBoutique?: () => v
         <div className="pt-8 flex flex-col space-y-6">
           <Link 
             to="/" 
-            onClick={(e) => {
-              if (onBackToBoutique) {
-                e.preventDefault();
-                onBackToBoutique();
-              }
-            }}
+            onClick={handleBoutiqueRedirect}
             className="text-xs text-theme-text-secondary hover:text-theme-accent transition-colors flex items-center justify-center gap-3"
           >
              <span className="w-10 h-[1px] bg-theme-border"></span>

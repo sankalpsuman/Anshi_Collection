@@ -8,7 +8,7 @@ import { Product } from '../types';
 import { productService } from '../services/productService';
 import { motion, AnimatePresence } from 'motion/react';
 import { MessageCircle, Instagram, Search, Sparkles, ShoppingBag } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { auth } from '../lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { adminService } from '../services/adminService';
@@ -94,6 +94,7 @@ export default function Home({
   initialIsAdmin?: boolean; 
   initialUserId?: string | null; 
 }) {
+  const location = useLocation();
   const [products, setProducts] = React.useState<Product[]>(() => {
     if (initialProducts && initialProducts.length > 0) return initialProducts;
     try {
@@ -214,7 +215,7 @@ export default function Home({
         }
       }
     }
-  }, [products, selectedProduct]);
+  }, [products, selectedProduct, location]);
 
   const filteredProducts = React.useMemo(() => {
     let filtered = products;

@@ -123,8 +123,9 @@ export default function Dashboard({ onViewBoutique }: DashboardProps = {}) {
     e.preventDefault();
     if (onViewBoutique) {
       onViewBoutique();
-    } else {
       navigate('/');
+    } else {
+      window.location.href = window.location.origin + '/';
     }
   };
 
@@ -483,7 +484,12 @@ export default function Dashboard({ onViewBoutique }: DashboardProps = {}) {
                                   {/* View in Boutique/Storefront Button */}
                                   <button
                                     onClick={() => {
-                                      navigate(`/?product=${product.id}`);
+                                      if (onViewBoutique) {
+                                        onViewBoutique();
+                                        navigate(`/?product=${product.id}`);
+                                      } else {
+                                        window.location.href = window.location.origin + `/?product=${product.id}`;
+                                      }
                                     }}
                                     className="px-4 py-2.5 bg-theme-primary/10 text-theme-primary text-[10px] font-black uppercase tracking-wider rounded-xl hover:bg-theme-primary hover:text-theme-primary-text transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
                                     title="View Piece Details"
