@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { Product } from '../types';
 import { MessageCircle, Share2, Star } from 'lucide-react';
 import { feedbackService } from '../services/feedbackService';
+import { ensureHttps, handleImageError } from '../lib/securityUtils';
 
 interface ProductCardProps {
   product: Product;
@@ -82,11 +83,12 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
     >
       <div className="relative aspect-[4/5] overflow-hidden bg-theme-bg/10">
         <img
-          src={product.imageUrl}
+          src={ensureHttps(product.imageUrl)}
           alt={product.name}
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
           referrerPolicy="no-referrer"
           loading="lazy"
+          onError={handleImageError}
         />
 
         {/* Custom Visual Badges */}

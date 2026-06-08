@@ -4,6 +4,7 @@ import { Product } from '../../types';
 import { Upload, X, Loader2, AlertCircle, CheckCircle2, Video, HelpCircle, ChevronDown, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { imageService } from '../../services/imageService';
+import { ensureHttps, handleImageError } from '../../lib/securityUtils';
 import ImageLibraryModal from './ImageLibraryModal';
 
 interface ProductFormProps {
@@ -377,10 +378,11 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
               {previewUrl ? (
                 <>
                   <img 
-                    src={previewUrl} 
+                    src={ensureHttps(previewUrl)} 
                     alt="Preview" 
                     referrerPolicy="no-referrer"
                     className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ${isUploadingPrimary ? 'opacity-40 grayscale' : ''}`} 
+                    onError={handleImageError}
                   />
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-xs">
                     {!isUploadingPrimary && (

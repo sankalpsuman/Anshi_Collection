@@ -12,6 +12,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { auth } from '../lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { adminService } from '../services/adminService';
+import { ensureHttps, handleImageError } from '../lib/securityUtils';
 
 // Branded Module Enhancements
 import FloatingNav, { AppModule } from '../components/FloatingNav';
@@ -72,7 +73,7 @@ function RecentlyViewed({
             className="group cursor-pointer bg-theme-surface border border-theme-border rounded-3xl p-3 w-40 hover:-translate-y-1.5 transition-all duration-350 shadow-sm hover:shadow-glow flex-shrink-0"
           >
             <div className="aspect-[4/5] rounded-2.5xl overflow-hidden bg-theme-bg/10">
-              <img src={p.imageUrl} alt={p.name} referrerPolicy="no-referrer" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <img src={ensureHttps(p.imageUrl)} alt={p.name} referrerPolicy="no-referrer" onError={handleImageError} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="mt-3.5 space-y-1 overflow-hidden">
               <h4 className="font-serif font-black text-xs text-theme-text-primary group-hover:text-theme-accent transition-colors truncate">{p.name}</h4>

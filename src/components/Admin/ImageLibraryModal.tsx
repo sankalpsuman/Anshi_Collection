@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Search, Loader2, Sparkles, Check, Image as ImageIcon, ChevronRight } from 'lucide-react';
 import { imageService, UserImage } from '../../services/imageService';
+import { ensureHttps, handleImageError } from '../../lib/securityUtils';
 import { productService } from '../../services/productService';
 
 interface ImageLibraryModalProps {
@@ -210,11 +211,12 @@ export default function ImageLibraryModal({ isOpen, onClose, onSelect }: ImageLi
                         }`}
                       >
                         <img
-                          src={image.imageUrl}
+                          src={ensureHttps(image.imageUrl)}
                           alt="Historical asset"
                           referrerPolicy="no-referrer"
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                           loading="lazy"
+                          onError={handleImageError}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
                           <p className="text-[8px] text-white/70 uppercase tracking-widest line-clamp-1">

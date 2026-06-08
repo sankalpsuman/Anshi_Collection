@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, MessageCircle, Share2, ShoppingBag, Eye, Check, Minus, Plus, Play, ChevronLeft, ChevronRight, Bookmark, ArrowRight } from 'lucide-react';
 import { Product } from '../types';
+import { ensureHttps, handleImageError } from '../lib/securityUtils';
 import FeedbackSection from './FeedbackSection';
 
 interface ProductModalProps {
@@ -234,11 +235,12 @@ function ProductModalContent({
                       className="w-full h-full cursor-zoom-in overflow-hidden relative flex items-center justify-center"
                     >
                       <motion.img
-                        src={currentShowcaseImageUrl}
+                        src={ensureHttps(currentShowcaseImageUrl)}
                         alt={product.name}
                         style={zoomStyle}
                         referrerPolicy="no-referrer"
                         className="w-full h-full object-cover transition-transform duration-200"
+                        onError={handleImageError}
                       />
 
                       {/* Navigation Chevrons inside presentation, visible on hover */}
@@ -326,7 +328,7 @@ function ProductModalContent({
                         }`}
                         aria-label={`View image thumbnail ${idx + 1}`}
                       >
-                        <img src={img} alt={`Thumbnail ${idx}`} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                        <img src={ensureHttps(img)} alt={`Thumbnail ${idx}`} referrerPolicy="no-referrer" className="w-full h-full object-cover" onError={handleImageError} />
                       </button>
                     ))}
                   </div>
@@ -585,7 +587,7 @@ function ProductModalContent({
                     className="group cursor-pointer p-0 rounded-2xl overflow-hidden border border-theme-border flex flex-row items-center gap-3 sm:gap-4 bg-theme-surface/50 hover:bg-theme-surface hover:shadow-luxury hover:border-theme-accent/50 transition-all duration-300"
                   >
                     <div className="w-20 sm:w-24 aspect-square overflow-hidden shrink-0">
-                      <img src={relProduct.imageUrl} alt={relProduct.name} referrerPolicy="no-referrer" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={ensureHttps(relProduct.imageUrl)} alt={relProduct.name} referrerPolicy="no-referrer" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onError={handleImageError} />
                     </div>
                     <div className="p-3 overflow-hidden text-left flex-1 space-y-1">
                       <h4 className="text-xs sm:text-sm font-serif font-bold text-theme-text-primary group-hover:text-theme-accent transition-colors truncate">{relProduct.name}</h4>

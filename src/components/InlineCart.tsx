@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Trash2, Plus, Minus, MessageCircle, ShieldCheck, Heart, ArrowRight } from 'lucide-react';
 import { Product } from '../types';
+import { ensureHttps, handleImageError } from '../lib/securityUtils';
 
 interface InquiryItem {
   cartId: string;
@@ -164,10 +165,11 @@ export default function InlineCart({ onBackToGallery }: InlineCartProps) {
                   {/* Saree thumbnail */}
                   <div className="w-24 aspect-[4/5] sm:w-20 sm:aspect-[4/5] rounded-xl overflow-hidden shrink-0 bg-theme-bg">
                     <img 
-                      src={item.product.imageUrl} 
+                      src={ensureHttps(item.product.imageUrl)} 
                       alt={item.product.name} 
                       referrerPolicy="no-referrer" 
                       className="w-full h-full object-cover" 
+                      onError={handleImageError}
                     />
                   </div>
 

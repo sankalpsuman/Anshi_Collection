@@ -3,6 +3,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '../../lib/firebase';
 import { productService } from '../../services/productService';
 import { Product } from '../../types';
+import { ensureHttps, handleImageError } from '../../lib/securityUtils';
 import { useNavigate, Link } from 'react-router-dom';
 import ProductForm from '../../components/Admin/ProductForm';
 import AdminControlPanel from '../../components/Admin/AdminControlPanel';
@@ -374,11 +375,12 @@ export default function Dashboard({ onViewBoutique }: DashboardProps = {}) {
                       >
                         <div className="aspect-[4/5] overflow-hidden relative">
                           <img 
-                            src={product.imageUrl} 
+                            src={ensureHttps(product.imageUrl)} 
                             alt={product.name} 
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                             referrerPolicy="no-referrer"
                             loading="lazy"
+                            onError={handleImageError}
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent" />
                           
@@ -447,11 +449,12 @@ export default function Dashboard({ onViewBoutique }: DashboardProps = {}) {
                                 <div className="flex items-center gap-5">
                                   <div className="w-16 h-20 rounded-xl overflow-hidden bg-theme-bg border border-theme-border flex-shrink-0 shadow-inner">
                                     <img 
-                                      src={product.imageUrl} 
+                                      src={ensureHttps(product.imageUrl)} 
                                       alt={product.name} 
                                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                       referrerPolicy="no-referrer"
                                       loading="lazy"
+                                      onError={handleImageError}
                                     />
                                   </div>
                                   <div className="space-y-1">

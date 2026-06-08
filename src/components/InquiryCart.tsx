@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ShoppingBag, X, Trash2, Plus, Minus, MessageCircle, ArrowRight, ShieldCheck, Heart } from 'lucide-react';
 import { Product } from '../types';
+import { ensureHttps, handleImageError } from '../lib/securityUtils';
 
 interface InquiryCartProps {
   isOpen: boolean;
@@ -163,7 +164,7 @@ export default function InquiryCart({ isOpen, onClose }: InquiryCartProps) {
                     className="relative p-4 rounded-3xl bg-theme-surface border border-theme-border shadow-sm flex items-start gap-4 hover:shadow-glow transition-shadow"
                   >
                     <div className="w-20 aspect-[4/5] rounded-xl overflow-hidden shrink-0">
-                      <img src={item.product.imageUrl} alt={item.product.name} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                      <img src={ensureHttps(item.product.imageUrl)} alt={item.product.name} referrerPolicy="no-referrer" className="w-full h-full object-cover" onError={handleImageError} />
                     </div>
 
                     <div className="flex-1 space-y-2 text-left">
