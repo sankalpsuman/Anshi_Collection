@@ -131,6 +131,9 @@ function ProductModalContent({
 
   // Add Item to Inquiry Cart
   const handleCartAdd = () => {
+    if (product.stockStatus === 'out_of_stock') {
+      return;
+    }
     onAddToInquiry({
       product,
       size: selectedSize,
@@ -542,19 +545,29 @@ function ProductModalContent({
                     </motion.button>
 
                     {/* Secondary Button: Inquiry list */}
-                    <motion.button
-                      whileHover={{ scale: 1.015 }}
-                      whileTap={{ scale: 0.985 }}
-                      onClick={handleCartAdd}
-                      className={`flex-1 flex items-center justify-center gap-2.5 py-4 px-6 rounded-2xl cursor-pointer text-xs font-display font-black uppercase tracking-[0.16em] border transition-all duration-300 ${
-                        addedSuccess 
-                          ? 'bg-theme-primary text-theme-primary-text border-theme-primary shadow-glow' 
-                          : 'bg-theme-primary/10 text-theme-primary border-theme-primary/30 hover:bg-theme-primary hover:text-theme-primary-text'
-                      }`}
-                    >
-                      {addedSuccess ? <Check size={16} /> : <ShoppingBag size={16} />}
-                      <span>{addedSuccess ? 'Added to Cart' : 'Add to Inquiry List'}</span>
-                    </motion.button>
+                    {product.stockStatus === 'out_of_stock' ? (
+                      <button
+                        disabled
+                        className="flex-1 flex items-center justify-center gap-2.5 py-4 px-6 rounded-2xl text-xs font-display font-black uppercase tracking-[0.16em] border border-theme-border/60 bg-theme-surface/50 text-theme-text-muted cursor-not-allowed"
+                      >
+                        <X size={16} />
+                        <span>Out of Stock</span>
+                      </button>
+                    ) : (
+                      <motion.button
+                        whileHover={{ scale: 1.015 }}
+                        whileTap={{ scale: 0.985 }}
+                        onClick={handleCartAdd}
+                        className={`flex-1 flex items-center justify-center gap-2.5 py-4 px-6 rounded-2xl cursor-pointer text-xs font-display font-black uppercase tracking-[0.16em] border transition-all duration-300 ${
+                          addedSuccess 
+                            ? 'bg-theme-primary text-theme-primary-text border-theme-primary shadow-glow' 
+                            : 'bg-theme-primary/10 text-theme-primary border-theme-primary/30 hover:bg-theme-primary hover:text-theme-primary-text'
+                        }`}
+                      >
+                        {addedSuccess ? <Check size={16} /> : <ShoppingBag size={16} />}
+                        <span>{addedSuccess ? 'Added to Cart' : 'Add to Inquiry List'}</span>
+                      </motion.button>
+                    )}
                   </div>
 
                   {/* Share Trigger */}

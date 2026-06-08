@@ -169,7 +169,14 @@ export default function InquiryCart({ isOpen, onClose }: InquiryCartProps) {
 
                     <div className="flex-1 space-y-2 text-left">
                       <div>
-                        <h4 className="font-serif font-black text-xs text-theme-text-primary line-clamp-1">{item.product.name}</h4>
+                        <h4 className="font-serif font-black text-xs text-theme-text-primary flex flex-wrap items-center gap-1.5">
+                          <span>{item.product.name}</span>
+                          {item.product.stockStatus === 'out_of_stock' && (
+                            <span className="inline-block bg-rose/10 border border-rose/30 text-rose text-[8px] font-display font-black p-0.5 px-1.5 rounded uppercase tracking-wider">
+                              Out of Stock
+                            </span>
+                          )}
+                        </h4>
                         <p className="text-[10px] font-mono font-bold text-theme-text-muted mt-0.5 uppercase">CODE: {item.product.code}</p>
                       </div>
 

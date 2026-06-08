@@ -91,6 +91,15 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
           onError={handleImageError}
         />
 
+        {/* Out of Stock Overlay */}
+        {product.stockStatus === 'out_of_stock' && (
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px] flex items-center justify-center z-20">
+            <span className="bg-black/80 border border-rose/30 text-rose font-display font-black text-xs uppercase tracking-[0.2em] px-4 py-2.5 rounded-xl shadow-2xl">
+              🔴 Out Of Stock
+            </span>
+          </div>
+        )}
+
         {/* Custom Visual Badges */}
         {product.badge && (
           <div className="absolute top-4 left-4 z-10">
@@ -159,7 +168,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
           className="wa-button w-full rounded-xl !py-4 group-hover:shadow-glow text-[10px] sm:text-xs"
         >
           <MessageCircle size={14} className="group-hover:animate-bounce" />
-          <span>Curate & Inquire</span>
+          <span>{product.stockStatus === 'out_of_stock' ? 'Inquire (Out of Stock)' : 'Curate & Inquire'}</span>
         </button>
       </div>
     </motion.div>

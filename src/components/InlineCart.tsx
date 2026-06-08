@@ -177,7 +177,14 @@ export default function InlineCart({ onBackToGallery }: InlineCartProps) {
                   <div className="flex-1 space-y-3 w-full">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h4 className="font-serif font-black text-sm text-theme-text-primary">{item.product.name}</h4>
+                        <h4 className="font-serif font-black text-sm text-theme-text-primary flex flex-wrap items-center gap-1.5">
+                          <span>{item.product.name}</span>
+                          {item.product.stockStatus === 'out_of_stock' && (
+                            <span className="inline-block bg-rose/10 border border-rose/30 text-rose text-[8px] font-display font-black p-1 px-2 rounded-md uppercase tracking-wider">
+                              Out of Stock
+                            </span>
+                          )}
+                        </h4>
                         <p className="text-[10px] font-mono font-bold text-theme-text-muted mt-0.5 uppercase tracking-wide">Code: {item.product.code || 'ANS'}</p>
                       </div>
                       <p className="text-sm font-display font-black text-theme-primary sm:hidden">

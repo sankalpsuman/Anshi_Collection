@@ -242,6 +242,9 @@ export default function Home({
 
   // Handle addition of items into persistent Local Storage cart
   const handleAddToInquiry = (item: { product: Product; size: string; color: string; quantity: number }) => {
+    if (item.product.stockStatus === 'out_of_stock') {
+      return; // Enforce stock constraints
+    }
     const raw = localStorage.getItem('boutiqueInquiryCart');
     let cartItems = raw ? JSON.parse(raw) : [];
     const cartId = `${item.product.id}-${item.size}-${item.color}`;
