@@ -363,14 +363,13 @@ export default function Dashboard({ onViewBoutique }: DashboardProps = {}) {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-10">
                 <AnimatePresence mode="popLayout">
                   {(products || []).map((product) => {
-                    const stableKey = product.publicId || product.id;
                     return (
                       <motion.div
                         layout
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.9 }}
-                        key={stableKey}
+                        key={product.id}
                         className="glass-card p-0 group flex flex-col h-full rounded-3xl overflow-hidden hover:shadow-[0_40px_80px_-20px_rgba(45,62,80,0.15)] bg-theme-surface border border-theme-border animate-premium-glow"
                       >
                         <div className="aspect-[4/5] overflow-hidden relative">
@@ -435,14 +434,13 @@ export default function Dashboard({ onViewBoutique }: DashboardProps = {}) {
                     <tbody>
                       <AnimatePresence mode="popLayout">
                         {(products || []).map((product) => {
-                          const stableKey = product.publicId || product.id;
                           return (
                             <motion.tr
                               layout
                               initial={{ opacity: 0, y: 10 }}
                               animate={{ opacity: 1, y: 0 }}
                               exit={{ opacity: 0, y: -10 }}
-                              key={stableKey}
+                              key={product.id}
                               className="border-b border-theme-border/60 hover:bg-theme-accent/5 transition-colors group"
                             >
                               <td className="py-5 px-8">

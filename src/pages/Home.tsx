@@ -36,7 +36,8 @@ function RecentlyViewed({
     if (raw) {
       try {
         const ids: string[] = JSON.parse(raw);
-        const list = ids
+        const uniqueIds = Array.from(new Set(ids));
+        const list = uniqueIds
           .map(id => products.find(p => p.id === id))
           .filter((p): p is Product => !!p);
         setViewedProducts(list);
